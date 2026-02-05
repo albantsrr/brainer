@@ -1,0 +1,124 @@
+{
+  "course": {
+    "title": "Fundamentals of Data Engineering",
+    "author": "Joe Reis, Matt Housley",
+    "slug": "fundamentals-of-data-engineering",
+    "output_dir": "content/courses/fundamentals-of-data-engineering/"
+  },
+  "index": {
+    "mdx_file": "00-index.mdx"
+  },
+  "parts": [
+    {
+      "order": 1,
+      "title": "Foundation and Building Blocks",
+      "chapters": [
+        {
+          "chapter_num": 1,
+          "title": "Data Engineering Described",
+          "source_file": "ch01.xhtml",
+          "order": 1,
+          "slug": "data-engineering-described",
+          "mdx_file": "01-data-engineering-described.mdx"
+        },
+        {
+          "chapter_num": 2,
+          "title": "The Data Engineering Lifecycle",
+          "source_file": "ch02.xhtml",
+          "order": 2,
+          "slug": "the-data-engineering-lifecycle",
+          "mdx_file": "02-the-data-engineering-lifecycle.mdx"
+        },
+        {
+          "chapter_num": 3,
+          "title": "Designing Good Data Architecture",
+          "source_file": "ch03.xhtml",
+          "order": 3,
+          "slug": "designing-good-data-architecture",
+          "mdx_file": "03-designing-good-data-architecture.mdx"
+        },
+        {
+          "chapter_num": 4,
+          "title": "Choosing Technologies Across the Data Engineering Lifecycle",
+          "source_file": "ch04.xhtml",
+          "order": 4,
+          "slug": "choosing-technologies-across-the-data-engineering-lifecycle",
+          "mdx_file": "04-choosing-technologies-across-the-data-engineering-lifecycle.mdx"
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "title": "The Data Engineering Lifecycle in Depth",
+      "chapters": [
+        {
+          "chapter_num": 5,
+          "title": "Data Generation in Source Systems",
+          "source_file": "ch05.xhtml",
+          "order": 5,
+          "slug": "data-generation-in-source-systems",
+          "mdx_file": "05-data-generation-in-source-systems.mdx"
+        },
+        {
+          "chapter_num": 6,
+          "title": "Storage",
+          "source_file": "ch06.xhtml",
+          "order": 6,
+          "slug": "storage",
+          "mdx_file": "06-storage.mdx"
+        },
+        {
+          "chapter_num": 7,
+          "title": "Ingestion",
+          "source_file": "ch07.xhtml",
+          "order": 7,
+          "slug": "ingestion",
+          "mdx_file": "07-ingestion.mdx"
+        },
+        {
+          "chapter_num": 8,
+          "title": "Queries, Modeling, and Transformation",
+          "source_file": "ch08.xhtml",
+          "order": 8,
+          "slug": "queries-modeling-and-transformation",
+          "mdx_file": "08-queries-modeling-and-transformation.mdx"
+        },
+        {
+          "chapter_num": 9,
+          "title": "Serving Data for Analytics, Machine Learning, and Reverse ETL",
+          "source_file": "ch09.xhtml",
+          "order": 9,
+          "slug": "serving-data-for-analytics-machine-learning-and-reverse-etl",
+          "mdx_file": "09-serving-data-for-analytics-machine-learning-and-reverse-etl.mdx"
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "title": "Security, Privacy, and the Future of Data Engineering",
+      "chapters": [
+        {
+          "chapter_num": 10,
+          "title": "Security and Privacy",
+          "source_file": "ch10.xhtml",
+          "order": 10,
+          "slug": "security-and-privacy",
+          "mdx_file": "10-security-and-privacy.mdx"
+        },
+        {
+          "chapter_num": 11,
+          "title": "The Future of Data Engineering",
+          "source_file": "ch11.xhtml",
+          "order": 11,
+          "slug": "the-future-of-data-engineering",
+          "mdx_file": "11-the-future-of-data-engineering.mdx"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "parts": 3,
+    "chapters": 11,
+    "total_mdx_files": 12
+  }
+}
