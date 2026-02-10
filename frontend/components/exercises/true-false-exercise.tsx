@@ -19,7 +19,7 @@ export function TrueFalseExercise({ content }: TrueFalseExerciseProps) {
     setSubmitted(true);
   };
 
-  const isCorrect = submitted && selectedAnswer === content.correct_answer;
+  const isCorrect = submitted && selectedAnswer === content.answer;
 
   return (
     <div className="space-y-4">

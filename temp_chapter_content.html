@@ -1,0 +1,307 @@
+<h2>Introduction</h2>
+
+<p>L'ingénierie des données est devenue l'un des domaines les plus dynamiques de la technologie. Elle constitue le fondement de la data science et de l'analytique en production. Ce chapitre explore ce qu'est l'ingénierie des données, son évolution historique, les compétences requises et les collaborations essentielles.</p>
+
+<h2>Qu'est-ce que l'ingénierie des données ?</h2>
+
+<p>Malgré sa popularité croissante, l'ingénierie des données reste un concept souvent mal compris. De nombreuses définitions existent, mais un fil conducteur émerge : <strong>un ingénieur de données récupère, stocke et prépare les données pour qu'elles soient consommées par les data scientists, analystes et autres utilisateurs.</strong></p>
+
+<h3>Définition</h3>
+
+<blockquote>
+<p><strong>L'ingénierie des données</strong> est le développement, l'implémentation et la maintenance de systèmes et processus qui transforment des données brutes en informations de haute qualité et cohérentes, supportant des cas d'usage en aval comme l'analyse et le machine learning.</p>
+
+<p>L'ingénierie des données se situe à l'intersection de la sécurité, de la gestion des données, du DataOps, de l'architecture de données, de l'orchestration et du génie logiciel.</p>
+
+<p>Un <strong>ingénieur de données</strong> gère le cycle de vie de l'ingénierie des données, depuis la récupération des données dans les systèmes sources jusqu'à leur mise à disposition pour des cas d'usage comme l'analyse ou le machine learning.</p>
+</blockquote>
+
+<h3>Le cycle de vie de l'ingénierie des données</h3>
+
+<p>Ce livre se concentre sur le <em>cycle de vie de l'ingénierie des données</em>, un concept qui déplace la conversation de la technologie vers les données elles-mêmes et les objectifs qu'elles doivent servir.</p>
+
+<figure>
+<img src="/static/images/69b55414-11ff-4a23-80ee-b365d202e303.png" alt="Le cycle de vie de l'ingénierie des données" />
+<figcaption>Figure 1-1. Le cycle de vie de l'ingénierie des données</figcaption>
+</figure>
+
+<p>Les étapes du cycle de vie sont :</p>
+
+<ul>
+<li><strong>Génération</strong> : Production des données dans les systèmes sources</li>
+<li><strong>Stockage</strong> : Persistance des données</li>
+<li><strong>Ingestion</strong> : Collecte et intégration des données</li>
+<li><strong>Transformation</strong> : Traitement et enrichissement des données</li>
+<li><strong>Service</strong> : Mise à disposition pour l'analytique, le ML, etc.</li>
+</ul>
+
+<p>Le cycle de vie comprend également des <strong>courants sous-jacents</strong> (undercurrents) qui traversent toutes les étapes :</p>
+
+<ul>
+<li>Sécurité</li>
+<li>Gestion des données</li>
+<li>DataOps</li>
+<li>Architecture de données</li>
+<li>Orchestration</li>
+<li>Génie logiciel</li>
+</ul>
+
+<h2>Évolution de l'ingénieur de données</h2>
+
+<blockquote>
+<p><em>« L'histoire ne se répète pas, mais elle rime. »</em> — Citation souvent attribuée à Mark Twain</p>
+</blockquote>
+
+<h3>Les débuts : 1980-2000, du data warehouse au web</h3>
+
+<p>L'ingénieur de données trouve ses racines dans le <strong>data warehousing</strong> des années 1970-1980. Après le développement des bases de données relationnelles et du SQL par IBM, puis leur popularisation par Oracle, les entreprises ont eu besoin d'outils dédiés pour le reporting et la business intelligence (BI).</p>
+
+<p>Le data warehousing a inauguré la première ère de l'analytique scalable avec les bases de données MPP (Massively Parallel Processing). Des rôles comme ingénieur BI, développeur ETL et ingénieur data warehouse sont apparus — précurseurs de l'ingénierie des données moderne.</p>
+
+<h3>Début des années 2000 : Naissance de l'ingénierie des données contemporaine</h3>
+
+<p>Au début des années 2000, des entreprises comme Google, Yahoo et Amazon ont poussé les systèmes traditionnels à leurs limites. Face à l'explosion des volumes de données et la disponibilité du matériel bon marché, de nouvelles approches ont émergé.</p>
+
+<p>En 2003-2004, Google a publié des articles sur le Google File System et MapReduce. Ces publications ont inspiré la création d'<strong>Apache Hadoop</strong> en 2006, marquant le début de l'ère "big data".</p>
+
+<p>Parallèlement, Amazon a créé AWS (Amazon Web Services), offrant des environnements de calcul élastiques (EC2), du stockage scalable (S3) et des bases NoSQL (DynamoDB). Le cloud public est devenu l'une des innovations majeures du 21e siècle.</p>
+
+<h3>Années 2000 et 2010 : L'ingénierie big data</h3>
+
+<p>Les outils big data open source (Hadoop, Spark, Hive, Cassandra) ont rapidement maturé. La transition du batch vers le streaming en temps réel a marqué une nouvelle révolution.</p>
+
+<figure>
+<img src="/static/images/79f892ac-8711-4ca1-b1fd-adfd78181aee.png" alt="Tendances Google pour 'big data'" />
+<figcaption>Figure 1-2. Tendances Google pour "big data" (Mars 2022)</figcaption>
+</figure>
+
+<p>Cependant, le big data est rapidement devenu victime de son succès. Malgré leur puissance, les outils big data nécessitaient une maintenance constante et des équipes entières pour les gérer. Le terme "big data" est désormais un vestige décrivant une époque et une approche particulières.</p>
+
+<p><strong>Aujourd'hui, le traitement des données est devenu si accessible qu'il ne mérite plus de terme distinct.</strong> Les ingénieurs big data sont simplement devenus des ingénieurs de données.</p>
+
+<h3>Années 2020 : Ingénierie pour le cycle de vie des données</h3>
+
+<p>Le rôle d'ingénieur de données évolue rapidement. Alors que les ingénieurs devaient historiquement gérer les détails bas niveau de frameworks monolithiques (Hadoop, Spark), la tendance va vers des outils décentralisés, modulaires, managés et hautement abstraits.</p>
+
+<figure>
+<img src="/static/images/457ae8e1-d008-4de9-a373-bb7296d49724.png" alt="Paysage des données 2012 vs 2021" />
+<figcaption>Figure 1-3. Le paysage des données en 2012 versus 2021 (Matt Turck)</figcaption>
+</figure>
+
+<p>L'ingénieur de données moderne — un <em>ingénieur du cycle de vie des données</em> — n'est plus encombré par les détails techniques des anciens frameworks. Il se concentre sur des aspects plus stratégiques : sécurité, gestion des données, DataOps, architecture et orchestration.</p>
+
+<h2>Ingénierie des données et data science</h2>
+
+<p>L'ingénierie des données est <strong>distincte et complémentaire</strong> de la data science. L'ingénierie des données se situe <em>en amont</em> de la data science : les ingénieurs fournissent les inputs que les data scientists transforment en valeur.</p>
+
+<figure>
+<img src="/static/images/25e70737-a1c5-4d2f-a8d3-7435a12b784c.png" alt="L'ingénierie des données en amont de la data science" />
+<figcaption>Figure 1-4. L'ingénierie des données se situe en amont de la data science</figcaption>
+</figure>
+
+<h3>La hiérarchie des besoins en data science</h3>
+
+<figure>
+<img src="/static/images/9264db4f-eedc-4228-a1a5-85ba2f872dac.png" alt="Hiérarchie des besoins en data science" />
+<figcaption>Figure 1-5. La hiérarchie des besoins en data science (Monica Rogati)</figcaption>
+</figure>
+
+<p>Selon Monica Rogati, les data scientists passent 70-80% de leur temps sur les trois niveaux inférieurs de la pyramide : collecte, nettoyage et traitement des données. <strong>Les entreprises doivent construire une fondation solide avant de s'attaquer à l'IA et au ML.</strong></p>
+
+<p>Dans un monde idéal, les data scientists devraient consacrer plus de 90% de leur temps aux niveaux supérieurs : analytique, expérimentation et ML. Les ingénieurs de données construisent cette fondation solide.</p>
+
+<figure>
+<img src="/static/images/2d0c9d00-3c17-4d62-9716-630bb1c2a09f.png" alt="Rôle de l'ingénieur de données" />
+<figcaption>Figure 1-6. L'ingénieur de données obtient les données et crée de la valeur à partir de celles-ci</figcaption>
+</figure>
+
+<h2>Compétences et activités d'un ingénieur de données</h2>
+
+<p>L'ingénieur de données doit jongler avec de nombreux éléments complexes et optimiser constamment selon plusieurs axes : coût, agilité, scalabilité, simplicité, réutilisation et interopérabilité.</p>
+
+<figure>
+<img src="/static/images/69ed4263-3749-4adb-846e-dfc0b5a0463f.png" alt="Équilibre de l'ingénierie des données" />
+<figcaption>Figure 1-7. L'acte d'équilibre de l'ingénierie des données</figcaption>
+</figure>
+
+<p>Aujourd'hui, le paysage des outils est considérablement simplifié. Les ingénieurs se concentrent sur l'équilibre entre solutions simples, rentables et performantes qui apportent de la valeur au business.</p>
+
+<p><strong>Ce qu'un ingénieur de données ne fait généralement pas :</strong></p>
+<ul>
+<li>Construire des modèles de ML</li>
+<li>Créer des rapports ou dashboards</li>
+<li>Effectuer des analyses de données</li>
+<li>Développer des applications logicielles</li>
+</ul>
+
+<p>Cependant, il doit avoir une bonne compréhension de ces domaines pour mieux servir les parties prenantes.</p>
+
+<h3>Maturité des données et ingénieur de données</h3>
+
+<p>La <strong>maturité des données</strong> est la progression vers une meilleure utilisation, des capacités accrues et une intégration des données à travers l'organisation. Elle ne dépend pas simplement de l'âge ou du chiffre d'affaires d'une entreprise.</p>
+
+<figure>
+<img src="/static/images/3b1ec269-5045-48be-8bbc-9b3254fa3180.png" alt="Modèle de maturité des données" />
+<figcaption>Figure 1-8. Modèle simplifié de maturité des données</figcaption>
+</figure>
+
+<h4>Stade 1 : Démarrer avec les données</h4>
+
+<p><strong>Caractéristiques :</strong> Objectifs flous, architecture naissante, équipe réduite. L'ingénieur est généralement un généraliste jouant plusieurs rôles.</p>
+
+<p><strong>Focus :</strong></p>
+<ul>
+<li>Obtenir le soutien des parties prenantes clés</li>
+<li>Définir la bonne architecture de données</li>
+<li>Identifier et auditer les données disponibles</li>
+<li>Construire une fondation solide pour les futurs analystes et data scientists</li>
+</ul>
+
+<p><strong>Pièges à éviter :</strong></p>
+<ul>
+<li>Travailler en silo sans communiquer avec les autres départements</li>
+<li>Se créer de la complexité technique inutile</li>
+<li>Vouloir construire custom quand des solutions prêtes à l'emploi existent</li>
+</ul>
+
+<h4>Stade 2 : Scaler avec les données</h4>
+
+<p><strong>Caractéristiques :</strong> Pratiques formelles établies, architectures scalables. Les rôles évoluent de généralistes vers spécialistes.</p>
+
+<p><strong>Objectifs :</strong></p>
+<ul>
+<li>Établir des pratiques formelles</li>
+<li>Créer des architectures scalables et robustes</li>
+<li>Adopter DevOps et DataOps</li>
+<li>Construire des systèmes supportant le ML</li>
+</ul>
+
+<p><strong>Attention :</strong> Le principal goulot d'étranglement n'est pas la technologie mais l'équipe d'ingénierie. Privilégier la simplicité de déploiement et de gestion.</p>
+
+<h4>Stade 3 : Leader avec les données</h4>
+
+<p><strong>Caractéristiques :</strong> Entreprise data-driven, pipelines automatisés, self-service analytics et ML. Spécialisation accrue des rôles.</p>
+
+<p><strong>Focus :</strong></p>
+<ul>
+<li>Automatiser l'introduction de nouvelles données</li>
+<li>Construire des outils custom là où cela crée un avantage compétitif</li>
+<li>Se concentrer sur la gouvernance et la qualité des données</li>
+<li>Déployer des outils de catalogage, lignage et gestion des métadonnées</li>
+</ul>
+
+<p><strong>Danger :</strong> La complaisance. Une fois le stade 3 atteint, un effort constant est nécessaire pour maintenir ce niveau.</p>
+
+<h3>Compétences techniques essentielles</h3>
+
+<p><strong>Langages primaires :</strong></p>
+
+<dl>
+<dt>SQL</dt>
+<dd>L'interface la plus courante pour les bases de données et data lakes. SQL est redevenu la lingua franca des données.</dd>
+
+<dt>Python</dt>
+<dd>Le langage pont entre ingénierie des données et data science. De nombreux outils sont écrits en Python ou ont des APIs Python (Airflow, pandas, PySpark).</dd>
+
+<dt>Langages JVM (Java, Scala)</dt>
+<dd>Prévalents dans les projets Apache open source (Spark, Hive). La JVM offre généralement de meilleures performances que Python.</dd>
+
+<dt>bash</dt>
+<dd>L'interface en ligne de commande Linux. Maîtriser bash améliore significativement la productivité.</dd>
+</dl>
+
+<aside>
+<h4>L'efficacité remarquable de SQL</h4>
+<p>SQL peut traiter des quantités massives de données avec une sémantique déclarative simple. Les ingénieurs compétents doivent maîtriser SQL, mais aussi reconnaître quand il n'est pas le bon outil et savoir choisir une alternative appropriée.</p>
+</aside>
+
+<h3>Types d'ingénieurs de données : A et B</h3>
+
+<p>Inspiré de la distinction entre data scientists de type A (Analysis) et type B (Building), on peut distinguer deux types d'ingénieurs de données :</p>
+
+<dl>
+<dt>Type A (Abstraction)</dt>
+<dd>Évite le travail lourd indifférencié, garde l'architecture simple et abstraite. Utilise principalement des produits et services managés prêts à l'emploi. Présent dans tous les secteurs et niveaux de maturité.</dd>
+
+<dt>Type B (Build)</dt>
+<dd>Construit des outils et systèmes qui scalent et exploitent les compétences clés de l'entreprise. Plus courant dans les entreprises aux stades 2-3 de maturité, ou quand un cas d'usage unique nécessite des outils custom.</dd>
+</dl>
+
+<p>Les types A et B peuvent travailler dans la même entreprise ou même être la même personne ! Typiquement, un type A est d'abord embauché pour poser les fondations, puis les compétences type B sont apprises ou recrutées selon les besoins.</p>
+
+<h2>L'ingénieur de données dans l'organisation</h2>
+
+<p>Les ingénieurs de données ne travaillent pas en vase clos. Ils interagissent avec de nombreuses personnes techniques et non techniques, dans différentes directions (internes et externes).</p>
+
+<h3>Ingénieurs orientés interne vs externe</h3>
+
+<figure>
+<img src="/static/images/4922be89-58cc-4147-becf-0a16f682505c.png" alt="Directions d'un ingénieur de données" />
+<figcaption>Figure 1-9. Les directions qu'un ingénieur de données peut prendre</figcaption>
+</figure>
+
+<p><strong>Ingénieur orienté externe :</strong> S'aligne avec les applications externes (réseaux sociaux, IoT, e-commerce). Construit des systèmes avec une boucle de feedback : application → pipeline de données → application. Doit gérer une forte concurrence, des limites de requêtes strictes et une sécurité complexe (données multi-tenant).</p>
+
+<figure>
+<img src="/static/images/cf6ab3fb-0400-47a9-89bc-9ada608ee15e.png" alt="Systèmes orientés externe" />
+<figcaption>Figure 1-10. Systèmes d'ingénierie de données orientés externe</figcaption>
+</figure>
+
+<p><strong>Ingénieur orienté interne :</strong> Se concentre sur les besoins internes et des parties prenantes business (dashboards BI, rapports, processus métier, data science, ML).</p>
+
+<figure>
+<img src="/static/images/f15b6b94-ad3b-421d-98a5-367c25e828ae.png" alt="Ingénieur orienté interne" />
+<figcaption>Figure 1-11. Ingénieur de données orienté interne</figcaption>
+</figure>
+
+<p>En pratique, ces responsabilités sont souvent mélangées, les données internes étant généralement un prérequis aux données externes.</p>
+
+<h3>Parties prenantes techniques</h3>
+
+<figure>
+<img src="/static/images/b63c6c20-32d1-4114-895a-b5a7c9f3d8ea.png" alt="Parties prenantes techniques clés" />
+<figcaption>Figure 1-12. Parties prenantes techniques clés de l'ingénierie des données</figcaption>
+</figure>
+
+<p>L'ingénieur de données est un hub entre :</p>
+
+<p><strong>Producteurs de données (upstream) :</strong></p>
+<ul>
+<li><strong>Architectes de données</strong> : Conçoivent le blueprint de la gestion des données, pont entre technique et business</li>
+<li><strong>Ingénieurs logiciels</strong> : Construisent les systèmes générant les données internes (logs, événements)</li>
+<li><strong>Ingénieurs DevOps/SRE</strong> : Produisent des données via le monitoring opérationnel</li>
+</ul>
+
+<p><strong>Consommateurs de données (downstream) :</strong></p>
+<ul>
+<li><strong>Data scientists</strong> : Construisent des modèles prédictifs. Les ingénieurs doivent automatiser la préparation des données et faciliter le déploiement en production</li>
+<li><strong>Data analysts</strong> : Analysent la performance et les tendances business. Experts des données avec lesquelles ils travaillent, ils collaborent pour améliorer la qualité des données</li>
+<li><strong>ML engineers</strong> : Développent des techniques ML avancées et maintiennent l'infrastructure de production. Les frontières avec l'ingénierie des données sont floues</li>
+</ul>
+
+<h3>Leadership business</h3>
+
+<p>Les ingénieurs de données interagissent également avec le leadership non technique :</p>
+
+<ul>
+<li><strong>CEO</strong> : Définit la vision en collaboration avec les rôles techniques. Les ingénieurs fournissent une vision de ce qui est possible avec les données</li>
+<li><strong>CIO</strong> (Chief Information Officer) : Responsable IT interne, travaille avec les ingénieurs sur les initiatives majeures</li>
+<li><strong>CTO</strong> (Chief Technology Officer) : Orienté externe, possède la stratégie technologique pour les applications externes</li>
+<li><strong>CDO</strong> (Chief Data Officer) : Responsable des actifs et de la stratégie données</li>
+<li><strong>Project/Product Managers</strong> : Dirigent les initiatives et équilibrent les besoins technologiques avec les besoins business</li>
+</ul>
+
+<h2>Conclusion</h2>
+
+<p>Ce chapitre vous a fourni une vue d'ensemble du paysage de l'ingénierie des données :</p>
+
+<ul>
+<li>Définition de l'ingénierie des données et du cycle de vie</li>
+<li>Évolution historique du domaine</li>
+<li>Types de maturité des données dans une entreprise</li>
+<li>Ingénieurs de type A (Abstraction) et type B (Build)</li>
+<li>Compétences techniques et business essentielles</li>
+<li>Collaborations avec les parties prenantes techniques et business</li>
+</ul>
+
+<p>Les chapitres suivants approfondiront le cycle de vie de l'ingénierie des données, l'architecture, et les décisions technologiques pour chaque étape du cycle. L'accent sera mis sur les <em>immuables</em> — des perspectives qui resteront valides pendant de nombreuses années malgré les changements constants.</p>

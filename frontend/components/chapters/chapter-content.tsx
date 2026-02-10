@@ -1,16 +1,18 @@
+import { ContentRenderer } from './content/content-renderer';
+
 interface ChapterContentProps {
   content: string | null;
+  className?: string;
 }
 
-export function ChapterContent({ content }: ChapterContentProps) {
+export function ChapterContent({ content, className }: ChapterContentProps) {
   if (!content) {
-    return <p className="text-muted-foreground">Aucun contenu disponible.</p>;
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Aucun contenu disponible.</p>
+      </div>
+    );
   }
 
-  return (
-    <div
-      className="prose prose-slate max-w-none dark:prose-invert"
-      dangerouslySetInnerHTML={{ __html: content }}
-    />
-  );
+  return <ContentRenderer content={content} className={className} />;
 }
