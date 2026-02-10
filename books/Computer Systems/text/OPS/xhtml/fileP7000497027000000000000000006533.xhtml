@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:svg="http://www.w3.org/2000/svg" xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" epub:prefix="index: http://www.index.com/">
+  <head>
+    <meta name="dcterms.conformsTo" content="PXE Basic 1.0"/>
+    <meta name="generator" content="PXE Tools version 1.39.52"/>
+    <!--Created by pxe.pl for standard version PXE Basic 1.0,data-profile-product=standard by PXE Tools 1.39.52, partial=false-->
+    <title>Homework Problems </title>
+    <link rel="alternate stylesheet" type="text/css" title="night" href="../css/theme/night.css"/>
+    <link rel="alternate stylesheet" type="text/css" title="sepia" href="../css/theme/sepia.css"/>
+    <script src="js/format_lg_obj.js"></script>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body epub:type="bodymatter" class="pcalibre1 pcalibre2 pcalibre">
+<section id="P7000497027000000000000000006533" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre1 pcalibre2 pcalibre4" id="P7000497027000000000000000044D39" data-uri="chapter07.xhtml#P7000497027000000000000000044D39" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">Homework Problems </span></h1></header>
+<section id="P7000497027000000000000000006535" data-uri="chapter07.xhtml#P7000497027000000000000000006535" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044D3A" data-uri="chapter07.xhtml#P7000497027000000000000000044D3A" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.6 </span>♦</h1></header>
+<p id="P7000497027000000000000000044D3B" data-uri="chapter07.xhtml#P7000497027000000000000000044D3B" class="pcalibre8 pcalibre1 pcalibre2">This problem concerns the <code id="P7000497027000000000000000044D3C" data-uri="chapter07.xhtml#P7000497027000000000000000044D3C" class="pcalibre1 calibre1 pcalibre2">m.o</code> module from <a class="pcalibre15 pcalibre1 pcalibre2 pcalibre16 pcalibre14 pcalibre28" href="fileP700049702700000000000000000608B.xhtml#P700049702700000000000000000612D"><span class="pcalibre1 pcalibre21 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">7.5</span></a> and the following version of the <code id="P7000497027000000000000000044D3D" data-uri="chapter07.xhtml#P7000497027000000000000000044D3D" class="pcalibre1 calibre1 pcalibre2">swap.c</code> function that counts the number of times it has been called:</p>
+<pre id="P7000497027000000000000000044D3E" data-uri="chapter07.xhtml#P7000497027000000000000000044D3E" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044D3F" data-uri="chapter07.xhtml#P7000497027000000000000000044D3F" class="calibre3 pcalibre1 pcalibre2">
+1	extern int buf[];
+2
+3	int *bufp0 = &amp;buf[0];
+4	static int *bufp1;
+5
+6	static void incr()
+7	{
+8		static int count=0;
+9
+10		count++;
+11	}
+12
+13	void swap()
+14	{
+<span class="pcalibre1 pcalibre2 pcalibre5" id="P700049702700000000000000000653C" title="715" data-uri="chapter07.xhtml#P700049702700000000000000000653C" epub:type="pagebreak"></span>15		int temp;
+16
+17		incr();
+18		bufp1 = &amp;buf[1];
+19		temp = *bufp0;
+20		*bufp0 = *bufp1;
+21		*bufp1 = temp;
+22	}</code></pre>
+<p id="P7000497027000000000000000044D40" data-uri="chapter07.xhtml#P7000497027000000000000000044D40" class="pcalibre8 pcalibre1 pcalibre2">For each symbol that is defined and referenced in <code id="P7000497027000000000000000044D41" data-uri="chapter07.xhtml#P7000497027000000000000000044D41" class="pcalibre1 calibre1 pcalibre2">swap.o</code>, indicate if it will have a symbol table entry in the <code id="P7000497027000000000000000044D42" data-uri="chapter07.xhtml#P7000497027000000000000000044D42" class="pcalibre1 calibre1 pcalibre2">.symtab</code> section in module <code id="P7000497027000000000000000044D43" data-uri="chapter07.xhtml#P7000497027000000000000000044D43" class="pcalibre1 calibre1 pcalibre2">swap.o</code>. If so, indicate the module that defines the symbol (<code id="P7000497027000000000000000044D44" data-uri="chapter07.xhtml#P7000497027000000000000000044D44" class="pcalibre1 calibre1 pcalibre2">swap.o or m.o</code>), the symbol type(local, global, or extern), and the section (<code id="P7000497027000000000000000044D45" data-uri="chapter07.xhtml#P7000497027000000000000000044D45" class="pcalibre1 calibre1 pcalibre2">.text, .data</code>, or <code id="P7000497027000000000000000044D46" data-uri="chapter07.xhtml#P7000497027000000000000000044D46" class="pcalibre1 calibre1 pcalibre2">.bss</code>) it occupies in that module.</p>
+<table id="P7000497027000000000000000044D47" data-uri="chapter07.xhtml#P7000497027000000000000000044D47" class="pcalibre1 pcalibre2 pcalibre43">
+<thead class="pcalibre44 pcalibre2 pcalibre1">
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<th id="P7000497027000000000000000044D48" data-uri="chapter07.xhtml#P7000497027000000000000000044D48" class="pcalibre1 pcalibre2 calibre5">Symbol</th>
+<th id="P7000497027000000000000000044D49" data-uri="chapter07.xhtml#P7000497027000000000000000044D49" class="pcalibre1 pcalibre2 calibre5"><code id="P7000497027000000000000000044D4A" data-uri="chapter07.xhtml#P7000497027000000000000000044D4A" class="calibre3 pcalibre1 pcalibre2">swap.o .symtab</code> entry?</th>
+<th id="P7000497027000000000000000044D4B" data-uri="chapter07.xhtml#P7000497027000000000000000044D4B" class="pcalibre1 pcalibre2 calibre5">Symbol type</th>
+<th id="P7000497027000000000000000044D4C" data-uri="chapter07.xhtml#P7000497027000000000000000044D4C" class="pcalibre1 pcalibre2 calibre5">Module where defined</th>
+<th id="P7000497027000000000000000044D4D" data-uri="chapter07.xhtml#P7000497027000000000000000044D4D" class="pcalibre1 pcalibre2 calibre5">Section</th>
+</tr>
+</thead>
+<tbody class="pcalibre1 pcalibre2 calibre6">
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<td id="P7000497027000000000000000044D4E" data-uri="chapter07.xhtml#P7000497027000000000000000044D4E" class="pcalibre1 pcalibre2 calibre7"><code id="P7000497027000000000000000044D4F" data-uri="chapter07.xhtml#P7000497027000000000000000044D4F" class="calibre3 pcalibre1 pcalibre2">buf</code></td>
+<td id="P7000497027000000000000000044D50" data-uri="chapter07.xhtml#P7000497027000000000000000044D50" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D51" data-uri="chapter07.xhtml#P7000497027000000000000000044D51" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D52" data-uri="chapter07.xhtml#P7000497027000000000000000044D52" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D53" data-uri="chapter07.xhtml#P7000497027000000000000000044D53" class="pcalibre1 pcalibre2 calibre7">_____</td>
+</tr>
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<td id="P7000497027000000000000000044D54" data-uri="chapter07.xhtml#P7000497027000000000000000044D54" class="pcalibre1 pcalibre2 calibre7"><code id="P7000497027000000000000000044D55" data-uri="chapter07.xhtml#P7000497027000000000000000044D55" class="calibre3 pcalibre1 pcalibre2">bufp0</code></td>
+<td id="P7000497027000000000000000044D56" data-uri="chapter07.xhtml#P7000497027000000000000000044D56" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D57" data-uri="chapter07.xhtml#P7000497027000000000000000044D57" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D58" data-uri="chapter07.xhtml#P7000497027000000000000000044D58" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D59" data-uri="chapter07.xhtml#P7000497027000000000000000044D59" class="pcalibre1 pcalibre2 calibre7">_____</td>
+</tr>
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<td id="P7000497027000000000000000044D5A" data-uri="chapter07.xhtml#P7000497027000000000000000044D5A" class="pcalibre1 pcalibre2 calibre7"><code id="P7000497027000000000000000044D5B" data-uri="chapter07.xhtml#P7000497027000000000000000044D5B" class="calibre3 pcalibre1 pcalibre2">bufp1</code></td>
+<td id="P7000497027000000000000000044D5C" data-uri="chapter07.xhtml#P7000497027000000000000000044D5C" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D5D" data-uri="chapter07.xhtml#P7000497027000000000000000044D5D" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D5E" data-uri="chapter07.xhtml#P7000497027000000000000000044D5E" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D5F" data-uri="chapter07.xhtml#P7000497027000000000000000044D5F" class="pcalibre1 pcalibre2 calibre7">_____</td>
+</tr>
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<td id="P7000497027000000000000000044D60" data-uri="chapter07.xhtml#P7000497027000000000000000044D60" class="pcalibre1 pcalibre2 calibre7"><code id="P7000497027000000000000000044D61" data-uri="chapter07.xhtml#P7000497027000000000000000044D61" class="calibre3 pcalibre1 pcalibre2">swap</code></td>
+<td id="P7000497027000000000000000044D62" data-uri="chapter07.xhtml#P7000497027000000000000000044D62" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D63" data-uri="chapter07.xhtml#P7000497027000000000000000044D63" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D64" data-uri="chapter07.xhtml#P7000497027000000000000000044D64" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D65" data-uri="chapter07.xhtml#P7000497027000000000000000044D65" class="pcalibre1 pcalibre2 calibre7">_____</td>
+</tr>
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<td id="P7000497027000000000000000044D66" data-uri="chapter07.xhtml#P7000497027000000000000000044D66" class="pcalibre1 pcalibre2 calibre7"><code id="P7000497027000000000000000044D67" data-uri="chapter07.xhtml#P7000497027000000000000000044D67" class="calibre3 pcalibre1 pcalibre2">temp</code></td>
+<td id="P7000497027000000000000000044D68" data-uri="chapter07.xhtml#P7000497027000000000000000044D68" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D69" data-uri="chapter07.xhtml#P7000497027000000000000000044D69" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D6A" data-uri="chapter07.xhtml#P7000497027000000000000000044D6A" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D6B" data-uri="chapter07.xhtml#P7000497027000000000000000044D6B" class="pcalibre1 pcalibre2 calibre7">_____</td>
+</tr>
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<td id="P7000497027000000000000000044D6C" data-uri="chapter07.xhtml#P7000497027000000000000000044D6C" class="pcalibre1 pcalibre2 calibre7"><code id="P7000497027000000000000000044D6D" data-uri="chapter07.xhtml#P7000497027000000000000000044D6D" class="calibre3 pcalibre1 pcalibre2">incr</code></td>
+<td id="P7000497027000000000000000044D6E" data-uri="chapter07.xhtml#P7000497027000000000000000044D6E" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D6F" data-uri="chapter07.xhtml#P7000497027000000000000000044D6F" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D70" data-uri="chapter07.xhtml#P7000497027000000000000000044D70" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D71" data-uri="chapter07.xhtml#P7000497027000000000000000044D71" class="pcalibre1 pcalibre2 calibre7">_____</td>
+</tr>
+<tr class="pcalibre45 pcalibre1 pcalibre2">
+<td id="P7000497027000000000000000044D72" data-uri="chapter07.xhtml#P7000497027000000000000000044D72" class="pcalibre1 pcalibre2 calibre7"><code id="P7000497027000000000000000044D73" data-uri="chapter07.xhtml#P7000497027000000000000000044D73" class="calibre3 pcalibre1 pcalibre2">count</code></td>
+<td id="P7000497027000000000000000044D74" data-uri="chapter07.xhtml#P7000497027000000000000000044D74" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D75" data-uri="chapter07.xhtml#P7000497027000000000000000044D75" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D76" data-uri="chapter07.xhtml#P7000497027000000000000000044D76" class="pcalibre1 pcalibre2 calibre7">_____</td>
+<td id="P7000497027000000000000000044D77" data-uri="chapter07.xhtml#P7000497027000000000000000044D77" class="pcalibre1 pcalibre2 calibre7">_____</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="P7000497027000000000000000006575" data-uri="chapter07.xhtml#P7000497027000000000000000006575" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044D78" data-uri="chapter07.xhtml#P7000497027000000000000000044D78" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.7 </span>♦</h1></header>
+<p id="P7000497027000000000000000044D79" data-uri="chapter07.xhtml#P7000497027000000000000000044D79" class="pcalibre8 pcalibre1 pcalibre2">Without changing any variable names, modify <code id="P7000497027000000000000000044D7A" data-uri="chapter07.xhtml#P7000497027000000000000000044D7A" class="pcalibre1 calibre1 pcalibre2">bar5.c</code> on page 683 so that <code id="P7000497027000000000000000044D7B" data-uri="chapter07.xhtml#P7000497027000000000000000044D7B" class="pcalibre1 calibre1 pcalibre2">foo5.c</code> prints the correct values of <code id="P7000497027000000000000000044D7C" data-uri="chapter07.xhtml#P7000497027000000000000000044D7C" class="pcalibre1 calibre1 pcalibre2">x</code> and <code id="P7000497027000000000000000044D7D" data-uri="chapter07.xhtml#P7000497027000000000000000044D7D" class="pcalibre1 calibre1 pcalibre2">y</code> (i.e., the hex representations of integers 15213 and 15212).</p>
+</section>
+<section id="P700049702700000000000000000657C" data-uri="chapter07.xhtml#P700049702700000000000000000657C" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044D7E" data-uri="chapter07.xhtml#P7000497027000000000000000044D7E" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.8 </span>♦</h1></header>
+<p id="P7000497027000000000000000044D7F" data-uri="chapter07.xhtml#P7000497027000000000000000044D7F" class="pcalibre8 pcalibre1 pcalibre2">In this problem, let <code id="P7000497027000000000000000044D80" data-uri="chapter07.xhtml#P7000497027000000000000000044D80" class="pcalibre1 calibre1 pcalibre2">REF(x.i) → DEF(x.k)</code> denote that the linker will associate an arbitrary reference to symbol <code id="P7000497027000000000000000044D81" data-uri="chapter07.xhtml#P7000497027000000000000000044D81" class="pcalibre1 calibre1 pcalibre2">x</code> in module <code id="P7000497027000000000000000044D82" data-uri="chapter07.xhtml#P7000497027000000000000000044D82" class="pcalibre1 calibre1 pcalibre2">i</code> to the definition of <code id="P7000497027000000000000000044D83" data-uri="chapter07.xhtml#P7000497027000000000000000044D83" class="pcalibre1 calibre1 pcalibre2">x</code> in module <code id="P7000497027000000000000000044D84" data-uri="chapter07.xhtml#P7000497027000000000000000044D84" class="pcalibre1 calibre1 pcalibre2">k</code>. For each example below, use this notation to indicate how the linker would resolve references to the multiply-defined symbol in each module. If there is a link-time error (rule 1), write "<code id="P7000497027000000000000000044D85" data-uri="chapter07.xhtml#P7000497027000000000000000044D85" class="pcalibre1 calibre1 pcalibre2"><span class="pcalibre1 pcalibre29 pcalibre2">error</span></code>". If the linker arbitrarily chooses one of the definitions (rule 3), write "<code id="P7000497027000000000000000044D86" data-uri="chapter07.xhtml#P7000497027000000000000000044D86" class="pcalibre1 calibre1 pcalibre2"><span class="pcalibre1 pcalibre29 pcalibre2">unknown</span></code>".</p>
+<ol class="pcalibre1 pcalibre2 pcalibre79" id="P7000497027000000000000000044D87" data-uri="chapter07.xhtml#P7000497027000000000000000044D87">
+<li id="P7000497027000000000000000044D88" data-uri="chapter07.xhtml#P7000497027000000000000000044D88" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044D89" data-uri="chapter07.xhtml#P7000497027000000000000000044D89" class="pcalibre1 pcalibre2 pcalibre10"></p>
+<pre id="P7000497027000000000000000044D8A" data-uri="chapter07.xhtml#P7000497027000000000000000044D8A" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044D8B" data-uri="chapter07.xhtml#P7000497027000000000000000044D8B" class="calibre3 pcalibre1 pcalibre2">
+/* Module 1 */		/* Module 2 */
+int main()		static int main=1[
+{			int p2()
+}			{
+			}
+(a) REF(main.1) → DEF(_____._____)
+(b) REF(main.2) → DEF(_____._____)
+</code></pre></li>
+<li id="P7000497027000000000000000044D8C" data-uri="chapter07.xhtml#P7000497027000000000000000044D8C" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044D8D" data-uri="chapter07.xhtml#P7000497027000000000000000044D8D" class="pcalibre1 pcalibre2 pcalibre10"><span class="pcalibre1 pcalibre2 pcalibre5" id="P700049702700000000000000000658D" title="716" data-uri="chapter07.xhtml#P700049702700000000000000000658D" epub:type="pagebreak"></span></p>
+<pre id="P7000497027000000000000000044D8E" data-uri="chapter07.xhtml#P7000497027000000000000000044D8E" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044D8F" data-uri="chapter07.xhtml#P7000497027000000000000000044D8F" class="calibre3 pcalibre1 pcalibre2">
+/* Module 1 */		/* Module 2 */
+int x;			double x;
+void main()		int p2()
+{			{
+}			}
+(a) REF(x.1) → DEF(_____._____)
+(b) REF(x.2) → DEF(_____._____)
+</code></pre></li>
+<li id="P7000497027000000000000000044D90" data-uri="chapter07.xhtml#P7000497027000000000000000044D90" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044D91" data-uri="chapter07.xhtml#P7000497027000000000000000044D91" class="pcalibre1 pcalibre2 pcalibre10"></p>
+<pre id="P7000497027000000000000000044D92" data-uri="chapter07.xhtml#P7000497027000000000000000044D92" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044D93" data-uri="chapter07.xhtml#P7000497027000000000000000044D93" class="calibre3 pcalibre1 pcalibre2">
+/* Module 1 */		/* Module 2 */
+int x=1;		double x=1.0;
+void main()		int p2()
+{			{
+}			}
+(a) REF(x.1) → DEF(_____._____)
+(b) REF(x.2) → DEF(_____._____)
+</code></pre>
+</li>
+</ol>
+</section>
+<section id="P7000497027000000000000000006594" data-uri="chapter07.xhtml#P7000497027000000000000000006594" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044D94" data-uri="chapter07.xhtml#P7000497027000000000000000044D94" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.9 </span>♦</h1></header>
+<p id="P7000497027000000000000000044D95" data-uri="chapter07.xhtml#P7000497027000000000000000044D95" class="pcalibre8 pcalibre1 pcalibre2">Consider the following program, which consists of two object modules:</p>
+<pre id="P7000497027000000000000000044D96" data-uri="chapter07.xhtml#P7000497027000000000000000044D96" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044D97" data-uri="chapter07.xhtml#P7000497027000000000000000044D97" class="calibre3 pcalibre1 pcalibre2">
+1	/* foo6.c */
+2	void p2(void);
+3
+4	int main()
+5	{
+6		p2();
+7		return 0;
+8	}
+</code></pre>
+<pre id="P7000497027000000000000000044D98" data-uri="chapter07.xhtml#P7000497027000000000000000044D98" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044D99" data-uri="chapter07.xhtml#P7000497027000000000000000044D99" class="calibre3 pcalibre1 pcalibre2">
+1	/* bar6.c */
+2	#include &lt;stdio.h&gt;
+3
+4	char main;
+5
+6	void p2()
+7	{
+8		printf("0x%xn", main);
+9	}
+</code></pre>
+<p id="P7000497027000000000000000044D9A" data-uri="chapter07.xhtml#P7000497027000000000000000044D9A" class="pcalibre8 pcalibre1 pcalibre2">When this program is compiled and executed on an x86-64 Linux system, it prints the string <code id="P7000497027000000000000000044D9B" data-uri="chapter07.xhtml#P7000497027000000000000000044D9B" class="pcalibre1 calibre1 pcalibre2">0x48\n</code> and terminates normally, even though function <code id="P7000497027000000000000000044D9C" data-uri="chapter07.xhtml#P7000497027000000000000000044D9C" class="pcalibre1 calibre1 pcalibre2">p2</code> never initializes variable <code id="P7000497027000000000000000044D9D" data-uri="chapter07.xhtml#P7000497027000000000000000044D9D" class="pcalibre1 calibre1 pcalibre2">main</code>. Can you explain this?</p>
+</section>
+<section id="P700049702700000000000000000659F" data-uri="chapter07.xhtml#P700049702700000000000000000659F" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044D9E" data-uri="chapter07.xhtml#P7000497027000000000000000044D9E" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.10 </span>♦♦</h1></header>
+<p id="P7000497027000000000000000044D9F" data-uri="chapter07.xhtml#P7000497027000000000000000044D9F" class="pcalibre8 pcalibre1 pcalibre2">Let <code id="P7000497027000000000000000044DA0" data-uri="chapter07.xhtml#P7000497027000000000000000044DA0" class="pcalibre1 calibre1 pcalibre2">a</code> and <code id="P7000497027000000000000000044DA1" data-uri="chapter07.xhtml#P7000497027000000000000000044DA1" class="pcalibre1 calibre1 pcalibre2">b</code> denote object modules or static libraries in the current directory, and let <code id="P7000497027000000000000000044DA2" data-uri="chapter07.xhtml#P7000497027000000000000000044DA2" class="pcalibre1 calibre1 pcalibre2">a</code>→<code id="P7000497027000000000000000044DA3" data-uri="chapter07.xhtml#P7000497027000000000000000044DA3" class="pcalibre1 calibre1 pcalibre2">b</code> denote that <code id="P7000497027000000000000000044DA4" data-uri="chapter07.xhtml#P7000497027000000000000000044DA4" class="pcalibre1 calibre1 pcalibre2">a</code> depends on <code id="P7000497027000000000000000044DA5" data-uri="chapter07.xhtml#P7000497027000000000000000044DA5" class="pcalibre1 calibre1 pcalibre2">b</code>, in the sense that <code id="P7000497027000000000000000044DA6" data-uri="chapter07.xhtml#P7000497027000000000000000044DA6" class="pcalibre1 calibre1 pcalibre2">b</code> defines a symbol that is <span class="pcalibre1 pcalibre2 pcalibre5" id="P70004970270000000000000000065A9" title="717" data-uri="chapter07.xhtml#P70004970270000000000000000065A9" epub:type="pagebreak"></span>referenced by <code id="P7000497027000000000000000044DA7" data-uri="chapter07.xhtml#P7000497027000000000000000044DA7" class="pcalibre1 calibre1 pcalibre2">a</code>. For each of the following scenarios, show the minimal command line (i.e., one with the least number of object file and library arguments) that will allow the static linker to resolve all symbol references:</p>
+<ol class="pcalibre1 pcalibre2 pcalibre79" id="P7000497027000000000000000044DA8" data-uri="chapter07.xhtml#P7000497027000000000000000044DA8">
+<li id="P7000497027000000000000000044DA9" data-uri="chapter07.xhtml#P7000497027000000000000000044DA9" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DAA" data-uri="chapter07.xhtml#P7000497027000000000000000044DAA" class="pcalibre1 pcalibre2 pcalibre10"></p>
+<pre id="P7000497027000000000000000044DAB" data-uri="chapter07.xhtml#P7000497027000000000000000044DAB" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044DAC" data-uri="chapter07.xhtml#P7000497027000000000000000044DAC" class="calibre3 pcalibre1 pcalibre2">p.o → libx.a → p.o</code></pre></li>
+<li id="P7000497027000000000000000044DAD" data-uri="chapter07.xhtml#P7000497027000000000000000044DAD" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DAE" data-uri="chapter07.xhtml#P7000497027000000000000000044DAE" class="pcalibre1 pcalibre2 pcalibre10"></p>
+<pre id="P7000497027000000000000000044DAF" data-uri="chapter07.xhtml#P7000497027000000000000000044DAF" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044DB0" data-uri="chapter07.xhtml#P7000497027000000000000000044DB0" class="calibre3 pcalibre1 pcalibre2">p.o → libx.a → liby.a <i class="pcalibre17 pcalibre2 pcalibre1">and</i> liby.a → libx.a</code></pre></li>
+<li id="P7000497027000000000000000044DB1" data-uri="chapter07.xhtml#P7000497027000000000000000044DB1" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DB2" data-uri="chapter07.xhtml#P7000497027000000000000000044DB2" class="pcalibre1 pcalibre2 pcalibre10"></p>
+<pre id="P7000497027000000000000000044DB3" data-uri="chapter07.xhtml#P7000497027000000000000000044DB3" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044DB4" data-uri="chapter07.xhtml#P7000497027000000000000000044DB4" class="calibre3 pcalibre1 pcalibre2">p.o → libx.a → liby.a → libz.a <i class="pcalibre17 pcalibre2 pcalibre1">and</i> liby.a → libx.a → libz.a</code></pre></li>
+</ol>
+</section>
+<section id="P70004970270000000000000000065B8" data-uri="chapter07.xhtml#P70004970270000000000000000065B8" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044DB5" data-uri="chapter07.xhtml#P7000497027000000000000000044DB5" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.11 </span>♦♦</h1></header>
+<p id="P7000497027000000000000000044DB6" data-uri="chapter07.xhtml#P7000497027000000000000000044DB6" class="pcalibre8 pcalibre1 pcalibre2">The program header in <a class="pcalibre15 pcalibre1 pcalibre2 pcalibre16 pcalibre14 pcalibre28" href="fileP7000497027000000000000000006348.xhtml#P700049702700000000000000000634F"><span class="pcalibre1 pcalibre21 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">7.14</span></a> indicates that the data segment occupies <code id="P7000497027000000000000000044DB7" data-uri="chapter07.xhtml#P7000497027000000000000000044DB7" class="pcalibre1 calibre1 pcalibre2">0x230</code> bytes in memory. However, only the first <code id="P7000497027000000000000000044DB8" data-uri="chapter07.xhtml#P7000497027000000000000000044DB8" class="pcalibre1 calibre1 pcalibre2">0x228</code> bytes of these come from the sections of the executable file. What causes this discrepancy?</p>
+</section>
+<section id="P70004970270000000000000000065BD" data-uri="chapter07.xhtml#P70004970270000000000000000065BD" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044DB9" data-uri="chapter07.xhtml#P7000497027000000000000000044DB9" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.12 </span>♦♦</h1></header>
+<p id="P7000497027000000000000000044DBA" data-uri="chapter07.xhtml#P7000497027000000000000000044DBA" class="pcalibre8 pcalibre1 pcalibre2">Consider the call to function swap in object file <code id="P7000497027000000000000000044DBB" data-uri="chapter07.xhtml#P7000497027000000000000000044DBB" class="pcalibre1 calibre1 pcalibre2">m.o</code> (<a class="pcalibre15 pcalibre1 pcalibre2 pcalibre16 pcalibre14 pcalibre28" href="#P7000497027000000000000000006535"><span class="pcalibre1 pcalibre21 pcalibre2">Problem </span><span class="pcalibre1 pcalibre21 pcalibre2">7.6</span></a>).</p>
+<pre id="P7000497027000000000000000044DBC" data-uri="chapter07.xhtml#P7000497027000000000000000044DBC" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044DBD" data-uri="chapter07.xhtml#P7000497027000000000000000044DBD" class="calibre3 pcalibre1 pcalibre2">9: e8 00 00 00 00	callq e &lt;main+0xe&gt;	<b class="pcalibre1 pcalibre2 pcalibre12"><i class="pcalibre17 pcalibre2 pcalibre1">swap()</i></b></code></pre>
+<p class="pcalibre8 pcalibre1 pcalibre2" id="P7000497027000000000000000044DBE" data-uri="chapter07.xhtml#P7000497027000000000000000044DBE">with the following relocation entry:</p>
+<pre id="P7000497027000000000000000044DBF" data-uri="chapter07.xhtml#P7000497027000000000000000044DBF" class="calibre2 pcalibre2 pcalibre1"><code id="P7000497027000000000000000044DC0" data-uri="chapter07.xhtml#P7000497027000000000000000044DC0" class="calibre3 pcalibre1 pcalibre2">r.offset = 0xa
+r.symbol = swap
+r.type = R_X86_64_PC32
+r.addend = -4</code></pre>
+<ol class="pcalibre1 pcalibre2 pcalibre79" id="P7000497027000000000000000044DC1" data-uri="chapter07.xhtml#P7000497027000000000000000044DC1">
+<li id="P7000497027000000000000000044DC2" data-uri="chapter07.xhtml#P7000497027000000000000000044DC2" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DC3" data-uri="chapter07.xhtml#P7000497027000000000000000044DC3" class="pcalibre1 pcalibre2 pcalibre10">Suppose that the linker relocates <code id="P7000497027000000000000000044DC4" data-uri="chapter07.xhtml#P7000497027000000000000000044DC4" class="pcalibre1 calibre1 pcalibre2">.text</code> in <code id="P7000497027000000000000000044DC5" data-uri="chapter07.xhtml#P7000497027000000000000000044DC5" class="pcalibre1 calibre1 pcalibre2">m.o</code> to address <code id="P7000497027000000000000000044DC6" data-uri="chapter07.xhtml#P7000497027000000000000000044DC6" class="pcalibre1 calibre1 pcalibre2">0x4004e0</code> and <code id="P7000497027000000000000000044DC7" data-uri="chapter07.xhtml#P7000497027000000000000000044DC7" class="pcalibre1 calibre1 pcalibre2">swap</code> to address <code id="P7000497027000000000000000044DC8" data-uri="chapter07.xhtml#P7000497027000000000000000044DC8" class="pcalibre1 calibre1 pcalibre2">0x4004f8</code>. Then what is the value of the relocated reference to <code id="P7000497027000000000000000044DC9" data-uri="chapter07.xhtml#P7000497027000000000000000044DC9" class="pcalibre1 calibre1 pcalibre2">swap</code> in the <code id="P7000497027000000000000000044DCA" data-uri="chapter07.xhtml#P7000497027000000000000000044DCA" class="pcalibre1 calibre1 pcalibre2">callq</code> instruction?</p></li>
+<li id="P7000497027000000000000000044DCB" data-uri="chapter07.xhtml#P7000497027000000000000000044DCB" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DCC" data-uri="chapter07.xhtml#P7000497027000000000000000044DCC" class="pcalibre1 pcalibre2 pcalibre10">Suppose that the linker relocates <code id="P7000497027000000000000000044DCD" data-uri="chapter07.xhtml#P7000497027000000000000000044DCD" class="pcalibre1 calibre1 pcalibre2">.text</code> in <code id="P7000497027000000000000000044DCE" data-uri="chapter07.xhtml#P7000497027000000000000000044DCE" class="pcalibre1 calibre1 pcalibre2">m.o</code> to address <code id="P7000497027000000000000000044DCF" data-uri="chapter07.xhtml#P7000497027000000000000000044DCF" class="pcalibre1 calibre1 pcalibre2">0x4004d0</code> and <code id="P7000497027000000000000000044DD0" data-uri="chapter07.xhtml#P7000497027000000000000000044DD0" class="pcalibre1 calibre1 pcalibre2">swap</code> to address <code id="P7000497027000000000000000044DD1" data-uri="chapter07.xhtml#P7000497027000000000000000044DD1" class="pcalibre1 calibre1 pcalibre2">0x400500</code>. Then what is the value of the relocated reference to <code id="P7000497027000000000000000044DD2" data-uri="chapter07.xhtml#P7000497027000000000000000044DD2" class="pcalibre1 calibre1 pcalibre2">swap</code> in the <code id="P7000497027000000000000000044DD3" data-uri="chapter07.xhtml#P7000497027000000000000000044DD3" class="pcalibre1 calibre1 pcalibre2">callq</code> instruction?</p></li>
+</ol>
+</section>
+<section id="P70004970270000000000000000065D9" data-uri="chapter07.xhtml#P70004970270000000000000000065D9" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre30 pcalibre1 pcalibre2" id="P7000497027000000000000000044DD4" data-uri="chapter07.xhtml#P7000497027000000000000000044DD4" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">7.13 </span>♦♦</h1></header>
+<p id="P7000497027000000000000000044DD5" data-uri="chapter07.xhtml#P7000497027000000000000000044DD5" class="pcalibre8 pcalibre1 pcalibre2">Performing the following tasks will help you become more familiar with the various tools for manipulating object files.</p>
+<ol class="pcalibre1 pcalibre2 pcalibre79" id="P7000497027000000000000000044DD6" data-uri="chapter07.xhtml#P7000497027000000000000000044DD6">
+<li id="P7000497027000000000000000044DD7" data-uri="chapter07.xhtml#P7000497027000000000000000044DD7" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DD8" data-uri="chapter07.xhtml#P7000497027000000000000000044DD8" class="pcalibre1 pcalibre2 pcalibre10">How many object files are contained in the versions of <code id="P7000497027000000000000000044DD9" data-uri="chapter07.xhtml#P7000497027000000000000000044DD9" class="pcalibre1 calibre1 pcalibre2">libc.a</code> and <code id="P7000497027000000000000000044DDA" data-uri="chapter07.xhtml#P7000497027000000000000000044DDA" class="pcalibre1 calibre1 pcalibre2">libm.a</code> on your system?</p></li>
+<li id="P7000497027000000000000000044DDB" data-uri="chapter07.xhtml#P7000497027000000000000000044DDB" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DDC" data-uri="chapter07.xhtml#P7000497027000000000000000044DDC" class="pcalibre1 pcalibre2 pcalibre10">Does <code id="P7000497027000000000000000044DDD" data-uri="chapter07.xhtml#P7000497027000000000000000044DDD" class="pcalibre1 calibre1 pcalibre2">gcc -0g</code> produce different executable code than <code id="P7000497027000000000000000044DDE" data-uri="chapter07.xhtml#P7000497027000000000000000044DDE" class="pcalibre1 calibre1 pcalibre2">gcc -0g -g</code>?</p></li>
+<li id="P7000497027000000000000000044DDF" data-uri="chapter07.xhtml#P7000497027000000000000000044DDF" class="pcalibre39 pcalibre2 pcalibre1"><p id="P7000497027000000000000000044DE0" data-uri="chapter07.xhtml#P7000497027000000000000000044DE0" class="pcalibre1 pcalibre2 pcalibre10">What shared libraries does the <span class="pcalibre1 pcalibre29 pcalibre2">gcc </span>driver on your system use?</p></li>
+</ol>
+</section>
+</section></body></html>

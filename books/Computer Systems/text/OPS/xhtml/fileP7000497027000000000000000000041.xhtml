@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:svg="http://www.w3.org/2000/svg" xmlns:epub="http://www.idpf.org/2007/ops" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" epub:prefix="index: http://www.index.com/">
+  <head>
+    <meta name="dcterms.conformsTo" content="PXE Basic 1.0"/>
+    <meta name="generator" content="PXE Tools version 1.39.52"/>
+    <!--Created by pxe.pl for standard version PXE Basic 1.0,data-profile-product=standard by PXE Tools 1.39.52, partial=false-->
+    <title>A.2 Error-Handling Wrappers</title>
+    <link rel="alternate stylesheet" type="text/css" title="night" href="../css/theme/night.css"/>
+    <link rel="alternate stylesheet" type="text/css" title="sepia" href="../css/theme/sepia.css"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body epub:type="backmatter" class="pcalibre1 pcalibre2 pcalibre">
+<section id="P7000497027000000000000000000041" class="pcalibre1 pcalibre2 pcalibre3"><header class="pcalibre1 pcalibre2 calibre"><h1 class="pcalibre1 pcalibre2 pcalibre4" id="P700049702700000000000000003E458" data-uri="app01.xhtml#P700049702700000000000000003E458" epub:type="title"><span class="pcalibre1 pcalibre21 pcalibre2">A.2 </span>Error-Handling Wrappers</h1></header>
+<p id="P700049702700000000000000003E459" data-uri="app01.xhtml#P700049702700000000000000003E459" class="pcalibre8 pcalibre1 pcalibre2">Here are some examples of the different error-handling wrappers.</p>
+<ul class="pcalibre38 pcalibre1 pcalibre2" id="P700049702700000000000000003E45A" data-uri="app01.xhtml#P700049702700000000000000003E45A">
+<li id="P700049702700000000000000003E45B" data-uri="app01.xhtml#P700049702700000000000000003E45B" class="pcalibre39 pcalibre2 pcalibre1"><p id="P700049702700000000000000003E45C" data-uri="app01.xhtml#P700049702700000000000000003E45C" class="pcalibre1 pcalibre2 pcalibre40"><span class="pcalibre1 pcalibre2 pcalibre41">Unix-style error-handling wrappers. </span><a class="pcalibre15 pcalibre1 pcalibre2 pcalibre16 pcalibre14 pcalibre28" href="#P7000497027000000000000000000058"><span class="pcalibre1 pcalibre21 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.2</span></a> shows the wrapper for the Unix-style <code id="P700049702700000000000000003E45D" data-uri="app01.xhtml#P700049702700000000000000003E45D" class="pcalibre1 calibre1 pcalibre2">wait</code> function. If the <code id="P700049702700000000000000003E45E" data-uri="app01.xhtml#P700049702700000000000000003E45E" class="pcalibre1 calibre1 pcalibre2">wait</code> returns with an error, the wrapper prints an informative message and then exits. Otherwise, it returns a PID to the caller. <a class="pcalibre15 pcalibre1 pcalibre2 pcalibre16 pcalibre14 pcalibre28" href="#P7000497027000000000000000000060"><span class="pcalibre1 pcalibre21 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.3</span></a> shows the wrapper for the Unix-style kill function. Notice that this function, unlike <code id="P700049702700000000000000003E45F" data-uri="app01.xhtml#P700049702700000000000000003E45F" class="pcalibre1 calibre1 pcalibre2">wait</code>, returns void on success.</p></li>
+<li id="P700049702700000000000000003E460" data-uri="app01.xhtml#P700049702700000000000000003E460" class="pcalibre39 pcalibre2 pcalibre1"><p id="P700049702700000000000000003E461" data-uri="app01.xhtml#P700049702700000000000000003E461" class="pcalibre1 pcalibre2 pcalibre40"><span class="pcalibre1 pcalibre2 pcalibre41">Posix-style error-handling wrappers. </span><a class="pcalibre15 pcalibre1 pcalibre2 pcalibre16 pcalibre14 pcalibre28" href="#P7000497027000000000000000000069"><span class="pcalibre1 pcalibre21 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.4</span></a> shows the wrapper for the Posix-style <code id="P700049702700000000000000003E462" data-uri="app01.xhtml#P700049702700000000000000003E462" class="pcalibre1 calibre1 pcalibre2">pthread_detach</code> function. Like most Posix-style functions, it does not overload useful results with error-return codes, so the wrapper returns void on success.</p></li>
+<li id="P700049702700000000000000003E463" data-uri="app01.xhtml#P700049702700000000000000003E463" class="pcalibre39 pcalibre2 pcalibre1"><p id="P700049702700000000000000003E464" data-uri="app01.xhtml#P700049702700000000000000003E464" class="pcalibre1 pcalibre2 pcalibre40"><span class="pcalibre1 pcalibre2 pcalibre41">GAI-style error-handling wrappers. </span><a class="pcalibre15 pcalibre1 pcalibre2 pcalibre16 pcalibre14 pcalibre28" href="#P7000497027000000000000000000071"><span class="pcalibre1 pcalibre21 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.5</span></a> shows the error-handling wrapper for the GAI-style <code id="P700049702700000000000000003E465" data-uri="app01.xhtml#P700049702700000000000000003E465" class="pcalibre1 calibre1 pcalibre2">getaddrinfo</code> function.</p></li>
+</ul>
+<figure class="pcalibre2 pcalibre32 pcalibre35" id="P7000497027000000000000000000050" data-uri="app01.xhtml#P7000497027000000000000000000050">
+<p id="P700049702700000000000000003E466" data-uri="app01.xhtml#P700049702700000000000000003E466" class="pcalibre8 pcalibre1 pcalibre2"><span class="pcalibre1 pcalibre2 pcalibre5" id="P7000497027000000000000000000052" title="1044" data-uri="app01.xhtml#P7000497027000000000000000000052" epub:type="pagebreak"></span>-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<pre id="P700049702700000000000000003E467" data-uri="app01.xhtml#P700049702700000000000000003E467" class="calibre2 pcalibre2 pcalibre1"><code id="P700049702700000000000000003E468" data-uri="app01.xhtml#P700049702700000000000000003E468" class="calibre3 pcalibre1 pcalibre2">
+1	void unix_error(char *msg) /* Unix-style error */
+2	{
+3		fprintf(stderr, "%s: %s\n", msg, strerror(errno));
+4		exit(0);
+5	}
+6
+7	void posix_error(int code, char *msg) /* Posix-style error */
+8	{
+9		fprintf(stderr, "%s: %s\n", msg, strerror(code));
+10		exit(0);
+11	}
+12
+13	void gai_error(int code, char *msg) /* Getaddrinfo-style error */
+14	{
+15		fprintf(stderr, "%s: %s\n", msg, gai_strerror(code));
+16		exit(0);
+17	}
+18
+19	void app_error(char *msg) /* Application error */
+20	{
+21		fprintf(stderr, "%s\n", msg);
+22		exit(0);
+23	}
+</code></pre>
+<p id="P700049702700000000000000003E469" data-uri="app01.xhtml#P700049702700000000000000003E469" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<figcaption id="P700049702700000000000000003E46A" data-uri="app01.xhtml#P700049702700000000000000003E46A" class="pcalibre1 pcalibre2 calibre4"><header class="pcalibre1 pcalibre2 pcalibre3"><h1 class="pcalibre1 pcalibre2 pcalibre36" id="P700049702700000000000000003E46B" data-uri="app01.xhtml#P700049702700000000000000003E46B" epub:type="title"><span class="label pcalibre1 pcalibre2">Figure </span><span class="pcalibre1 pcalibre2 pcalibre37">A.1 </span>Error-reporting functions.</h1></header>
+</figcaption>
+</figure>
+<figure class="pcalibre2 pcalibre32 pcalibre35" id="P7000497027000000000000000000058" data-uri="app01.xhtml#P7000497027000000000000000000058">
+<p id="P700049702700000000000000003E46C" data-uri="app01.xhtml#P700049702700000000000000003E46C" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<pre id="P700049702700000000000000003E46D" data-uri="app01.xhtml#P700049702700000000000000003E46D" class="calibre2 pcalibre2 pcalibre1"><code id="P700049702700000000000000003E46E" data-uri="app01.xhtml#P700049702700000000000000003E46E" class="calibre3 pcalibre1 pcalibre2">
+1	pid_t Wait(int *status)
+2	{
+3		pid_t pid;
+4
+5		if ((pid = wait(status)) &lt; 0)
+6			unix_error("Wait error");
+7		return pid;
+8	}
+</code></pre>
+<p id="P700049702700000000000000003E46F" data-uri="app01.xhtml#P700049702700000000000000003E46F" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<figcaption id="P700049702700000000000000003E470" data-uri="app01.xhtml#P700049702700000000000000003E470" class="pcalibre1 pcalibre2 calibre4"><header class="pcalibre1 pcalibre2 pcalibre3"><h1 class="pcalibre1 pcalibre2 pcalibre36" id="P700049702700000000000000003E471" data-uri="app01.xhtml#P700049702700000000000000003E471" epub:type="title"><span class="label pcalibre1 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.2 </span>Wrapper for Unix-style <code id="P700049702700000000000000003E472" data-uri="app01.xhtml#P700049702700000000000000003E472" class="pcalibre1 calibre1 pcalibre2">wait</code> function.</h1></header>
+</figcaption>
+</figure>
+<figure class="pcalibre2 pcalibre32 pcalibre35" id="P7000497027000000000000000000060" data-uri="app01.xhtml#P7000497027000000000000000000060">
+<span class="pcalibre1 pcalibre2 pcalibre5" id="P7000497027000000000000000000061" title="1045" data-uri="app01.xhtml#P7000497027000000000000000000061" epub:type="pagebreak"></span>
+<p id="P700049702700000000000000003E473" data-uri="app01.xhtml#P700049702700000000000000003E473" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<pre id="P700049702700000000000000003E474" data-uri="app01.xhtml#P700049702700000000000000003E474" class="calibre2 pcalibre2 pcalibre1"><code id="P700049702700000000000000003E475" data-uri="app01.xhtml#P700049702700000000000000003E475" class="calibre3 pcalibre1 pcalibre2">
+1	void Kill(pid_t pid, int signum)
+2	{
+3		int rc;
+4
+5		if ((rc = kill(pid, signum)) &lt; 0)
+6			unix_error("Kill error");
+7	}
+</code></pre>
+<p id="P700049702700000000000000003E476" data-uri="app01.xhtml#P700049702700000000000000003E476" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<figcaption id="P700049702700000000000000003E477" data-uri="app01.xhtml#P700049702700000000000000003E477" class="pcalibre1 pcalibre2 calibre4"><header class="pcalibre1 pcalibre2 pcalibre3"><h1 class="pcalibre1 pcalibre2 pcalibre36" id="P700049702700000000000000003E478" data-uri="app01.xhtml#P700049702700000000000000003E478" epub:type="title"><span class="label pcalibre1 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.3 </span>Wrapper for Unix-style <code id="P700049702700000000000000003E479" data-uri="app01.xhtml#P700049702700000000000000003E479" class="pcalibre1 calibre1 pcalibre2">kill</code> function.</h1></header>
+</figcaption>
+</figure>
+<figure class="pcalibre2 pcalibre32 pcalibre35" id="P7000497027000000000000000000069" data-uri="app01.xhtml#P7000497027000000000000000000069">
+<p id="P700049702700000000000000003E47A" data-uri="app01.xhtml#P700049702700000000000000003E47A" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<pre id="P700049702700000000000000003E47B" data-uri="app01.xhtml#P700049702700000000000000003E47B" class="calibre2 pcalibre2 pcalibre1"><code id="P700049702700000000000000003E47C" data-uri="app01.xhtml#P700049702700000000000000003E47C" class="calibre3 pcalibre1 pcalibre2">
+1	void Pthread_detach(pthread_t tid) {
+2		int rc;
+3
+4		if ((rc = pthread_detach(tid)) != 0)
+5			posix_error(rc, "Pthread_detach error");
+6	}
+</code></pre>
+<p id="P700049702700000000000000003E47D" data-uri="app01.xhtml#P700049702700000000000000003E47D" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<figcaption id="P700049702700000000000000003E47E" data-uri="app01.xhtml#P700049702700000000000000003E47E" class="pcalibre1 pcalibre2 calibre4"><header class="pcalibre1 pcalibre2 pcalibre3"><h1 class="pcalibre1 pcalibre2 pcalibre36" id="P700049702700000000000000003E47F" data-uri="app01.xhtml#P700049702700000000000000003E47F" epub:type="title"><span class="label pcalibre1 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.4 </span>Wrapper for Posix-style <code id="P700049702700000000000000003E480" data-uri="app01.xhtml#P700049702700000000000000003E480" class="pcalibre1 calibre1 pcalibre2">pthread_detach</code> function.</h1></header>
+</figcaption>
+</figure>
+<figure class="pcalibre2 pcalibre32 pcalibre35" id="P7000497027000000000000000000071" data-uri="app01.xhtml#P7000497027000000000000000000071">
+<p id="P700049702700000000000000003E481" data-uri="app01.xhtml#P700049702700000000000000003E481" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<pre id="P700049702700000000000000003E482" data-uri="app01.xhtml#P700049702700000000000000003E482" class="calibre2 pcalibre2 pcalibre1"><code id="P700049702700000000000000003E483" data-uri="app01.xhtml#P700049702700000000000000003E483" class="calibre3 pcalibre1 pcalibre2">
+1	void Getaddrinfo(const char *node, const char *service,
+2			const struct addrinfo *hints, struct addrinfo **res)
+3	{
+4		int rc;
+5
+6		if ((rc = getaddrinfo(node, service, hints, res)) != 0)
+7			gai_error(rc, "Getaddrinfo error");
+8	}
+</code></pre>
+<p id="P700049702700000000000000003E484" data-uri="app01.xhtml#P700049702700000000000000003E484" class="pcalibre8 pcalibre1 pcalibre2">-------------------------------------------<i class="pcalibre17 pcalibre2 pcalibre1">code/src/csapp.c</i></p>
+<figcaption id="P700049702700000000000000003E485" data-uri="app01.xhtml#P700049702700000000000000003E485" class="pcalibre1 pcalibre2 calibre4"><header class="pcalibre1 pcalibre2 pcalibre3"><h1 class="pcalibre1 pcalibre2 pcalibre36" id="P700049702700000000000000003E486" data-uri="app01.xhtml#P700049702700000000000000003E486" epub:type="title"><span class="label pcalibre1 pcalibre2">Figure </span><span class="pcalibre1 pcalibre21 pcalibre2">A.5 </span>Wrapper for GAI-style <code id="P700049702700000000000000003E487" data-uri="app01.xhtml#P700049702700000000000000003E487" class="pcalibre1 calibre1 pcalibre2">getaddrinfo</code> function.</h1></header>
+</figcaption>
+</figure>
+<p id="P700049702700000000000000003E488" data-uri="app01.xhtml#P700049702700000000000000003E488" class="pcalibre8 pcalibre1 pcalibre2"><span class="pcalibre1 pcalibre2 pcalibre5" id="P700049702700000000000000000007A" title="1046" data-uri="app01.xhtml#P700049702700000000000000000007A" epub:type="pagebreak"></span></p>
+</section></body></html>
