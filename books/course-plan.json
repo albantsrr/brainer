@@ -1,0 +1,117 @@
+{
+  "course": {
+    "title": "Models of the Mind",
+    "author": "Lindsay, Grace;",
+    "slug": "models-of-the-mind",
+    "output_dir": "models-of-the-mind-normalized/OEBPS/"
+  },
+  "parts": [
+    {
+      "order": 0,
+      "title": "General",
+      "chapters": [
+        {
+          "chapter_num": 1,
+          "order": 1,
+          "title": ":  Spherical Cows",
+          "slug": "chapter-01-spherical-cows",
+          "source_file": "ch01.xhtml",
+          "mdx_file": "01-chapter-01-spherical-cows.mdx"
+        },
+        {
+          "chapter_num": 2,
+          "order": 2,
+          "title": ":  How Neurons Get Their Spike",
+          "slug": "chapter-02-how-neurons-get-their-spike",
+          "source_file": "ch02.xhtml",
+          "mdx_file": "02-chapter-02-how-neurons-get-their-spike.mdx"
+        },
+        {
+          "chapter_num": 3,
+          "order": 3,
+          "title": ":  Learning to Compute",
+          "slug": "chapter-03-learning-to-compute",
+          "source_file": "ch03.xhtml",
+          "mdx_file": "03-chapter-03-learning-to-compute.mdx"
+        },
+        {
+          "chapter_num": 4,
+          "order": 4,
+          "title": ":  Making and Maintaining Memories",
+          "slug": "chapter-04-making-and-maintaining-memories",
+          "source_file": "ch04.xhtml",
+          "mdx_file": "04-chapter-04-making-and-maintaining-memories.mdx"
+        },
+        {
+          "chapter_num": 5,
+          "order": 5,
+          "title": ":  Excitation and Inhibition",
+          "slug": "chapter-05-excitation-and-inhibition",
+          "source_file": "ch05.xhtml",
+          "mdx_file": "05-chapter-05-excitation-and-inhibition.mdx"
+        },
+        {
+          "chapter_num": 6,
+          "order": 6,
+          "title": ":  Stages of Sight",
+          "slug": "chapter-06-stages-of-sight",
+          "source_file": "ch06.xhtml",
+          "mdx_file": "06-chapter-06-stages-of-sight.mdx"
+        },
+        {
+          "chapter_num": 7,
+          "order": 7,
+          "title": ":  Cracking the Neural Code",
+          "slug": "chapter-07-cracking-the-neural-code",
+          "source_file": "ch07.xhtml",
+          "mdx_file": "07-chapter-07-cracking-the-neural-code.mdx"
+        },
+        {
+          "chapter_num": 8,
+          "order": 8,
+          "title": ":  Movement in Low Dimensions",
+          "slug": "chapter-08-movement-in-low-dimensions",
+          "source_file": "ch08.xhtml",
+          "mdx_file": "08-chapter-08-movement-in-low-dimensions.mdx"
+        },
+        {
+          "chapter_num": 9,
+          "order": 9,
+          "title": ":  From Structure to Function",
+          "slug": "chapter-09-from-structure-to-function",
+          "source_file": "ch09.xhtml",
+          "mdx_file": "09-chapter-09-from-structure-to-function.mdx"
+        },
+        {
+          "chapter_num": 10,
+          "order": 10,
+          "title": ":  Making Rational Decisions",
+          "slug": "chapter-10-making-rational-decisions",
+          "source_file": "ch10.xhtml",
+          "mdx_file": "10-chapter-10-making-rational-decisions.mdx"
+        },
+        {
+          "chapter_num": 11,
+          "order": 11,
+          "title": ":  How Rewards Guide Actions",
+          "slug": "chapter-11-how-rewards-guide-actions",
+          "source_file": "ch11.xhtml",
+          "mdx_file": "11-chapter-11-how-rewards-guide-actions.mdx"
+        },
+        {
+          "chapter_num": 12,
+          "order": 12,
+          "title": ":  Grand Unified Theories of the Brain",
+          "slug": "chapter-12-grand-unified-theories-of-the-brain",
+          "source_file": "ch12.xhtml",
+          "mdx_file": "12-chapter-12-grand-unified-theories-of-the-brain.mdx"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "parts": 1,
+    "chapters": 12,
+    "total_mdx_files": 12
+  }
+}

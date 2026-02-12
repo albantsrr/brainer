@@ -29,35 +29,62 @@ except ImportError:
 API_URL = os.getenv("API_URL", "http://localhost:8000")
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent  # Go up to /home/teissier/brainer
 BOOKS_DIR = PROJECT_ROOT / "books"
-PARSE_TOC_SCRIPT = PROJECT_ROOT / "scripts" / "parse_toc.py"
-COURSE_PLAN_FILE = PROJECT_ROOT / "course-plan.json"
+PARSE_TOC_SCRIPT = Path(__file__).parent / "parse_toc.py"  # Now in same scripts directory
+TEMP_DIR = PROJECT_ROOT / "temp"
+COURSE_PLAN_FILE = TEMP_DIR / "course-plan.json"
+COURSE_PLAN_FR_FILE = TEMP_DIR / "course-plan-fr.json"
 
 
 def find_books() -> list[tuple[str, Path]]:
-    """Find all books with toc.ncx files."""
+    """Find all books with toc.ncx files OR normalized directories with course-plan.json."""
     books = []
+
+    # Find books with toc.ncx
     for toc_path in BOOKS_DIR.rglob("toc.ncx"):
-        book_name = toc_path.parent.name  # toc.ncx is directly in book directory
+        book_name = toc_path.parent.name
         books.append((book_name, toc_path))
+
+    # Find normalized books (directories ending with -normalized containing course-plan.json)
+    for book_dir in BOOKS_DIR.iterdir():
+        if book_dir.is_dir() and book_dir.name.endswith('-normalized'):
+            plan_path = book_dir / "course-plan.json"
+            if not plan_path.exists():
+                # Try parent directory
+                plan_path = book_dir.parent / "course-plan.json"
+
+            if plan_path.exists():
+                books.append((book_dir.name, plan_path))
+
     return books
 
 
 def find_book_by_name(name: str) -> Optional[Path]:
-    """Find toc.ncx for a specific book name."""
+    """Find toc.ncx or course-plan.json for a specific book name."""
     books = find_books()
-    for book_name, toc_path in books:
+    for book_name, path in books:
         if book_name.lower() == name.lower():
-            return toc_path
+            return path
     return None
 
 
-def parse_toc(toc_path: Path) -> dict:
-    """Run parse_toc.py and return the course plan."""
-    print(f"📖 Parsing TOC: {toc_path}")
+def parse_toc(toc_or_plan_path: Path) -> dict:
+    """Run parse_toc.py or load existing course-plan.json."""
+
+    # Ensure temp directory exists
+    TEMP_DIR.mkdir(exist_ok=True)
+
+    # Check if this is already a course-plan.json file
+    if toc_or_plan_path.name == "course-plan.json":
+        print(f"📖 Loading existing course plan: {toc_or_plan_path}")
+        with open(toc_or_plan_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+
+    # Otherwise, parse toc.ncx
+    print(f"📖 Parsing TOC: {toc_or_plan_path}")
 
     # Run parse_toc.py
     result = subprocess.run(
-        [sys.executable, str(PARSE_TOC_SCRIPT), str(toc_path)],
+        [sys.executable, str(PARSE_TOC_SCRIPT), str(toc_or_plan_path)],
         cwd=PROJECT_ROOT,
         capture_output=True,
         text=True
@@ -68,6 +95,13 @@ def parse_toc(toc_path: Path) -> dict:
         sys.exit(1)
 
     print(result.stdout)  # Show parse_toc.py output
+
+    # Check if parse_toc.py created the file at the old location (root)
+    old_plan_file = PROJECT_ROOT / "course-plan.json"
+    if old_plan_file.exists() and not COURSE_PLAN_FILE.exists():
+        # Move it to temp/
+        print(f"   📁 Moving course-plan.json to temp/")
+        old_plan_file.rename(COURSE_PLAN_FILE)
 
     # Read generated course-plan.json
     if not COURSE_PLAN_FILE.exists():
@@ -213,18 +247,19 @@ def main():
         print("=" * 70)
         print(f"\n  File: {COURSE_PLAN_FILE}")
         print(f"\n  Next step: Claude will translate this file to French")
+        print(f"  French file will be saved as: {COURSE_PLAN_FR_FILE}")
         print(f"  Then run without --generate-plan to import\n")
         sys.exit(0)
 
     # Check if French translation exists
-    french_plan_file = PROJECT_ROOT / "course-plan-fr.json"
-    if french_plan_file.exists():
-        print(f"\n📝 Using French translation: {french_plan_file}")
-        with open(french_plan_file, "r", encoding="utf-8") as f:
+    if COURSE_PLAN_FR_FILE.exists():
+        print(f"\n📝 Using French translation: {COURSE_PLAN_FR_FILE}")
+        with open(COURSE_PLAN_FR_FILE, "r", encoding="utf-8") as f:
             plan = json.load(f)
     else:
-        print(f"\n⚠️  No French translation found at {french_plan_file}")
+        print(f"\n⚠️  No French translation found at {COURSE_PLAN_FR_FILE}")
         print("   Using English version (not recommended)")
+        print(f"   Run with --generate-plan first to create French translation")
 
     # Create course structure
     course_slug = create_course(plan)

@@ -1,0 +1,139 @@
+<package xmlns="http://www.idpf.org/2007/opf" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:mml="http://www.w3.org/1998/Math/MathML" version="3.0" unique-identifier="p9781472966452">
+  <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
+    <dc:title id="id">Models of the Mind</dc:title>
+    <dc:creator id="id-1">Lindsay, Grace;</dc:creator>
+    <dc:identifier>calibre:4</dc:identifier>
+    <dc:identifier>uuid:372b002a-2837-499c-bb12-f52d47d97c81</dc:identifier>
+    <dc:identifier id="p9781472966452">6607108</dc:identifier>
+    <dc:language>en-US</dc:language>
+    <dc:publisher>Bloomsbury Publishing Plc</dc:publisher>
+    <opf:meta refines="#id" property="title-type">main</opf:meta>
+    <opf:meta refines="#id" property="file-as">Models of the Mind</opf:meta>
+    <meta property="dcterms:modified">2021-07-25T19:28:08Z</meta>
+    <meta name="cover" content="cover-image"/>
+    <meta content="1.4.3" name="Sigil version"/>
+    <opf:meta refines="#id-1" property="role" scheme="marc:relators">aut</opf:meta>
+    <opf:meta refines="#id-1" property="file-as">Lindsay, Grace;</opf:meta>
+  </metadata>
+  <manifest>
+    <item id="cover-page" href="xhtml/cover.xhtml" media-type="application/xhtml+xml"/>
+    <item id="halftitle" href="xhtml/halftitle.xhtml" media-type="application/xhtml+xml"/>
+    <item id="series_1" href="xhtml/series.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ded_1" href="xhtml/dedication.xhtml" media-type="application/xhtml+xml"/>
+    <item id="title_1" href="xhtml/title.xhtml" media-type="application/xhtml+xml"/>
+    <item id="contents" href="xhtml/contents.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter1" href="xhtml/chapter1.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter2" href="xhtml/chapter2.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter3" href="xhtml/chapter3.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter4" href="xhtml/chapter4.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter5" href="xhtml/chapter5.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter6" href="xhtml/chapter6.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter7" href="xhtml/chapter7.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter8" href="xhtml/chapter8.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter9" href="xhtml/chapter9.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter10" href="xhtml/chapter10.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter11" href="xhtml/chapter11.xhtml" media-type="application/xhtml+xml"/>
+    <item id="chapter12" href="xhtml/chapter12.xhtml" media-type="application/xhtml+xml"/>
+    <item id="Mathematical" href="xhtml/Mathematical.xhtml" media-type="application/xhtml+xml"/>
+    <item id="ack" href="xhtml/ack.xhtml" media-type="application/xhtml+xml"/>
+    <item id="bib" href="xhtml/bib.xhtml" media-type="application/xhtml+xml"/>
+    <item id="index" href="xhtml/index.xhtml" media-type="application/xhtml+xml"/>
+    <item id="copyright" href="xhtml/copyright.xhtml" media-type="application/xhtml+xml"/>
+    <item id="toc" href="xhtml/toc.xhtml" media-type="application/xhtml+xml" properties="nav"/>
+    <item id="ncx" href="toc.ncx" media-type="application/x-dtbncx+xml"/>
+    <item id="stylesheet" href="styles/stylesheet.css" media-type="text/css"/>
+    <item id="cover-image" href="images/cover.jpg" media-type="image/jpeg"/>
+    <item id="fig1.jpg" href="images/fig1.jpg" media-type="image/jpeg"/>
+    <item id="fig10.jpg" href="images/fig10.jpg" media-type="image/jpeg"/>
+    <item id="fig11.jpg" href="images/fig11.jpg" media-type="image/jpeg"/>
+    <item id="fig12.jpg" href="images/fig12.jpg" media-type="image/jpeg"/>
+    <item id="fig13.jpg" href="images/fig13.jpg" media-type="image/jpeg"/>
+    <item id="fig14.jpg" href="images/fig14.jpg" media-type="image/jpeg"/>
+    <item id="fig15.jpg" href="images/fig15.jpg" media-type="image/jpeg"/>
+    <item id="fig16.jpg" href="images/fig16.jpg" media-type="image/jpeg"/>
+    <item id="fig17.jpg" href="images/fig17.jpg" media-type="image/jpeg"/>
+    <item id="fig18.jpg" href="images/fig18.jpg" media-type="image/jpeg"/>
+    <item id="fig19.jpg" href="images/fig19.jpg" media-type="image/jpeg"/>
+    <item id="fig2.jpg" href="images/fig2.jpg" media-type="image/jpeg"/>
+    <item id="fig20.jpg" href="images/fig20.jpg" media-type="image/jpeg"/>
+    <item id="fig21.jpg" href="images/fig21.jpg" media-type="image/jpeg"/>
+    <item id="fig22.jpg" href="images/fig22.jpg" media-type="image/jpeg"/>
+    <item id="fig23.jpg" href="images/fig23.jpg" media-type="image/jpeg"/>
+    <item id="fig24.jpg" href="images/fig24.jpg" media-type="image/jpeg"/>
+    <item id="fig25.jpg" href="images/fig25.jpg" media-type="image/jpeg"/>
+    <item id="fig26.jpg" href="images/fig26.jpg" media-type="image/jpeg"/>
+    <item id="fig3.jpg" href="images/fig3.jpg" media-type="image/jpeg"/>
+    <item id="fig4.jpg" href="images/fig4.jpg" media-type="image/jpeg"/>
+    <item id="fig5.jpg" href="images/fig5.jpg" media-type="image/jpeg"/>
+    <item id="fig6_06.png" href="images/fig6_06.png" media-type="image/png"/>
+    <item id="fig6.jpg" href="images/fig6.jpg" media-type="image/jpeg"/>
+    <item id="fig7.jpg" href="images/fig7.jpg" media-type="image/jpeg"/>
+    <item id="fig8.jpg" href="images/fig8.jpg" media-type="image/jpeg"/>
+    <item id="fig9.jpg" href="images/fig9.jpg" media-type="image/jpeg"/>
+    <item id="halftitle.jpg" href="images/halftitle.jpg" media-type="image/jpeg"/>
+    <item id="inline1.jpg" href="images/inline1.jpg" media-type="image/jpeg"/>
+    <item id="inline10.jpg" href="images/inline10.jpg" media-type="image/jpeg"/>
+    <item id="inline11.jpg" href="images/inline11.jpg" media-type="image/jpeg"/>
+    <item id="inline12.jpg" href="images/inline12.jpg" media-type="image/jpeg"/>
+    <item id="inline13.jpg" href="images/inline13.jpg" media-type="image/jpeg"/>
+    <item id="inline14.jpg" href="images/inline14.jpg" media-type="image/jpeg"/>
+    <item id="inline15.jpg" href="images/inline15.jpg" media-type="image/jpeg"/>
+    <item id="inline16.jpg" href="images/inline16.jpg" media-type="image/jpeg"/>
+    <item id="inline17.jpg" href="images/inline17.jpg" media-type="image/jpeg"/>
+    <item id="inline18.jpg" href="images/inline18.jpg" media-type="image/jpeg"/>
+    <item id="inline19.jpg" href="images/inline19.jpg" media-type="image/jpeg"/>
+    <item id="inline2.jpg" href="images/inline2.jpg" media-type="image/jpeg"/>
+    <item id="inline20.jpg" href="images/inline20.jpg" media-type="image/jpeg"/>
+    <item id="inline21.jpg" href="images/inline21.jpg" media-type="image/jpeg"/>
+    <item id="inline22.jpg" href="images/inline22.jpg" media-type="image/jpeg"/>
+    <item id="inline23.jpg" href="images/inline23.jpg" media-type="image/jpeg"/>
+    <item id="inline24.jpg" href="images/inline24.jpg" media-type="image/jpeg"/>
+    <item id="inline25.jpg" href="images/inline25.jpg" media-type="image/jpeg"/>
+    <item id="inline26.jpg" href="images/inline26.jpg" media-type="image/jpeg"/>
+    <item id="inline27.jpg" href="images/inline27.jpg" media-type="image/jpeg"/>
+    <item id="inline28.jpg" href="images/inline28.jpg" media-type="image/jpeg"/>
+    <item id="inline29.jpg" href="images/inline29.jpg" media-type="image/jpeg"/>
+    <item id="inline3.jpg" href="images/inline3.jpg" media-type="image/jpeg"/>
+    <item id="inline30.jpg" href="images/inline30.jpg" media-type="image/jpeg"/>
+    <item id="inline31.jpg" href="images/inline31.jpg" media-type="image/jpeg"/>
+    <item id="inline4.jpg" href="images/inline4.jpg" media-type="image/jpeg"/>
+    <item id="inline5.jpg" href="images/inline5.jpg" media-type="image/jpeg"/>
+    <item id="inline6.jpg" href="images/inline6.jpg" media-type="image/jpeg"/>
+    <item id="inline7.jpg" href="images/inline7.jpg" media-type="image/jpeg"/>
+    <item id="inline8.jpg" href="images/inline8.jpg" media-type="image/jpeg"/>
+    <item id="inline9.jpg" href="images/inline9.jpg" media-type="image/jpeg"/>
+    <item id="title.jpg" href="images/title.jpg" media-type="image/jpeg"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="cover-page"/>
+    <itemref idref="halftitle"/>
+    <itemref idref="series_1"/>
+    <itemref idref="ded_1"/>
+    <itemref idref="title_1"/>
+    <itemref idref="contents"/>
+    <itemref idref="chapter1"/>
+    <itemref idref="chapter2"/>
+    <itemref idref="chapter3"/>
+    <itemref idref="chapter4"/>
+    <itemref idref="chapter5"/>
+    <itemref idref="chapter6"/>
+    <itemref idref="chapter7"/>
+    <itemref idref="chapter8"/>
+    <itemref idref="chapter9"/>
+    <itemref idref="chapter10"/>
+    <itemref idref="chapter11"/>
+    <itemref idref="chapter12"/>
+    <itemref idref="Mathematical"/>
+    <itemref idref="ack"/>
+    <itemref idref="bib"/>
+    <itemref idref="index"/>
+    <itemref idref="copyright"/>
+  </spine>
+  <guide>
+    <reference type="cover" title="Cover page" href="xhtml/cover.xhtml"/>
+    <reference type="text" title="Half-Title" href="xhtml/halftitle.xhtml"/>
+    <reference type="title" title="Title Page" href="xhtml/title.xhtml"/>
+    <reference type="copyright-page" title="Copyright" href="xhtml/copyright.xhtml"/>
+    <reference type="toc" title="Table of Contents" href="xhtml/contents.xhtml"/>
+  </guide>
+</package>

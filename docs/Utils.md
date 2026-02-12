@@ -79,16 +79,16 @@ npm run generate:types
 ### Parse a New Book
 ```bash
 source brainer_venv/bin/activate
-python scripts/parse_toc.py "books/Book Title/toc.ncx"
+python .claude/skills/import-course/scripts/parse_toc.py "books/Book Title/toc.ncx"
 ```
 
 ### Clean Book Files
 ```bash
 # Dry run (list files)
-python scripts/clean_ebook_data.py "books/Book Title/OEBPS"
+python .claude/skills/reformat-epub/scripts/clean_ebook_data.py "books/Book Title/OEBPS"
 
 # Actually delete
-python scripts/clean_ebook_data.py "books/Book Title/OEBPS" --delete
+python .claude/skills/reformat-epub/scripts/clean_ebook_data.py "books/Book Title/OEBPS" --delete
 ```
 
 ## Database

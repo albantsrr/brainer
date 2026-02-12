@@ -10,11 +10,17 @@ This script:
 5. Updates the chapter in the database
 
 Usage:
-    python create_chapter.py <course-slug> <chapter-number>
+    python create_chapter.py <course-slug> <chapter-number> [level]
+
+Parameters:
+    <course-slug>: Course identifier (e.g., fundamentals-of-data-engineering)
+    <chapter-number>: Chapter number to process (e.g., 1, 5)
+    [level]: Optional difficulty level - beginner, intermediate (default), or advanced
 
 Examples:
     python create_chapter.py fundamentals-of-data-engineering 1
-    python create_chapter.py fundamentals-of-data-engineering 5
+    python create_chapter.py fundamentals-of-data-engineering 5 beginner
+    python create_chapter.py computer-systems-a-programmers-perspective 3 advanced
 """
 
 import json
@@ -38,8 +44,11 @@ except ImportError:
 
 # Configuration
 API_URL = os.getenv("API_URL", "http://localhost:8000")
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent  # Up to /home/teissier/brainer
+# Script is in .claude/skills/create-chapters/scripts/create_chapter.py
+# Need to go up 5 levels to reach project root
+PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent  # Up to /home/teissier/brainer
 BOOKS_DIR = PROJECT_ROOT / "books"
+TEMP_DIR = PROJECT_ROOT / "temp"
 
 
 def check_backend():
@@ -79,45 +88,73 @@ def get_chapters(course_slug: str) -> list[dict]:
         return []
 
 
-def find_chapter_file(course_title: str, chapter_num: int) -> Optional[Path]:
+def find_chapter_file(course_title: str, chapter_num: int, course_slug: str = None) -> Optional[Path]:
     """Find the XHTML file for a specific chapter."""
-    book_dir = BOOKS_DIR / course_title / "OEBPS"
+    # Try multiple directory patterns
+    search_dirs = [
+        BOOKS_DIR / course_title / "OEBPS",                    # Standard structure (with title)
+        BOOKS_DIR / f"{course_title}-normalized" / "OEBPS",   # Normalized structure (with title)
+    ]
 
-    if not book_dir.exists():
-        print(f"❌ Book directory not found: {book_dir}")
-        return None
+    # Also try with slug if provided
+    if course_slug:
+        search_dirs.extend([
+            BOOKS_DIR / course_slug / "OEBPS",                    # Standard structure (with slug)
+            BOOKS_DIR / f"{course_slug}-normalized" / "OEBPS",   # Normalized structure (with slug)
+        ])
 
-    # Try zero-padded (ch01.xhtml)
-    chapter_file = book_dir / f"ch{chapter_num:02d}.xhtml"
-    if chapter_file.exists():
-        return chapter_file
+    for book_dir in search_dirs:
+        if not book_dir.exists():
+            continue
 
-    # Try without padding (ch1.xhtml)
-    chapter_file = book_dir / f"ch{chapter_num}.xhtml"
-    if chapter_file.exists():
-        return chapter_file
+        # Try zero-padded (ch01.xhtml)
+        chapter_file = book_dir / f"ch{chapter_num:02d}.xhtml"
+        if chapter_file.exists():
+            return chapter_file
+
+        # Try without padding (ch1.xhtml)
+        chapter_file = book_dir / f"ch{chapter_num}.xhtml"
+        if chapter_file.exists():
+            return chapter_file
 
     print(f"❌ Chapter file not found: ch{chapter_num:02d}.xhtml or ch{chapter_num}.xhtml")
+    print(f"   Searched in: {', '.join(str(d) for d in search_dirs)}")
     return None
 
 
-def find_chapter_images(course_title: str, chapter_num: int) -> list[Path]:
+def find_chapter_images(course_title: str, chapter_num: int, course_slug: str = None) -> list[Path]:
     """Find all images associated with a chapter."""
-    images_dir = BOOKS_DIR / course_title / "OEBPS" / "Images"
+    # Try multiple directory patterns
+    search_dirs = [
+        BOOKS_DIR / course_title / "OEBPS" / "Images",                   # Standard structure (with title)
+        BOOKS_DIR / f"{course_title}-normalized" / "OEBPS" / "Images",  # Normalized structure (with title)
+    ]
 
-    if not images_dir.exists():
-        print(f"⚠️  Images directory not found: {images_dir}")
-        return []
+    # Also try with slug if provided
+    if course_slug:
+        search_dirs.extend([
+            BOOKS_DIR / course_slug / "OEBPS" / "Images",                   # Standard structure (with slug)
+            BOOKS_DIR / f"{course_slug}-normalized" / "OEBPS" / "Images",  # Normalized structure (with slug)
+        ])
 
-    # Pattern: fode_01*.png for chapter 1, fode_02*.png for chapter 2, etc.
-    pattern = f"fode_{chapter_num:02d}*.png"
+    images = []
 
-    images = list(images_dir.glob(pattern))
+    for images_dir in search_dirs:
+        if not images_dir.exists():
+            continue
 
-    # Also try without zero-padding for chapters >= 10
-    if chapter_num >= 10:
-        pattern = f"fode_{chapter_num}*.png"
-        images.extend(images_dir.glob(pattern))
+        # Pattern 1: Normalized naming (chapter-01-image-*.png)
+        normalized_pattern = f"chapter-{chapter_num:02d}-image-*.*"
+        images.extend(images_dir.glob(normalized_pattern))
+
+        # Pattern 2: Legacy naming (fode_01*.png)
+        legacy_pattern = f"fode_{chapter_num:02d}*.*"
+        images.extend(images_dir.glob(legacy_pattern))
+
+        # Also try without zero-padding for chapters >= 10
+        if chapter_num >= 10:
+            legacy_pattern = f"fode_{chapter_num}*.*"
+            images.extend(images_dir.glob(legacy_pattern))
 
     # Remove duplicates and sort
     images = sorted(set(images))
@@ -130,12 +167,87 @@ def extract_content(xhtml_path: Path) -> dict:
     with open(xhtml_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
+    # For normalized EPUBs, the file may contain multiple concatenated XML documents
+    # Parse each document and extract all content
+    full_html_parts = []
+    full_text_parts = []
+    all_images = []
+
+    # Split by XML declarations to handle concatenated documents
+    xml_docs = content.split('<?xml version')
+    for i, doc in enumerate(xml_docs):
+        if i > 0:  # Re-add the XML declaration
+            doc = '<?xml version' + doc
+
+        if not doc.strip():
+            continue
+
+        try:
+            soup = BeautifulSoup(doc, 'html.parser')
+
+            # Extract body content
+            body = soup.find('body')
+            if body:
+                full_html_parts.append(str(body))
+                full_text_parts.append(body.get_text())
+
+                # Extract images
+                for img in body.find_all('img'):
+                    src = img.get('src', '')
+                    if src:
+                        filename = src.split('/')[-1]
+                        if filename not in all_images:
+                            all_images.append(filename)
+        except Exception as e:
+            print(f"   ⚠️  Could not parse document part {i}: {e}")
+            continue
+
+    # If we got nothing, fallback to simple extraction
+    if not full_html_parts:
+        soup = BeautifulSoup(content, 'html.parser')
+        full_html_parts = [str(soup)]
+        full_text_parts = [soup.get_text()]
+
+        # Find images
+        for img in soup.find_all('img'):
+            src = img.get('src', '')
+            if src:
+                filename = src.split('/')[-1]
+                if filename not in all_images:
+                    all_images.append(filename)
+
+    combined_html = '\n'.join(full_html_parts)
+    combined_text = '\n'.join(full_text_parts)
+
+    # Extract title from first document
+    soup = BeautifulSoup(content, 'html.parser')
+    title_elem = soup.find('h1')
+    title = title_elem.get_text() if title_elem else "Unknown Chapter"
+
+    return {
+        'title': title,
+        'html': combined_html,
+        'text': combined_text,
+        'images': all_images,
+        'sections': [],  # Not parsing sections for concatenated docs
+        'word_count': len(combined_text.split())
+    }
+
+# Old code below for reference
+def extract_content_old(xhtml_path: Path) -> dict:
+    """Extract structured content from XHTML file (OLD VERSION)."""
+    with open(xhtml_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+
     soup = BeautifulSoup(content, 'html.parser')
 
-    # Find the main chapter div
+    # Find the main chapter div/section
+    # Try multiple ways to identify chapter content
     chapter_div = soup.find('div', class_='chapter')
     if not chapter_div:
         chapter_div = soup.find('section', {'data-type': 'chapter'})
+    if not chapter_div:
+        chapter_div = soup.find('section', attrs={'epub:type': 'chapter'})
 
     if not chapter_div:
         print("⚠️  Could not find chapter content in XHTML")
@@ -213,26 +325,56 @@ def upload_images(image_paths: list[Path]) -> dict[str, str]:
     return url_map
 
 
-def save_extracted_content(course_slug: str, chapter_num: int, content: dict, image_map: dict):
+def save_extracted_content(course_slug: str, chapter_num: int, content: dict, image_map: dict, level: str = 'intermediate'):
     """Save extracted content to a JSON file for Claude to process."""
-    output_file = PROJECT_ROOT / f"chapter_{course_slug}_ch{chapter_num:02d}_extracted.json"
+    # Ensure temp directory exists
+    TEMP_DIR.mkdir(exist_ok=True)
+
+    output_file = TEMP_DIR / f"chapter_{course_slug}_ch{chapter_num:02d}_extracted.json"
 
     data = {
         'course_slug': course_slug,
         'chapter_number': chapter_num,
         'content': content,
         'image_map': image_map,
+        'level': level,
         'instructions': {
-            'task': 'Transform this chapter content into concise, pedagogical course material in French',
-            'guidelines': [
-                'Create structured HTML content using semantic tags (h2, h3, p, ul, ol, pre, code, blockquote, figure)',
-                'Aim for 40-60% of original length while preserving key concepts',
-                'Replace image references with URLs from image_map',
-                'Focus on learning objectives and practical understanding',
-                'Use clear, simple language',
-                'Add descriptive captions for images'
+            'task': f'Transform this chapter content into concise, pedagogical course material in French (level: {level})',
+            'mandatory_structure': [
+                '1. <h2>Objectifs d\'apprentissage</h2> - 3-6 actionable objectives using action verbs',
+                '2. <h2>Pourquoi c\'est important</h2> - Concrete impact (performance, security, etc.)',
+                '3. Content sections - Each main section MUST contain:',
+                '   - <h3>Concept fondamental</h3> - Core concept',
+                '   - <h3>Mécanisme interne</h3> - Technical mechanism',
+                '   - <h3>Exemple pratique</h3> - Concrete example (MANDATORY)',
+                '   - <h3>Erreurs fréquentes</h3> - Common mistakes (if relevant)',
+                '4. <h2>Synthèse</h2> - Structured summary with key points'
             ],
-            'output_format': 'Return complete HTML content as a string'
+            'critical_constraints': [
+                '✅ Preserve ALL central mechanisms (technical explanations)',
+                '✅ NEVER remove essential technical content',
+                '✅ Simplify language WITHOUT making content incorrect/incomplete',
+                '✅ Reduce length to 40-60% of original',
+                '✅ Remove redundancies, digressions, tangential anecdotes',
+                '✅ Keep all structuring concepts, key examples, definitions'
+            ],
+            'level_adaptation': {
+                'beginner': 'Simplified vocabulary, analogies, very concrete examples, gradual progression',
+                'intermediate': 'Balance theory/practice, technical terms with definitions, focus on patterns',
+                'advanced': 'Implementation details, performance analysis, edge cases, architectural implications'
+            },
+            'html_guidelines': [
+                'Use semantic HTML5 tags only (h2, h3, p, ul, ol, pre, code, blockquote, figure, svg)',
+                'NO inline styles, NO presentational tags, NO CSS classes',
+                'DO NOT use external images - create diagrams directly in the HTML using:',
+                '  • SVG diagrams for technical concepts (memory layouts, architectures, data flows)',
+                '  • ASCII art diagrams in <pre> tags for simple illustrations',
+                '  • Structured text diagrams using Unicode box-drawing characters',
+                'Each diagram MUST have a descriptive caption in a <figure> tag',
+                'Code: Complete, executable examples with comments',
+                'IMPORTANT: Images from the original EPUB are NOT available - replace them with inline diagrams'
+            ],
+            'output_format': 'Return complete HTML content as a string following the mandatory structure'
         }
     }
 
@@ -241,6 +383,7 @@ def save_extracted_content(course_slug: str, chapter_num: int, content: dict, im
 
     print(f"\n📝 Extracted content saved to: {output_file}")
     print(f"   Title: {content['title']}")
+    print(f"   Level: {level}")
     print(f"   Word count: {content['word_count']:,}")
     print(f"   Sections: {len(content['sections'])}")
     print(f"   Images referenced: {len(content['images'])}")
@@ -286,18 +429,34 @@ def main():
 
     # Parse arguments
     if len(sys.argv) < 3:
-        print("\nUsage: python create_chapter.py <course-slug> <chapter-number>")
+        print("\nUsage: python create_chapter.py <course-slug> <chapter-number> [level]")
+        print("\nParameters:")
+        print("  <course-slug>: Course identifier (e.g., fundamentals-of-data-engineering)")
+        print("  <chapter-number>: Chapter number to process (e.g., 1, 5)")
+        print("  [level]: Optional difficulty level - beginner, intermediate (default), or advanced")
         print("\nExamples:")
         print("  python create_chapter.py fundamentals-of-data-engineering 1")
-        print("  python create_chapter.py fundamentals-of-data-engineering 5")
+        print("  python create_chapter.py fundamentals-of-data-engineering 5 beginner")
+        print("  python create_chapter.py computer-systems-a-programmers-perspective 3 advanced")
         sys.exit(1)
 
     course_slug = sys.argv[1]
+
     try:
         chapter_num = int(sys.argv[2])
     except ValueError:
         print(f"❌ Chapter number must be an integer, got: {sys.argv[2]}")
         sys.exit(1)
+
+    # Parse optional level parameter
+    level = 'intermediate'  # default
+    if len(sys.argv) >= 4:
+        level = sys.argv[3].lower()
+        valid_levels = ['beginner', 'intermediate', 'advanced']
+        if level not in valid_levels:
+            print(f"❌ Invalid level: {sys.argv[3]}")
+            print(f"   Valid levels: {', '.join(valid_levels)}")
+            sys.exit(1)
 
     # Check backend
     if not check_backend():
@@ -334,7 +493,7 @@ def main():
 
     # Find XHTML file
     print(f"\n📄 Finding chapter file...")
-    xhtml_path = find_chapter_file(course_title, chapter_num)
+    xhtml_path = find_chapter_file(course_title, chapter_num, course_slug)
     if not xhtml_path:
         sys.exit(1)
 
@@ -342,7 +501,7 @@ def main():
 
     # Find images
     print(f"\n🖼️  Finding associated images...")
-    image_paths = find_chapter_images(course_title, chapter_num)
+    image_paths = find_chapter_images(course_title, chapter_num, course_slug)
     print(f"   ✅ Found {len(image_paths)} images")
 
     # Extract content
@@ -350,11 +509,12 @@ def main():
     content = extract_content(xhtml_path)
     print(f"   ✅ Extracted: {content['word_count']:,} words, {len(content['sections'])} sections")
 
-    # Upload images
-    image_map = upload_images(image_paths)
+    # Skip image upload - we'll create diagrams instead
+    print(f"\n🎨 Skipping image upload (will create diagrams in content)")
+    image_map = {}  # Empty map - no images uploaded
 
     # Save extracted content for Claude to process
-    output_file = save_extracted_content(course_slug, chapter_num, content, image_map)
+    output_file = save_extracted_content(course_slug, chapter_num, content, image_map, level)
 
     # Summary
     print("\n" + "=" * 70)
@@ -363,12 +523,12 @@ def main():
     print(f"\n  Next steps:")
     print(f"  1. Claude will read {output_file}")
     print(f"  2. Claude will generate pedagogical content in French")
-    print(f"  3. Claude will create 2-4 exercises")
-    print(f"  4. Claude will update the chapter via API")
+    print(f"  3. Claude will update the chapter via API")
     print(f"\n  Chapter to update:")
     print(f"    Course: {course_slug}")
     print(f"    Chapter: {chapter_slug} (ID: {chapter_id})")
     print(f"    Order: {chapter_num}")
+    print(f"\n  Note: Use /create-exercise skill separately to add exercises")
     print()
 
 

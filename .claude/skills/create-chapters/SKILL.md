@@ -1,13 +1,13 @@
 ---
 name: create-chapters
-description: Transform raw XHTML chapter content from EPUB books into concise, pedagogical course content with exercises and images. Use when the user wants to create or update a specific chapter's content in the Brainer system.
+description: Transform raw XHTML chapter content from EPUB books into concise, pedagogical course content with images. Use when the user wants to create or update a specific chapter's content in the Brainer system.
 ---
 
 # Create Chapters
 
 ## Overview
 
-This skill transforms raw book chapters (XHTML files) into structured, pedagogical course content. It extracts content from EPUB chapter files, identifies associated images, generates concise learning material with exercises, uploads images to the API, and updates the chapter in the database.
+This skill transforms raw book chapters (XHTML files) into structured, pedagogical course content. It extracts content from EPUB chapter files, identifies associated images, generates concise learning material, uploads images to the API, and updates the chapter in the database.
 
 **Key difference from import-course:** The `import-course` skill creates the course structure (course, parts, chapters) with placeholder content. This skill fills in the actual chapter content by processing XHTML files and creating educational material.
 
@@ -16,7 +16,6 @@ This skill transforms raw book chapters (XHTML files) into structured, pedagogic
 Invoke this skill when the user wants to:
 - Create pedagogical content for a specific chapter from an XHTML file
 - Transform raw book content into a structured, concise course
-- Add exercises to a chapter
 - Update chapter content with associated images
 - Process one chapter at a time (not bulk processing)
 
@@ -45,138 +44,127 @@ Invoke this skill when the user wants to:
 **Analyze the content:**
 - Identify main topics and key concepts
 - Determine learning objectives
-- Spot opportunities for exercises (concepts to test, practical applications)
 - Understand the pedagogical flow
 
-### Step 3: Find Associated Images
+### Step 3: Identify Visual Concepts
 
-**Image naming convention:**
-- Chapter 1 images: `fode_01*.png` (e.g., fode_0101.png, fode_0102.png)
-- Chapter 2 images: `fode_02*.png`
-- Chapter N images: `fode_0N*.png` (for N < 10) or `fode_N*.png` (for N >= 10)
+**⚠️ IMPORTANT: External images are NOT used.**
 
-**Location:** `books/{course-title}/OEBPS/Images/`
+Instead of uploading images from EPUB files (often poorly positioned), identify visual concepts that need illustration:
+- Technical architectures and system diagrams
+- Memory layouts and data structures
+- Process flows and state machines
+- Code execution patterns
 
-**Actions:**
-1. List all images matching the pattern for this chapter
-2. Note which images are referenced in the XHTML
-3. Prepare to upload all chapter images (even if not currently used in generated content)
+**These concepts will be illustrated using inline diagrams (SVG or ASCII art) in Step 5.**
 
 ### Step 4: Generate Pedagogical Content
 
-**Transform the content into a concise, structured course:**
+**Transform the content into a concise, structured course following strict pedagogical guidelines.**
 
-**Guidelines:**
-- **Conciseness:** Distill the essential concepts, removing verbose explanations
-- **Pedagogy:** Structure content for learning, not just reading
-  - Start with learning objectives or key questions
-  - Use clear section headings
-  - Include practical examples
-  - Add visual elements (diagrams, code examples)
-- **Clarity:** Use simple, direct language
-- **Structure:** Use semantic HTML5 tags:
-  - `<h2>` for main sections
-  - `<h3>` for subsections
-  - `<p>` for paragraphs
-  - `<ul>` or `<ol>` for lists
-  - `<pre><code>` for code blocks
-  - `<blockquote>` for important quotes or callouts
-  - `<figure>` and `<figcaption>` for images
-  - `<strong>` for emphasis, `<em>` for italics
+**CRITICAL:** Refer to `references/content_transformation.md` for complete transformation guidelines.
 
-**Image integration:**
-- Reference images using the uploaded URL format: `/static/images/{filename}`
-- Add descriptive captions
-- Place images contextually near relevant content
+**Mandatory Structure (in this exact order):**
 
-**Content length target:** Aim for 40-60% of the original length while preserving all key concepts.
+1. **Objectifs d'apprentissage** (`<h2>Objectifs d'apprentissage</h2>`)
+   - 3-6 actionable learning objectives
+   - Use action verbs: comprendre, identifier, appliquer, analyser, construire
+   - Aligned with actual chapter content
 
-### Step 5: Generate Exercises
+2. **Pourquoi c'est important** (`<h2>Pourquoi c'est important</h2>`)
+   - Concrete impact: performance, security, architecture, debugging
+   - Real-world consequences of not mastering this content
+   - 2-4 paragraphs maximum
 
-**Create 2-4 exercises per chapter** based on the content:
+3. **Content Sections** (hierarchical structure)
+   - Each main section (`<h2>`) MUST contain:
+     - **Concept fondamental** (`<h3>`) - Core concept explanation
+     - **Mécanisme interne** (`<h3>`) - How it works technically
+     - **Exemple pratique** (`<h3>`) - Concrete example (MANDATORY)
+     - **Erreurs fréquentes** (`<h3>`) - Common mistakes (if relevant)
+   - Use inline SVG diagrams or ASCII art to clarify complex mechanisms
 
-**Exercise types:**
-1. **Multiple Choice** - Test conceptual understanding
-2. **True/False** - Quick comprehension checks
-3. **Code/Practical** - Apply concepts (for technical chapters)
+4. **Synthèse** (`<h2>Synthèse</h2>`)
+   - Structured summary of key points (3-6 bullets)
+   - Logical schema or mind map (if relevant)
+   - Connections to other chapters
+   - Next learning steps
 
-**Exercise creation via API:**
+**Critical Constraints:**
+- ✅ Preserve ALL central mechanisms (technical explanations)
+- ✅ NEVER remove essential technical content
+- ✅ Simplify language WITHOUT making content incorrect/incomplete
+- ✅ Reduce length to 40-60% of original
+- ✅ Remove redundancies, digressions, tangential anecdotes
+- ✅ Keep all structuring concepts, key examples, definitions
 
-**Endpoint:** `POST /api/chapters/{chapter_id}/exercises`
+**Level Adaptation (beginner/intermediate/advanced):**
+- **beginner**: Simplified vocabulary, analogies, very concrete examples, gradual progression
+- **intermediate** (default): Balance theory/practice, technical terms with definitions, focus on patterns
+- **advanced**: Implementation details, performance analysis, edge cases, architectural implications
 
-**Multiple Choice format:**
-```json
-{
-  "order": 1,
-  "title": "Understanding Data Engineering",
-  "type": "multiple_choice",
-  "content": {
-    "question": "What is the primary role of a data engineer?",
-    "options": [
-      "Analyze data to extract insights",
-      "Build and maintain data pipelines and infrastructure",
-      "Create machine learning models",
-      "Design user interfaces for data visualization"
-    ],
-    "correct_index": 1,
-    "explanation": "Data engineers focus on building and maintaining the infrastructure and systems that enable data collection, storage, and processing. Data scientists analyze the data, ML engineers build models, and UI designers create visualizations."
-  }
-}
-```
+**HTML Structure:**
+- Use semantic HTML5 tags only (h2, h3, p, ul, ol, pre, code, blockquote, figure, svg)
+- NO inline styles, NO presentational tags, NO CSS classes
+- Diagrams: Inline SVG or ASCII art (NO external images)
+- Each diagram wrapped in `<figure>` with descriptive `<figcaption>`
+- Code: Complete, executable examples with comments
 
-**True/False format:**
-```json
-{
-  "order": 2,
-  "title": "Data Engineering Evolution",
-  "type": "true_false",
-  "content": {
-    "statement": "Big data tools like Hadoop are always necessary for processing large datasets.",
-    "correct_answer": false,
-    "explanation": "Modern cloud services and managed solutions often provide better alternatives to managing Hadoop clusters, especially with simplified abstractions and pay-as-you-go models."
-  }
-}
-```
+**Language:** All content in French (see `references/content_transformation.md` for translation guidelines)
 
-**Code Exercise format:**
-```json
-{
-  "order": 3,
-  "title": "SQL Query Practice",
-  "type": "code",
-  "content": {
-    "instructions": "Write a SQL query to select all users who joined in the last 30 days.",
-    "language": "sql",
-    "starter_code": "SELECT * FROM users\nWHERE ",
-    "solution": "SELECT * FROM users\nWHERE created_at >= CURRENT_DATE - INTERVAL '30 days';",
-    "hints": [
-      "Use the CURRENT_DATE function",
-      "Consider using INTERVAL for date arithmetic"
-    ]
-  }
-}
-```
+### Step 5: Create Inline Diagrams
 
-**Exercise guidelines:**
-- Order exercises logically (start easy, increase difficulty)
-- Ensure exercises cover different aspects of the chapter
-- Provide clear, helpful explanations for correct answers
-- Make distractors plausible but clearly incorrect
+**⚠️ NO external images are uploaded. Create diagrams directly in HTML.**
 
-### Step 6: Upload Images
+**Diagram Types:**
 
-**For each image found in Step 3:**
+1. **SVG Diagrams** - For complex technical concepts:
+   ```html
+   <figure>
+     <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+       <rect x="10" y="10" width="100" height="50" fill="#e0e0e0" stroke="#333"/>
+       <text x="60" y="40" text-anchor="middle">Component</text>
+       <!-- Additional SVG elements -->
+     </svg>
+     <figcaption>Diagram description</figcaption>
+   </figure>
+   ```
 
-1. **Read image file:** `books/{course-title}/OEBPS/Images/{filename}`
-2. **Upload via API:** `POST /api/images/upload`
-   - Content-Type: `multipart/form-data`
-   - Field name: `file`
-3. **Receive URL:** Response contains the static URL (e.g., `/static/images/fode_0101.png`)
-4. **Update content references:** Replace image references in the HTML content with the returned URLs
+2. **ASCII Art** - For simple illustrations:
+   ```html
+   <figure>
+     <pre>
+   ┌─────────┐
+   │   CPU   │
+   └────┬────┘
+        │
+   ┌────▼────┐
+   │ Memory  │
+   └─────────┘
+     </pre>
+     <figcaption>Simple architecture</figcaption>
+   </figure>
+   ```
 
-**Note:** Images are uploaded to `api/static/images/` and served at `/static/images/{filename}`
+3. **Unicode Box-Drawing** - For structured diagrams:
+   ```html
+   <pre>
+   ╔════════════════╗
+   ║   Process      ║
+   ╠════════════════╣
+   ║ Code   │ Data  ║
+   ╚════════════════╝
+   </pre>
+   ```
 
-### Step 7: Update Chapter Content
+**When to use diagrams:**
+- Memory layouts and address spaces
+- System architectures (CPU, memory, I/O)
+- Data flows and pipelines
+- State machines and control flows
+- Stack frames and function calls
+
+### Step 6: Update Chapter Content
 
 **Update the chapter via API:**
 
@@ -191,18 +179,19 @@ Invoke this skill when the user wants to:
 
 **The content field should contain:**
 - Complete HTML content from Step 4
-- Image references using uploaded URLs from Step 6
+- Inline diagrams (SVG or ASCII art) from Step 5
 - No inline styles (use semantic HTML, styling handled by frontend)
+- NO external image references
 
-**Note:** Exercises are created separately (Step 5), not included in chapter content.
+**Note:** Exercises are created separately via the `/create-exercise` skill.
 
-### Step 8: Report Results
+### Step 7: Report Results
 
 **Display a summary:**
 - ✅ Chapter updated: {chapter_title}
 - 📄 Content length: {word_count} words
-- 🖼️  Images uploaded: {image_count}
-- ✏️  Exercises created: {exercise_count}
+- 🎨 Diagrams created: {diagram_count} inline diagrams
+- 📁 Temporary files stored in: `temp/`
 - 🔗 View at: `http://localhost:3000/courses/{course_slug}/chapters/{chapter_slug}`
 
 ## Important Notes
@@ -211,25 +200,27 @@ Invoke this skill when the user wants to:
 - **Course and chapter must already exist** (created by `import-course` skill first)
 - **One chapter at a time** - This skill is not designed for bulk processing
 - **Content is pedagogical transformation** - Not literal translation, but educational adaptation
+- **Mandatory structure** - MUST follow the exact structure defined in `references/content_transformation.md`
+- **Preserve central mechanisms** - NEVER remove essential technical explanations
+- **Level parameter** - Optional: `beginner`, `intermediate` (default), or `advanced`
 - **French content** - Generate content in French for French courses
-- **Preserve technical accuracy** - Simplify explanations but keep technical details correct
-- **Image optimization** - Images are uploaded as-is, no resizing or compression
+- **Preserve technical accuracy** - Simplify language but keep technical details correct
+- **Inline diagrams only** - NO external images, create SVG/ASCII diagrams in HTML
+- **Temporary files** - All extracted content is stored in `temp/` directory (created automatically)
 
 ## Example Usage
 
 **User request:**
-> "Crée le contenu pédagogique pour le chapitre 1 du cours Fundamentals of Data Engineering"
+> "Crée le contenu pédagogique pour le chapitre 1 du cours [course-name]"
 
 **Skill actions:**
-1. ✅ Course found: `fundamentals-of-data-engineering`
-2. ✅ Chapter found: `ch01.xhtml` → "Data Engineering Described"
-3. 📖 Extracted content: ~15,000 words, 12 images referenced
-4. 🖼️  Found 12 images: `fode_0101.png` through `fode_0112.png`
-5. ✍️  Generated pedagogical content: ~6,500 words (concise, structured)
-6. ✏️  Created 3 exercises: 2 multiple choice, 1 true/false
-7. ⬆️  Uploaded 12 images
-8. ✅ Updated chapter in database
-9. 🔗 View at: http://localhost:3000/courses/fundamentals-of-data-engineering/chapters/data-engineering-described
+1. ✅ Course found: `course-slug`
+2. ✅ Chapter found: `ch01.xhtml` → "Chapter Title"
+3. 📖 Extracted content: ~15,000 words → saved to `temp/chapter_course-slug_ch01_extracted.json`
+4. 🎨 Skipping image upload (creating inline diagrams instead)
+5. ✍️  Generated pedagogical content: ~6,500 words with 8 inline diagrams
+6. ✅ Updated chapter in database
+7. 🔗 View at: http://localhost:3000/courses/course-slug/chapters/chapter-slug
 
 ## Resources
 
@@ -238,24 +229,33 @@ Invoke this skill when the user wants to:
 Python script that orchestrates the chapter creation process:
 - Finds and validates chapter XHTML files
 - Extracts content and structure from XHTML
-- Identifies and uploads images
+- Saves extracted content to `temp/chapter_{course-slug}_ch{XX}_extracted.json`
 - Coordinates with Claude for content generation
-- Makes API requests to update chapters and create exercises
+- Makes API requests to update chapters
 - Provides detailed progress reporting
+- Automatically creates `temp/` directory if it doesn't exist
 
 **Usage:**
 ```bash
 source brainer_venv/bin/activate
-python .claude/skills/create-chapters/scripts/create_chapter.py <course-slug> <chapter-number>
+python .claude/skills/create-chapters/scripts/create_chapter.py <course-slug> <chapter-number> [level]
 ```
+
+**Parameters:**
+- `<course-slug>`: Course identifier (e.g., `fundamentals-of-data-engineering`)
+- `<chapter-number>`: Chapter number to process (e.g., `1`, `5`)
+- `[level]`: Optional difficulty level - `beginner`, `intermediate` (default), or `advanced`
 
 **Examples:**
 ```bash
-# Create chapter 1
+# Create chapter 1 (intermediate level by default)
 python .claude/skills/create-chapters/scripts/create_chapter.py fundamentals-of-data-engineering 1
 
-# Create chapter 5
-python .claude/skills/create-chapters/scripts/create_chapter.py fundamentals-of-data-engineering 5
+# Create chapter 5 for beginners
+python .claude/skills/create-chapters/scripts/create_chapter.py fundamentals-of-data-engineering 5 beginner
+
+# Create chapter 3 for advanced learners
+python .claude/skills/create-chapters/scripts/create_chapter.py computer-systems-a-programmers-perspective 3 advanced
 ```
 
 ### references/content_transformation.md
@@ -265,11 +265,3 @@ Guidelines for transforming raw book content into pedagogical course material:
 - Structuring for learning
 - Examples of good transformations
 - HTML structure guidelines
-
-### references/exercise_creation.md
-
-Guidelines and examples for creating effective exercises:
-- Exercise type selection criteria
-- Writing good questions and distractors
-- Explanation best practices
-- Examples for each exercise type

@@ -13,11 +13,11 @@ A private course site that extracts structured courses from books (PDF/EPUB) and
 **Three-component system:**
 1. **Extraction scripts** (Python) — Parse EPUB books into structured course data
 2. **Backend API** (FastAPI + SQLAlchemy) — REST API with SQLite database
-3. **Frontend** (Next.js 15 + TypeScript) — SSR app with TanStack Query + shadcn/ui
+3. **Frontend** (Next.js 16 + TypeScript) — SSR app with TanStack Query + shadcn/ui
 
 **Data flow:** Books → extraction scripts → SQLite DB ← REST API ← Frontend
 
-**Stack:** Python + FastAPI + SQLAlchemy + SQLite | Next.js 15 + TypeScript + TanStack Query + Tailwind
+**Stack:** Python + FastAPI + SQLAlchemy + SQLite | Next.js 16 + TypeScript + TanStack Query + Tailwind
 
 ## Quick Start
 
@@ -39,6 +39,9 @@ uvicorn api.main:app --reload --host 0.0.0.0    # http://localhost:8000
 cd frontend
 npm install
 npm run dev                                      # http://localhost:3000
+npm run build                                    # Production build
+npm run start                                    # Production server
+npm run lint                                     # Run ESLint
 ```
 
 **WSL Note:** Use `--host 0.0.0.0` for backend to be accessible from Windows browsers.
@@ -47,16 +50,19 @@ npm run dev                                      # http://localhost:3000
 
 **Use skills for implementation details.** Skills contain specialized context and workflows:
 
+- **`/reformat-epub`** — Analyze and normalize EPUB books into Brainer-compatible structure
 - **`/import-course`** — Import EPUB book structure into database
 - **`/create-chapters <num>`** — Generate pedagogical content for a chapter
+- **`/create-exercise`** — Create targeted exercises for chapters
 - **`/api-endpoint`** — Create/modify FastAPI endpoints (use for backend work)
 - **`/frontend-component`** — Create/modify UI components (use for frontend work)
 - **`/skill-creator`** — Create new skills
 
 **Workflow for adding a book:**
 1. Place EPUB in `books/` and extract it
-2. `/import-course` — creates course/parts/chapters structure
-3. `/create-chapters 1`, `/create-chapters 2`, etc. — fills content + exercises
+2. **`/reformat-epub`** — normalize EPUB structure if needed (malformed EPUBs, split files, etc.)
+3. **`/import-course`** — creates course/parts/chapters structure in database
+4. **`/create-chapters 1`**, **`/create-chapters 2`**, etc. — fills content + exercises for each chapter
 
 ## Database Schema
 
@@ -97,13 +103,16 @@ npm run dev                                      # http://localhost:3000
 
 ## Current Status
 
-**Books:** Fundamentals of Data Engineering (EPUB, unpacked in `books/`)
+**Books in `books/`:**
+- Fundamentals of Data Engineering (EPUB, unpacked)
+- Computer Systems: A Programmer's Perspective (EPUB, unpacked + normalized)
 
 **What works:**
 - Full-stack app: extraction scripts, FastAPI backend, Next.js frontend
-- Skills for automation: `/import-course`, `/create-chapters`, `/api-endpoint`, `/frontend-component`
+- Skills for automation: `/reformat-epub`, `/import-course`, `/create-chapters`, `/create-exercise`, `/api-endpoint`, `/frontend-component`
 - Database auto-created on startup (`brainer.db`)
 - Type-safe frontend with auto-generated API types
+- EPUB normalization for malformed/non-standard books
 
 **Roadmap:**
 - Batch chapter processing (currently one-at-a-time via `/create-chapters`)

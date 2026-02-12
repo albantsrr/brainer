@@ -1,0 +1,159 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xmlns:mml="http://www.w3.org/1998/Math/MathML" lang="en" xml:lang="en">
+<head>
+<title>Mathematical Appendix</title>
+<link href="../styles/stylesheet.css" rel="stylesheet" type="text/css"/>
+<meta content="urn:uuid:e0000000-0000-0000-0000-000006607108" name="Adept.expected.resource"/>
+</head>
+<body>
+<p class="FMT"><a href="contents.xhtml#re_Mathematical" id="Mathematical">Mathematical Appendix</a><a id="page_365"/></p>
+<p class="H1" id="b-9781472966445-ch1368-sec1">
+<span class="bold">Chapter 2: How Neurons Get Their Spike</span></p>
+<p class="TXT">Lapicque devised an equation for describing how the voltage across a cell’s membrane changes over time. The equation is based on those used to describe electrical circuits. Specifically, the voltage, <span class="italic">V(t)</span>, is defined according to the equation for a circuit with resistance (<span class="italic">R</span>) and capacitance (<span class="italic">C</span>) in parallel:</p>
+<p class="image-fig" id="inline1.jpg">
+<img alt="" src="../images/inline1.jpg"/></p>
+<p class="TXT">where <span class="italic">t = RC</span>. External input to the cell (from an experimenter or the effects of another neuron) is represented by <span class="italic">I(t)</span>. The cell membrane thus integrates this external input current, with some leak. </p>
+<p class="TXI">Lapicque’s equation doesn’t capture what happens to the membrane potential during an action potential. However, we can add a simple mechanism that indicates when the cell’s membrane has reached its threshold and would cause a spike. Specifically, to turn this equation into a model of a neuron that fires, the voltage is reset to its resting state (<span class="italic">Vrest</span>  ) once it reaches a spiking threshold (<span class="italic">Vthresh</span>  ):</p>
+<p class="image-fig" id="inline2.jpg">
+<img alt="" src="../images/inline2.jpg"/></p>
+<a id="page_366"/>
+<p class="TXT">This doesn’t mimic the complex dynamics of the action potential (for which the Hodgkin-Huxley model is needed), but it does provide a simple way to calculate spike times.</p>
+<p class="H1" id="b-9781472966445-ch1381-sec2">
+<span class="bold">Chapter 3: Learning to Compute</span></p>
+<p class="TXT">The perceptron is a one-layer artificial neural network that can learn to perform simple classification tasks. The learning occurs via updates in the weights between the input neurons and the output neuron, calculated based on specific examples of inputs and outputs.</p>
+<p class="TXI">The learning algorithm starts with a set of random weights, , one for each of the <span class="italic">N</span> binary inputs, <span class="italic">xn</span>. The output classification, , of the perceptron is calculated as:</p>
+<p class="image-fig" id="inline3.jpg">
+<img alt="" src="../images/inline3.jpg"/></p>
+<p class="TXT">where <span class="italic">b</span> is a bias that shifts the threshold. With learning, each entry of <span class="bold">w</span> updates according to the learning rule:</p>
+<p class="image-fig" id="inline4.jpg">
+<img alt="" src="../images/inline4.jpg"/></p>
+<p class="TXT">where  is the correct classification and  is the learning rate. If <span class="italic">xn</span> is one, the sign of the difference between the correct classification and the perceptron’s output will determine how is updated. If <span class="italic">xn</span> or the difference is zero, no update occurs.</p><a id="page_367"/>
+<p class="H1" id="b-9781472966445-ch1395-sec3">
+<span class="bold">Chapter 4: Making and Maintaining Memories</span></p> 
+<p class="TXT">A Hopfield network represents memories as patterns of neural activity. The connections between the neurons allow the network to implement associative memory – that is, a full memory can be retrieved by activating a subset of it.</p>
+<p class="TXI">The network is composed of <span class="italic">N</span> cells, the interactions between which are defined according to a symmetric weight matrix (<span class="italic">W</span>). Each entry (<span class="italic">nm</span>  ) in this matrix defines the strength of the connection between cells <span class="italic">n</span> and <span class="italic">m</span>. At each time point, the activity state for each cell (<span class="italic">cn</span> for <span class="italic">n</span>=1...<span class="italic">N</span>) is updated according to:</p>
+<p class="image-fig" id="inline5.jpg">
+<img alt="" src="../images/inline5.jpg"/></p>
+<p class="TXT">where  &#120579;<span class="italic">n</span> is a threshold.</p>
+<p class="TXI">Each memory, &#120656;i, is a length <span class="italic">N</span> vector defining the activity state of each neuron. If the activity of the network is initially set to a noisy, partial version of a memory, it will evolve to that memory’s attractor state (defined by &#120656;i), at which point the network activity <span class="bold">c</span> will stop changing.</p>
+<p class="TXI">The weight matrix is determined by the memories stored in the network. To store <span class="italic">K</span> memories, each entry of <span class="italic">W</span> is defined according to:</p>
+<p class="image-fig" id="inline6.jpg">
+<img alt="" src="../images/inline6.jpg"/></p>
+<a id="page_368"/>
+<p class="TXI">Therefore, pairs of neurons that have similar activity in many memories will have strong positive connections; those with opposite activity patterns will have strong negative connections.</p>
+<p class="H1" id="b-9781472966445-ch1410-sec4">
+<span class="bold">Chapter 5: Excitation and Inhibition</span></p> 
+<p class="TXT">Networks with the appropriate balance between excitation and inhibition can create stable, noisy neural activity. These networks can be analysed using the mean-field approach, which simplifies the mathematics of the full network into just a handful of equations.</p>
+<p class="TXI">The mean-field equations for the balanced network start with a network of <span class="italic">N</span> neurons (both excitatory and inhibitory) wherein neurons receive external input as well as recurrent input. For the recurrent input, each neuron receives <span class="italic">K</span> excitatory and <span class="italic">K</span> inhibitory inputs. <span class="italic">K</span> is assumed to be much less than <span class="italic">N</span>:</p> 
+<p class="image-fig" id="inline7.jpg">
+<img alt="" src="../images/inline7.jpg"/></p>
+<p class="TXT">Looking at the case of large <span class="italic">K</span> and a constant external input to the network, the mean input to a cell of type <span class="italic">j</span> (either excitatory or inhibitory) is given by:</p>
+<p class="image-fig" id="inline8.jpg">
+<img alt="" src="../images/inline8.jpg"/></p>
+<p class="TXT">And the variance of this input is:</p>
+<p class="image-fig" id="inline9.jpg">
+<img alt="" src="../images/inline9.jpg"/></p>
+<a id="page_369"/>
+<p class="TXI">The terms <span class="italic">Xj</span> and <span class="italic">x</span> represent the external input’s connection strength to the <span class="italic">j</span> population and its firing rate respectively; &#120579;j is the threshold for spiking. <span class="italic">WjI</span> is a measure of the total strength from the inhibitory population to the <span class="italic">j</span> population (the corresponding value from the excitatory population is defined to be one). <span class="italic">WjI</span> is given as the strength of a single connection times √<span class="italic">K</span>. </p>
+<p class="TXI">
+<span class="italic">j</span> is the average activity of the <span class="italic">j</span> population defined to range from zero to one. These values are determined by the mean and square root of the variance of the input according to:</p>
+<p class="image-fig" id="inline10.jpg">
+<img alt="" src="../images/inline10.jpg"/></p>
+<p class="TXT">where <span class="italic">H</span> is the complementary error function. </p>
+<p class="TXI">To make sure that neither the excitatory nor inhibitory input to a cell overwhelms its output, the first term in the equation for mj should be of the same order as the threshold, which is one. To satisfy this, individual connections should have a strength of 1/√<span class="italic">K</span>.</p>
+<p class="H1" id="b-9781472966445-ch1433-sec5">
+<span class="bold">Chapter 6: Stages of Sight</span></p> 
+<p class="TXT">Convolutional neural networks process images by replicating some of the basic features of the brain’s visual system. They are composed of several basic operations. Starting with an image <span class="italic">I</span>, the first step is to convolve this image with a filter <span class="italic">F</span>. The result of this convolution is <a id="page_370"/>passed through an elementwise nonlinearity (&#120601;) to yield activity for the simple cell-like layer:</p>
+<p class="image-fig" id="inline11.jpg">
+<img alt="" src="../images/inline11.jpg"/></p>
+<p class="TXT">The most common nonlinearity is positive rectification:</p>
+<p class="image-fig" id="inline12.jpg">
+<img alt="" src="../images/inline12.jpg"/></p>
+<p class="TXT">Assuming the image and filter are both two-dimensional matrices, <span class="italic">AS</span> is also a two-dimensional matrix. To replicate complex cell responses, a 2D max-pooling operation is applied to the simple cell-like activity. Each element of the matrix of complex cell-like activity (<span class="italic">AC</span>) is defined according to:</p>
+<p class="image-fig" id="inline13.jpg">
+<img alt="" src="../images/inline13.jpg"/></p>
+<p class="TXT">where <span class="italic">Pij</span> is a 2D neighbourhood of AS centred on location <span class="italic">ij</span>. The effect of this operation is that the complex cell activity is simply the maximal activity of the patch of simple cells from which it receives inputs.</p>
+<p class="H1" id="b-9781472966445-ch1449-sec6">
+<span class="bold">Chapter 7: Cracking the Neural Code</span></p> 
+<p class="TXT">Shannon defined information in terms of bits, which are calculated as the base-two log of a symbol’s inverse probability. This can also be written as the negative of the base-two log of the probability:</p>
+<p class="image-fig" id="inline14.jpg">
+<img alt="" src="../images/inline14.jpg"/></p>
+<p class="TXT">The<a id="page_371"/> total information in a code, a value known as entropy (<span class="italic">H</span>), is a function of the information in each of its symbols. Specifically, entropy is a sum of the information contained in each symbol (<span class="italic">xi</span>) of a code <span class="italic">X</span> weighted by its probability, <span class="italic">P(xi  )</span>.</p>
+<p class="image-fig" id="inline15.jpg">
+<img alt="" src="../images/inline15.jpg"/></p>
+<p class="H1" id="b-9781472966445-ch1462-sec7">
+<span class="bold">Chapter 8: Movement in Low Dimensions</span></p> 
+<p class="TXT">Principal components analysis (PCA) can be used to reduce the dimensionality of the activity of a population of neurons. Applying PCA to neural data starts with a matrix of data (<span class="italic">X</span>    ) wherein each row represents a neuron (out of a total of <span class="italic">N</span> neurons) and each column is the mean-subtracted activity of those neurons over time (of length <span class="italic">L</span>):</p>
+<p class="image-fig" id="inline16.jpg">
+<img alt="" src="../images/inline16.jpg"/></p>
+<p class="TXT">The covariance matrix of this data is given as</p> 
+<p class="image-fig" id="inline17.jpg">
+<img alt="" src="../images/inline17.jpg"/></p>
+<a id="page_372"/>
+<p class="TXI">The eigenvalue decomposition says:</p>
+<p class="image-fig" id="inline18.jpg">
+<img alt="" src="../images/inline18.jpg"/></p>
+<p class="TXT">where each column in <span class="italic">Q</span> is an eigenvector of <span class="italic">K</span> and &#120556; is a diagonal matrix wherein the entries on the diagonal are the eigenvalues of the corresponding eigenvectors. The principal components of the data are defined as the eigenvectors of <span class="italic">K</span>. </p>
+<p class="TXI">In order to reduce the full-dimensional data to <span class="italic">D</span> dimensions, the top <span class="italic">D</span> eigenvectors (as ranked by their eigenvalues) are used as the new axes. Projecting the full-dimensional data on to these new axes provides a new data matrix:</p>
+<p class="image-fig" id="inline19.jpg">
+<img alt="" src="../images/inline19.jpg"/></p>
+<p class="TXT">If <span class="italic">D</span> is three or less, this reduced data matrix can be visualised.</p>
+<p class="H1" id="b-9781472966445-ch1483-sec8">
+<span class="bold">Chapter 9: From Structure to Function</span></p> 
+<p class="TXT">Watts and Strogatz argued that many real-world graphs could be described as small-world networks. Small-world networks have low average path lengths (the number of edges traversed between any two nodes) and high clustering coefficients. </p>
+<p class="TXI">Assume a graph composed of <span class="italic">N</span> nodes. If a given node <span class="italic">n</span> is connected to <span class="italic">kn</span> other nodes (known as its neighbours), then the clustering coefficient of that node is:</p>
+<p class="image-fig" id="inline20.jpg">
+<img alt="" src="../images/inline20.jpg"/></p>
+<a id="page_373"/>
+<p class="TXI">where En is the number of edges that exist amongst <span class="italic">n</span>’s neighbours and the term in the denominator is the total number of edges that could exist among these nodes. The clustering coefficient is thus a measure of how interconnected, or ‘cliquey’, groups of nodes are. </p>
+<p class="TXI">The clustering coefficient for the entire network is given by the average of the clustering coefficients for each node:</p>
+<p class="image-fig" id="inline21.jpg">
+<img alt="" src="../images/inline21.jpg"/></p>
+<p class="H1" id="b-9781472966445-ch1496-sec9">
+<span class="bold">Chapter 10: Making Rational Decisions</span></p> 
+<p class="TXT">The full form of Bayes’ rule is:</p>
+<p class="image-fig" id="inline22.jpg">
+<img alt="" src="../images/inline22.jpg"/></p>
+<p class="TXT">where <span class="italic">h</span> represents the hypothesis and <span class="italic">d</span> the observed data. The term on the left-hand side of the equation is known as the posterior distribution. Bayesian decision theory (BDT) addresses how Bayes’ rule can guide decisions by indicating how the posterior distribution should be mapped to a specific perception, choice or action. </p>
+<p class="TXI">In BDT, a loss function indicates the penalty that comes from making different types of wrong decision (for example, incorrectly seeing a red flower as white versus seeing a white flower as red could have different negative outcomes). In the most basic loss function, any <a id="page_374"/>incorrectly chosen hypothesis incurs the same penalty while the correct choice (<span class="italic">h*</span>) has no penalty:</p>
+<p class="image-fig" id="inline23.jpg">
+<img alt="" src="../images/inline23.jpg"/></p>
+<p class="TXT">The overall expected loss for choosing a certain hypothesis (<span class="italic">
+<span class="italic">h</span>
+</span>) is calculated by weighing this loss by the probability of each hypothesis:</p>
+<p class="image-fig" id="inline24.jpg">
+<img alt="" src="../images/inline24.jpg"/></p>
+<p class="TXT">which yields:</p>
+<p class="image-fig" id="inline25.jpg">
+<img alt="" src="../images/inline25.jpg"/></p>
+<p class="TXT">Therefore, to minimise this loss, the option that maximises the posterior distribution should be chosen. That is, the best hypothesis is the one with the highest posterior probability.</p>
+<p class="H1" id="b-9781472966445-ch1517-sec10">
+<span class="bold">Chapter 11: How Rewards Guide Actions</span></p> 
+<p class="TXT">Reinforcement learning describes how animals or artificial agents can learn to behave simply by receiving rewards. A central concept in reinforcement learning is value, a measure that combines the amount of reward received currently with what is expected to come in the future.</p> <a id="page_375"/>
+<p class="TXI">The Bellman equation defines the value (<span class="italic">V</span>) of a state (<span class="italic">s</span>) in terms of the reward ( ) received if action <span class="italic">a</span> is taken in that state and the discounted value of the next state:</p>
+<p class="image-fig" id="inline26.jpg">
+<img alt="" src="../images/inline26.jpg"/></p>
+<p class="TXT">Here,  is the discounting factor and <span class="italic">T</span> is the transition function, which determines which state the agent will be in after taking action <span class="italic">a</span> in state <span class="italic">s</span>. The max operation functions to ensure that the action that yields the highest value is always taken. You can see that the definition of value is recursive as the value function itself appears on the right-hand side of the equation.</p>
+<p class="H1" id="b-9781472966445-ch1526-sec11">
+<span class="bold">Chapter 12: Grand Unified Theories of the Brain</span></p> 
+<p class="TXT">The free energy principle has been offered as a unifying theory of the brain that can describe neural activity and behaviour. Free energy is defined as:</p>
+<p class="image-fig" id="inline27.jpg">
+<img alt="" src="../images/inline27.jpg"/></p>
+<p class="TXT">where <span class="italic">s</span> are sensory inputs, m are internal brain states and <span class="italic">x</span> are states of the world. The first term in this definition (the negative log probability of <span class="italic">s</span>) is sometimes referred to as ‘surprise’, as it is high when the probability of the sensory inputs is low. </p>
+<p class="TXI">
+<span class="italic">DKL</span> is the Kullback–Leibler divergence between two probability distributions, defined as:</p>
+<p class="image-fig" id="inline28.jpg">
+<img alt="" src="../images/inline28.jpg"/></p>
+<a id="page_376"/>
+<p class="TXI">The second term of the definition of free energy thus measures the difference between the probability of states of the world given the brain’s internal state and the probability of states of the world given the sensory inputs. The brain can be thought of as attempting to approximate <span class="italic">p(x | s)</span> using its own internal states 
+(<span class="italic">q(x |</span> m<span class="italic">)</span>) and the better the approximation the lower the free energy.</p>
+<p class="TXI">Because the free energy principle says the brain aims to minimise free energy, it should update its internal states according to:</p>
+<p class="image-fig" id="inline29.jpg">
+<img alt="" src="../images/inline29.jpg"/></p>
+<p class="TXT">In addition, the choice of actions (<span class="italic">a</span>) taken by the animal will influence the sensory inputs it receives:</p>
+<p class="image-fig" id="inline30.jpg">
+<img alt="" src="../images/inline30.jpg"/></p>
+<p class="TXT">Therefore, actions should also be selected according to their ability to minimise free energy:</p>
+<p class="image-fig" id="inline31.jpg">
+<img alt="" src="../images/inline31.jpg"/></p>
+</body>
+</html>
