@@ -9,3 +9,4 @@ brainer.db
 # Uploaded images (served statically, not versionnées)
 api/static/images/*
 !api/static/images/.gitkeep
+*books
