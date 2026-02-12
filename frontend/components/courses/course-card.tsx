@@ -9,17 +9,21 @@ import type { Course } from '@/lib/types';
 interface CourseCardProps {
   course: Course;
   className?: string;
+  style?: React.CSSProperties;
 }
 
-export function CourseCard({ course, className }: CourseCardProps) {
+export function CourseCard({ course, className, style }: CourseCardProps) {
   return (
     <Link href={`/courses/${course.slug}`} className="group">
-      <Card className={cn(
-        "h-full overflow-hidden transition-all duration-300",
-        "hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1",
-        "border-2 hover:border-primary/20",
-        className
-      )}>
+      <Card
+        className={cn(
+          "h-full overflow-hidden transition-all duration-300",
+          "hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1",
+          "border-2 hover:border-primary/20",
+          className
+        )}
+        style={style}
+      >
         {/* Image Section */}
         {course.image ? (
           <div className="relative h-36 w-full overflow-hidden bg-muted">
