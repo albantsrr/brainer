@@ -1,4 +1,4 @@
-import parse, { HTMLReactParserOptions, Element, domToReact } from 'html-react-parser';
+import parse, { HTMLReactParserOptions, Element, domToReact, DOMNode } from 'html-react-parser';
 import { Paragraph } from './paragraph';
 import { Heading } from './heading';
 import { List, ListItem } from './list';
@@ -24,37 +24,37 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
         const level = parseInt(name[1]) as 1 | 2 | 3 | 4 | 5 | 6;
         return (
           <Heading level={level} id={attribs?.id}>
-            {domToReact(children, options)}
+            {domToReact(children as DOMNode[], options)}
           </Heading>
         );
       }
 
       // Paragraphs
       if (name === 'p') {
-        return <Paragraph>{domToReact(children, options)}</Paragraph>;
+        return <Paragraph>{domToReact(children as DOMNode[], options)}</Paragraph>;
       }
 
       // Lists
       if (name === 'ul') {
-        return <List ordered={false}>{domToReact(children, options)}</List>;
+        return <List ordered={false}>{domToReact(children as DOMNode[], options)}</List>;
       }
 
       if (name === 'ol') {
-        return <List ordered={true}>{domToReact(children, options)}</List>;
+        return <List ordered={true}>{domToReact(children as DOMNode[], options)}</List>;
       }
 
       if (name === 'li') {
-        return <ListItem>{domToReact(children, options)}</ListItem>;
+        return <ListItem>{domToReact(children as DOMNode[], options)}</ListItem>;
       }
 
       // Blockquote
       if (name === 'blockquote') {
-        return <Blockquote>{domToReact(children, options)}</Blockquote>;
+        return <Blockquote>{domToReact(children as DOMNode[], options)}</Blockquote>;
       }
 
       // Code blocks
       if (name === 'pre') {
-        return <CodeBlock>{domToReact(children, options)}</CodeBlock>;
+        return <CodeBlock>{domToReact(children as DOMNode[], options)}</CodeBlock>;
       }
 
       // Inline code
@@ -62,14 +62,14 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
         // Check if it's inside a pre (already handled)
         const parent = domNode.parent;
         if (parent && parent instanceof Element && parent.name === 'pre') {
-          return <code>{domToReact(children, options)}</code>;
+          return <code>{domToReact(children as DOMNode[], options)}</code>;
         }
-        return <InlineCode>{domToReact(children, options)}</InlineCode>;
+        return <InlineCode>{domToReact(children as DOMNode[], options)}</InlineCode>;
       }
 
       // Figures and images
       if (name === 'figure') {
-        return <Figure>{domToReact(children, options)}</Figure>;
+        return <Figure>{domToReact(children as DOMNode[], options)}</Figure>;
       }
 
       if (name === 'img') {
@@ -82,21 +82,21 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
       }
 
       if (name === 'figcaption') {
-        return <FigureCaption>{domToReact(children, options)}</FigureCaption>;
+        return <FigureCaption>{domToReact(children as DOMNode[], options)}</FigureCaption>;
       }
 
       // Strong
       if (name === 'strong' || name === 'b') {
         return (
           <strong className="font-semibold text-foreground">
-            {domToReact(children, options)}
+            {domToReact(children as DOMNode[], options)}
           </strong>
         );
       }
 
       // Emphasis
       if (name === 'em' || name === 'i') {
-        return <em className="italic">{domToReact(children, options)}</em>;
+        return <em className="italic">{domToReact(children as DOMNode[], options)}</em>;
       }
 
       // Links
@@ -108,7 +108,7 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
             target={attribs?.target}
             rel={attribs?.rel}
           >
-            {domToReact(children, options)}
+            {domToReact(children as DOMNode[], options)}
           </a>
         );
       }
