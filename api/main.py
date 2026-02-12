@@ -9,6 +9,12 @@ from .routers import chapters, courses, exercises, images
 
 app = FastAPI(title="Brainer API", version="0.1.0")
 
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for Docker healthcheck and monitoring."""
+    return {"status": "healthy"}
+
 # CORS — allow all in dev; tighten allow_origins in production
 app.add_middleware(
     CORSMiddleware,
