@@ -76,6 +76,11 @@ def classify(label: str):
     if m:
         return "part", roman_to_int(m.group(1)), m.group(2).strip()
 
+    # Chapter — "Chapter N: Title" format
+    m = re.match(r"^Chapter\s+(\d+):\s+(.*)", label, re.IGNORECASE)
+    if m:
+        return "chapter", int(m.group(1)), m.group(2).strip()
+
     # Chapter — numeric prefix
     m = re.match(r"^(\d+)\.\s+(.*)", label)
     if m:
