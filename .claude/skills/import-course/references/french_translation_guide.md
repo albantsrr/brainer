@@ -6,26 +6,37 @@ Ce document explique comment traduire les titres de cours, parties et chapitres 
 
 **⚠️ PAS de traduction littérale !** Les titres doivent être traduits de manière logique, compréhensible et pédagogique.
 
-### 1. Titres de cours
+### 1. Titres et descriptions de cours
 
 **Objectifs :**
 - Clarté et professionnalisme
 - Préserver les termes techniques reconnaissables
 - Format académique français
+- Description concise et informative (1-2 phrases)
 
-**Exemples :**
+**Exemples de titres :**
 
 | Anglais | ❌ Mauvaise traduction | ✅ Bonne traduction |
 |---------|------------------------|---------------------|
 | Fundamentals of Data Engineering | Fondamentaux de l'Ingénierie des Données | Principes fondamentaux de l'ingénierie des données |
 | Computer Systems: A Programmer's Perspective | Systèmes Informatiques : Une Perspective de Programmeur | Systèmes informatiques : Une approche pratique pour les programmeurs |
 | Learning Python | Apprendre Python | Apprendre Python |
+| Docker Deep Dive | Plongée Profonde dans Docker | Docker en profondeur |
+
+**Exemples de descriptions :**
+
+| Cours | ❌ Mauvaise description | ✅ Bonne description |
+|-------|------------------------|---------------------|
+| Docker Deep Dive | by Nigel Poulton | Guide complet de Docker, des concepts de base aux fonctionnalités avancées : conteneurs, images, réseaux, volumes, Compose, Swarm et sécurité. |
+| Fundamentals of Data Engineering | by Joe Reis and Matt Housley | Introduction complète à l'ingénierie des données : pipelines, architectures, outils modernes et bonnes pratiques pour construire des systèmes de données robustes. |
+| Computer Systems | Un livre sur les systèmes informatiques | Exploration approfondie des systèmes informatiques du point de vue du programmeur : architecture matérielle, systèmes d'exploitation, réseaux et optimisation. |
 
 **Règles :**
 - Utiliser "Principes fondamentaux" plutôt que "Fondamentaux"
 - Préférer "ingénierie des données" à "Ingénierie des Données"
 - Adapter les sous-titres pour qu'ils soient naturels en français
 - Garder les noms de langages/technologies tels quels (Python, Java, etc.)
+- **Description : 1-2 phrases maximum, résumant les sujets clés du cours (PAS le nom de l'auteur)**
 
 ### 2. Titres de parties
 
@@ -50,14 +61,16 @@ Ce document explique comment traduire les titres de cours, parties et chapitres 
 
 ### 3. Titres de chapitres
 
+**⚠️ IMPORTANT :** Les titres de chapitres dans `course-plan.json` incluent TOUJOURS le préfixe "Chapter X:" automatiquement. Il faut simplement le traduire en "Chapitre X:".
+
 **Objectifs :**
 - Précision pédagogique
 - Action et apprentissage
-- Format consistant
+- Format consistant avec préfixe numéroté
 
 **Exemples :**
 
-| Anglais | ❌ Mauvaise traduction | ✅ Bonne traduction |
+| Anglais (course-plan.json) | ❌ Mauvaise traduction | ✅ Bonne traduction |
 |---------|------------------------|---------------------|
 | Chapter 1: Getting Started | Chapitre 1 : Commencer | Chapitre 1 : Premiers pas |
 | Chapter 2: Data Modeling | Chapitre 2 : Modélisation de Données | Chapitre 2 : Modélisation des données |
@@ -65,7 +78,8 @@ Ce document explique comment traduire les titres de cours, parties et chapitres 
 | Chapter 4: Performance Optimization | Chapitre 4 : Optimisation de Performance | Chapitre 4 : Optimisation des performances |
 
 **Règles :**
-- Format : "Chapitre {numéro} : {titre}"
+- **Transformer "Chapter {num}:" en "Chapitre {num} :"** (noter l'espace avant les deux-points en français)
+- Format final : "Chapitre {numéro} : {titre}"
 - "Getting Started" → "Premiers pas" (pas "Commencer" ou "Démarrage")
 - "Working with X" → "Travailler avec X" (pas "Travailler sur")
 - Utiliser l'article défini : "les données", "les API", "les performances"
@@ -116,7 +130,7 @@ Examiner :
 - Les titres des parties
 - Les titres des chapitres
 
-### 3. Traduire intelligemment
+### 3. Traduire intelligemment et générer une description
 
 Créer `temp/course-plan-fr.json` en appliquant les règles ci-dessus :
 
@@ -125,7 +139,8 @@ Créer `temp/course-plan-fr.json` en appliquant les règles ci-dessus :
   "course": {
     "title": "Principes fondamentaux de l'ingénierie des données",
     "slug": "fundamentals-of-data-engineering",
-    "author": "Joe Reis, Matt Housley"
+    "author": "Joe Reis, Matt Housley",
+    "description": "Introduction complète à l'ingénierie des données : pipelines, architectures, outils modernes et bonnes pratiques pour construire des systèmes de données robustes."
   },
   "parts": [
     {
@@ -197,7 +212,8 @@ Après l'import, vérifier :
 {
   "course": {
     "title": "Systèmes informatiques : Une approche pratique pour les programmeurs",
-    "slug": "computer-systems-a-programmers-perspective"
+    "slug": "computer-systems-a-programmers-perspective",
+    "description": "Exploration approfondie des systèmes informatiques du point de vue du programmeur : architecture matérielle, systèmes d'exploitation, réseaux et optimisation."
   },
   "parts": [
     {
@@ -219,6 +235,7 @@ Après l'import, vérifier :
 ## Notes importantes
 
 - **Ne PAS modifier les slugs** : Ils restent en anglais pour la compatibilité
-- **Préserver la structure JSON** : Ne pas modifier les clés, seulement les valeurs "title"
+- **Préserver la structure JSON** : Ne pas modifier les clés, seulement les valeurs "title" et "description"
 - **Conserver les métadonnées** : Author, order, etc. restent identiques
 - **Respecter la hiérarchie** : Partie → Chapitre
+- **OBLIGATOIRE : Ajouter une description** : Le champ "description" doit contenir une phrase descriptive (1-2 phrases), PAS le nom de l'auteur

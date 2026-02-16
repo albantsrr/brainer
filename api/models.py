@@ -43,7 +43,7 @@ class Chapter(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     course_id = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"), nullable=False)
-    part_id = Column(Integer, ForeignKey("parts.id", ondelete="CASCADE"), nullable=False)
+    part_id = Column(Integer, ForeignKey("parts.id", ondelete="CASCADE"), nullable=True)
     order = Column(Integer, nullable=False)
     title = Column(String, nullable=False)
     slug = Column(String, nullable=False)

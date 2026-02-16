@@ -71,7 +71,17 @@ def classify(label: str):
     chapter   Numbered chapter           (1. …)
     other     Everything else            (preface, appendix, index …)
     """
-    # Part — Roman numeral prefix
+    # Part — "Part N: Title" or "Part N Title" format with number
+    m = re.match(r"^Part\s+(\d+)[\s:\-]+(.*)", label, re.IGNORECASE)
+    if m:
+        return "part", int(m.group(1)), m.group(2).strip()
+
+    # Part — "Part I: Title" or "Part I Title" format with Roman numeral
+    m = re.match(r"^Part\s+([IVX]+)[\s:\-]+(.*)", label, re.IGNORECASE)
+    if m:
+        return "part", roman_to_int(m.group(1)), m.group(2).strip()
+
+    # Part — Roman numeral prefix (legacy format: "I. Title")
     m = re.match(r"^([IVX]+)\.\s+(.*)", label)
     if m:
         return "part", roman_to_int(m.group(1)), m.group(2).strip()
@@ -141,8 +151,10 @@ def parse(toc_path: Path) -> dict:
             # chapters before the first part header land in an implicit part
             if current_part is None:
                 current_part = {"order": 0, "title": "General", "chapters": []}
+            # Always include "Chapter X:" prefix in the title for consistency
+            chapter_title = f"Chapter {num}: {clean}"
             current_part["chapters"].append(
-                {"chapter_num": num, "title": clean, "source_file": src}
+                {"chapter_num": num, "title": chapter_title, "source_file": src}
             )
         # 'other' → silently skipped (preface, appendices, index, …)
 

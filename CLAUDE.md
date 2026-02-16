@@ -21,20 +21,22 @@ A private course site that extracts structured courses from books (PDF/EPUB) and
 
 ## Quick Start
 
-**Setup Python environment:**
+**Local development (recommended):**
+
+1. **Setup Python environment:**
 ```bash
 python -m venv brainer_venv
 source brainer_venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**Run backend (FastAPI):**
+2. **Run backend (FastAPI):**
 ```bash
 source brainer_venv/bin/activate
 uvicorn api.main:app --reload --host 0.0.0.0    # http://localhost:8000
 ```
 
-**Run frontend (Next.js):**
+3. **Run frontend (Next.js):**
 ```bash
 cd frontend
 npm install
@@ -44,7 +46,21 @@ npm run start                                    # Production server
 npm run lint                                     # Run ESLint
 ```
 
-**WSL Note:** Use `--host 0.0.0.0` for backend to be accessible from Windows browsers.
+**Docker deployment:**
+```bash
+# Local development with Docker
+docker-compose up -d
+
+# Production deployment (see /deploy-docker skill)
+./scripts/build_images.sh      # Build Docker images
+./scripts/push_images.sh       # Push to registry
+./scripts/deploy.sh            # Deploy to VPS
+```
+
+**Notes:**
+- WSL: Use `--host 0.0.0.0` for backend to be accessible from Windows browsers
+- Local dev uses SQLite (`brainer.db`), Docker uses PostgreSQL
+- API docs available at: http://localhost:8000/docs (Swagger UI)
 
 ## Skills
 

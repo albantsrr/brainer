@@ -14,8 +14,9 @@ Usage:
 
 import json
 import os
-import subprocess
+import shutil
 import sys
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -29,37 +30,37 @@ except ImportError:
 API_URL = os.getenv("API_URL", "http://localhost:8000")
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent  # Go up to /home/teissier/brainer
 BOOKS_DIR = PROJECT_ROOT / "books"
-PARSE_TOC_SCRIPT = Path(__file__).parent / "parse_toc.py"  # Now in same scripts directory
 TEMP_DIR = PROJECT_ROOT / "temp"
-COURSE_PLAN_FILE = TEMP_DIR / "course-plan.json"
 COURSE_PLAN_FR_FILE = TEMP_DIR / "course-plan-fr.json"
 
 
+def clear_temp_dir():
+    """Clear the temp/ directory before starting."""
+    if TEMP_DIR.exists():
+        print(f"🗑️  Clearing temp directory: {TEMP_DIR}")
+        shutil.rmtree(TEMP_DIR)
+    TEMP_DIR.mkdir(exist_ok=True)
+    print(f"   ✅ Temp directory ready")
+
+
 def find_books() -> list[tuple[str, Path]]:
-    """Find all books with toc.ncx files OR normalized directories with course-plan.json."""
+    """Find all books with course-plan.json in their directory."""
     books = []
 
-    # Find books with toc.ncx
-    for toc_path in BOOKS_DIR.rglob("toc.ncx"):
-        book_name = toc_path.parent.name
-        books.append((book_name, toc_path))
-
-    # Find normalized books (directories ending with -normalized containing course-plan.json)
+    # Search for course-plan.json in all book directories
     for book_dir in BOOKS_DIR.iterdir():
-        if book_dir.is_dir() and book_dir.name.endswith('-normalized'):
-            plan_path = book_dir / "course-plan.json"
-            if not plan_path.exists():
-                # Try parent directory
-                plan_path = book_dir.parent / "course-plan.json"
+        if not book_dir.is_dir():
+            continue
 
-            if plan_path.exists():
-                books.append((book_dir.name, plan_path))
+        plan_path = book_dir / "course-plan.json"
+        if plan_path.exists():
+            books.append((book_dir.name, plan_path))
 
     return books
 
 
 def find_book_by_name(name: str) -> Optional[Path]:
-    """Find toc.ncx or course-plan.json for a specific book name."""
+    """Find course-plan.json for a specific book name."""
     books = find_books()
     for book_name, path in books:
         if book_name.lower() == name.lower():
@@ -67,47 +68,14 @@ def find_book_by_name(name: str) -> Optional[Path]:
     return None
 
 
-def parse_toc(toc_or_plan_path: Path) -> dict:
-    """Run parse_toc.py or load existing course-plan.json."""
+def load_course_plan(plan_path: Path) -> dict:
+    """Load course-plan.json from book directory."""
+    print(f"📖 Loading course plan: {plan_path}")
 
-    # Ensure temp directory exists
-    TEMP_DIR.mkdir(exist_ok=True)
+    if not plan_path.exists():
+        sys.exit(f"ERROR: {plan_path} not found")
 
-    # Check if this is already a course-plan.json file
-    if toc_or_plan_path.name == "course-plan.json":
-        print(f"📖 Loading existing course plan: {toc_or_plan_path}")
-        with open(toc_or_plan_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-
-    # Otherwise, parse toc.ncx
-    print(f"📖 Parsing TOC: {toc_or_plan_path}")
-
-    # Run parse_toc.py
-    result = subprocess.run(
-        [sys.executable, str(PARSE_TOC_SCRIPT), str(toc_or_plan_path)],
-        cwd=PROJECT_ROOT,
-        capture_output=True,
-        text=True
-    )
-
-    if result.returncode != 0:
-        print(f"ERROR running parse_toc.py:\n{result.stderr}")
-        sys.exit(1)
-
-    print(result.stdout)  # Show parse_toc.py output
-
-    # Check if parse_toc.py created the file at the old location (root)
-    old_plan_file = PROJECT_ROOT / "course-plan.json"
-    if old_plan_file.exists() and not COURSE_PLAN_FILE.exists():
-        # Move it to temp/
-        print(f"   📁 Moving course-plan.json to temp/")
-        old_plan_file.rename(COURSE_PLAN_FILE)
-
-    # Read generated course-plan.json
-    if not COURSE_PLAN_FILE.exists():
-        sys.exit(f"ERROR: {COURSE_PLAN_FILE} was not created")
-
-    with open(COURSE_PLAN_FILE, "r", encoding="utf-8") as f:
+    with open(plan_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -118,7 +86,7 @@ def create_course(plan: dict) -> str:
     payload = {
         "title": course_info["title"],
         "slug": course_info["slug"],
-        "description": f"by {course_info['author']}" if course_info.get("author") else None
+        "description": course_info.get("description")
     }
 
     print(f"\n🎓 Creating course: {payload['title']}")
@@ -200,66 +168,61 @@ def main():
     print("  Brainer Course Importer")
     print("=" * 70)
 
-    # Parse arguments
-    generate_only = "--generate-plan" in sys.argv
-    if generate_only:
-        sys.argv.remove("--generate-plan")
+    # Ensure temp directory exists (without clearing it)
+    TEMP_DIR.mkdir(exist_ok=True)
 
-    # Check if backend is running (skip if only generating plan)
-    if not generate_only:
-        try:
-            response = requests.get(f"{API_URL}/api/courses", timeout=2)
-        except requests.exceptions.RequestException:
-            sys.exit(f"\n❌ Backend not accessible at {API_URL}\n   Make sure to run: uvicorn api.main:app --reload --host 0.0.0.0\n")
+    # Check if backend is running
+    try:
+        requests.get(f"{API_URL}/api/courses", timeout=2)
+    except requests.exceptions.RequestException:
+        sys.exit(f"\n❌ Backend not accessible at {API_URL}\n   Make sure to run: uvicorn api.main:app --reload --host 0.0.0.0\n")
 
-    # Find books
+    # Find books with course-plan.json
     books = find_books()
 
     if not books:
-        sys.exit(f"\n❌ No books with toc.ncx found in {BOOKS_DIR}\n")
+        sys.exit(f"\n❌ No books with course-plan.json found in {BOOKS_DIR}\n   Run /reformat-epub first to generate course-plan.json\n")
 
     # If no book name provided, list available books
     if len(sys.argv) < 2:
-        print(f"\n📚 Found {len(books)} book(s):\n")
-        for book_name, toc_path in books:
+        print(f"\n📚 Found {len(books)} book(s) with course-plan.json:\n")
+        for book_name, plan_path in books:
             print(f"   • {book_name}")
-        print(f"\nUsage: python {Path(__file__).name} [--generate-plan] \"Book Title\"")
+        print(f"\nUsage: python {Path(__file__).name} \"Book Directory Name\"")
         sys.exit(0)
 
     # Import specific book
     book_name = sys.argv[1]
-    toc_path = find_book_by_name(book_name)
+    plan_path = find_book_by_name(book_name)
 
-    if not toc_path:
+    if not plan_path:
         print(f"\n❌ Book '{book_name}' not found.\n")
         print("Available books:")
         for name, _ in books:
             print(f"   • {name}")
         sys.exit(1)
 
-    # Parse TOC
-    plan = parse_toc(toc_path)
+    # Load course plan from book directory
+    plan = load_course_plan(plan_path)
 
-    # If generate-only mode, stop here
-    if generate_only:
-        print("\n" + "=" * 70)
-        print("  ✅ Course plan generated!")
-        print("=" * 70)
-        print(f"\n  File: {COURSE_PLAN_FILE}")
-        print(f"\n  Next step: Claude will translate this file to French")
-        print(f"  French file will be saved as: {COURSE_PLAN_FR_FILE}")
-        print(f"  Then run without --generate-plan to import\n")
-        sys.exit(0)
+    print(f"\n📝 Course plan loaded successfully")
+    print(f"   Course: {plan['course']['title']}")
+    print(f"   Parts: {plan['summary']['parts']}")
+    print(f"   Chapters: {plan['summary']['chapters']}")
 
-    # Check if French translation exists
+    # Ask Claude to translate to French and save to temp/course-plan-fr.json
+    print(f"\n⚠️  IMPORTANT: Claude must now translate the course plan to French")
+    print(f"   Source: {plan_path}")
+    print(f"   Target: {COURSE_PLAN_FR_FILE}")
+    print(f"\n   After translation, this script will import using the French version.\n")
+
+    # Check if French translation exists in temp/
     if COURSE_PLAN_FR_FILE.exists():
-        print(f"\n📝 Using French translation: {COURSE_PLAN_FR_FILE}")
+        print(f"\n✅ French translation found: {COURSE_PLAN_FR_FILE}")
         with open(COURSE_PLAN_FR_FILE, "r", encoding="utf-8") as f:
             plan = json.load(f)
     else:
-        print(f"\n⚠️  No French translation found at {COURSE_PLAN_FR_FILE}")
-        print("   Using English version (not recommended)")
-        print(f"   Run with --generate-plan first to create French translation")
+        sys.exit(f"\n❌ Please create French translation at {COURSE_PLAN_FR_FILE} before importing")
 
     # Create course structure
     course_slug = create_course(plan)

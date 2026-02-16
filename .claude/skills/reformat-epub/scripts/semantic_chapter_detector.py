@@ -20,7 +20,8 @@ from bs4 import BeautifulSoup
 
 # Import utility functions from parse_toc.py
 import sys
-sys.path.insert(0, str(Path(__file__).parent))
+import_course_scripts = Path(__file__).parent.parent.parent / "import-course" / "scripts"
+sys.path.insert(0, str(import_course_scripts))
 from parse_toc import slugify, roman_to_int, classify as classify_original
 
 
@@ -172,9 +173,13 @@ def _detect_from_toc(documents: list, toc_structure: list) -> dict:
                 }
 
             chapter_counter += 1
+            # Always include "Chapter X:" prefix for consistency
+            # Clean up title (remove leading colons/spaces if present)
+            cleaned = clean_title.lstrip(': ').strip()
+            chapter_title = f"Chapter {num}: {cleaned}"
             chapter = {
                 'declared_num': num,
-                'title': clean_title,
+                'title': chapter_title,
                 'source_files': [src] if src else [],
                 'content_html': doc['content'] if doc else '',
                 'part_order': current_part['order'],
@@ -248,9 +253,14 @@ def _detect_from_content(documents: list) -> dict:
                 }
 
             chapter_counter += 1
+            # Always include "Chapter X:" prefix for consistency
+            # Clean up title (remove leading colons/spaces if present)
+            num = chapter_num or chapter_counter
+            cleaned = chapter_title.lstrip(': ').strip()
+            formatted_title = f"Chapter {num}: {cleaned}"
             chapter = {
-                'declared_num': chapter_num or chapter_counter,
-                'title': chapter_title,
+                'declared_num': num,
+                'title': formatted_title,
                 'source_files': [doc['href']],
                 'content_html': doc['content'],
                 'part_order': current_part['order'],

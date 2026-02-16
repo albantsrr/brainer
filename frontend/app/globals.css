@@ -26,6 +26,8 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -81,6 +83,10 @@
   /* Destructive - Keep red for errors */
   --destructive: oklch(0.577 0.245 27.325);
 
+  /* Success - Green for correct answers */
+  --success: oklch(0.60 0.18 150);
+  --success-foreground: oklch(0.99 0 0);
+
   /* Borders and inputs - soft blue-gray tint */
   --border: oklch(0.90 0.01 250);
   --input: oklch(0.90 0.01 250);
@@ -135,6 +141,10 @@
 
   /* Destructive - Softer red for dark mode */
   --destructive: oklch(0.65 0.20 27.325);
+
+  /* Success - Brighter green for dark mode */
+  --success: oklch(0.70 0.18 150);
+  --success-foreground: oklch(0.15 0.01 250);
 
   /* Borders and inputs - subtle with blue tint */
   --border: oklch(0.30 0.01 250);

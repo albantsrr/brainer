@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/health": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Health Check
+         * @description Health check endpoint for Docker healthcheck and monitoring.
+         */
+        get: operations["health_check_health_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/courses": {
         parameters: {
             query?: never;
@@ -96,7 +116,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/courses/{slug}/chapters/{chapter_id}": {
+    "/api/courses/{slug}/chapters/{chapter_slug}": {
         parameters: {
             query?: never;
             header?: never;
@@ -104,12 +124,12 @@ export interface paths {
             cookie?: never;
         };
         /** Get Chapter */
-        get: operations["get_chapter_api_courses__slug__chapters__chapter_id__get"];
+        get: operations["get_chapter_api_courses__slug__chapters__chapter_slug__get"];
         /** Update Chapter */
-        put: operations["update_chapter_api_courses__slug__chapters__chapter_id__put"];
+        put: operations["update_chapter_api_courses__slug__chapters__chapter_slug__put"];
         post?: never;
         /** Delete Chapter */
-        delete: operations["delete_chapter_api_courses__slug__chapters__chapter_id__delete"];
+        delete: operations["delete_chapter_api_courses__slug__chapters__chapter_slug__delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -464,6 +484,26 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    health_check_health_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
     list_courses_api_courses_get: {
         parameters: {
             query?: never;
@@ -842,13 +882,13 @@ export interface operations {
             };
         };
     };
-    get_chapter_api_courses__slug__chapters__chapter_id__get: {
+    get_chapter_api_courses__slug__chapters__chapter_slug__get: {
         parameters: {
             query?: never;
             header?: never;
             path: {
                 slug: string;
-                chapter_id: number;
+                chapter_slug: string;
             };
             cookie?: never;
         };
@@ -874,13 +914,13 @@ export interface operations {
             };
         };
     };
-    update_chapter_api_courses__slug__chapters__chapter_id__put: {
+    update_chapter_api_courses__slug__chapters__chapter_slug__put: {
         parameters: {
             query?: never;
             header?: never;
             path: {
                 slug: string;
-                chapter_id: number;
+                chapter_slug: string;
             };
             cookie?: never;
         };
@@ -910,13 +950,13 @@ export interface operations {
             };
         };
     };
-    delete_chapter_api_courses__slug__chapters__chapter_id__delete: {
+    delete_chapter_api_courses__slug__chapters__chapter_slug__delete: {
         parameters: {
             query?: never;
             header?: never;
             path: {
                 slug: string;
-                chapter_id: number;
+                chapter_slug: string;
             };
             cookie?: never;
         };

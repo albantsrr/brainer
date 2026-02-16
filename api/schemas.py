@@ -103,7 +103,7 @@ class PartResponse(BaseModel):
 
 
 class ChapterCreate(BaseModel):
-    part_id: int
+    part_id: int | None = None
     order: int
     title: str
     slug: str
@@ -128,7 +128,7 @@ class ChapterListItem(BaseModel):
     order: int
     title: str
     slug: str
-    part_id: int
+    part_id: int | None
 
 
 class ChapterResponse(BaseModel):
@@ -136,7 +136,7 @@ class ChapterResponse(BaseModel):
 
     id: int
     course_id: int
-    part_id: int
+    part_id: int | None
     order: int
     title: str
     slug: str

@@ -181,10 +181,16 @@ Ajouter 1 :        11111011  ← représentation de -5
 
 <p>Vérification : 00000101 + 11111011 = 00000000 (avec retenue ignorée)</p>
 
-<figure>
-  <img src="/static/images/chapter-02-image-01.png" alt="Représentation complément à deux" />
-  <figcaption>Figure 1 : Représentation des entiers signés sur 4 bits en complément à deux</figcaption>
-</figure>
+<pre><code class="language-mermaid">
+graph TD
+    A[Nombre positif: 5] -->|Convertir en binaire| B[00000101]
+    B -->|Inverser tous les bits| C[11111010]
+    C -->|Ajouter 1| D[11111011]
+    D -->|Résultat| E[Représentation de -5]
+
+    style A fill:#e3f2fd
+    style E fill:#c8e6c9
+</code></pre>
 
 <h3>Erreurs fréquentes</h3>
 <ul>
@@ -241,10 +247,26 @@ Comprendre ces limites est essentiel pour éviter les bugs de dépassement et d'
 <p><strong>Prochaines étapes :</strong> Le chapitre suivant explore comment le processeur
 exécute les instructions en langage machine.</p>
 
-<figure>
-  <img src="/static/images/chapter-02-summary.png" alt="Carte mentale des représentations numériques" />
-  <figcaption>Carte mentale : Relations entre les différentes représentations numériques</figcaption>
-</figure>
+<pre><code class="language-mermaid">
+graph TD
+    Root[Représentation des Nombres]
+    Root --> Integer[Entiers]
+    Root --> Float[Flottants]
+
+    Integer --> Unsigned[Non signés]
+    Integer --> Signed[Signés]
+
+    Unsigned --> U_Range[0 à 2^n-1]
+    Signed --> S_Range[-2^n-1 à 2^n-1-1]
+    Signed --> TwoComp[Complément à deux]
+
+    Float --> IEEE[IEEE 754]
+    IEEE --> Parts[Signe + Exposant + Mantisse]
+
+    style Root fill:#e1f5ff
+    style Integer fill:#fff4e1
+    style Float fill:#fff4e1
+</code></pre>
 ```
 
 ---
@@ -412,13 +434,15 @@ le même hardware pour l'addition et la soustraction.</p>
 <p>Texte avec <strong>emphase forte</strong> et <em>emphase légère</em>.</p>
 <p>Code inline : <code>variable_name</code></p>
 
-<!-- Listes -->
+<!-- Listes - TOUJOURS utiliser ul/ol, JAMAIS convertir en paragraphes -->
 <ul>
   <li>Item non ordonné</li>
+  <li>Autre item</li>
 </ul>
 
 <ol>
   <li>Étape ordonnée</li>
+  <li>Autre étape</li>
 </ol>
 
 <!-- Blocs de code -->
@@ -427,16 +451,17 @@ def example():
     return "Hello"
 </code></pre>
 
+<!-- Diagrammes Mermaid -->
+<pre><code class="language-mermaid">
+graph TD
+    A[Start] --> B[Process]
+    B --> C[End]
+</code></pre>
+
 <!-- Citations importantes -->
 <blockquote>
   <p>Principe ou citation importante</p>
 </blockquote>
-
-<!-- Images avec légendes -->
-<figure>
-  <img src="/static/images/filename.png" alt="Description" />
-  <figcaption>Figure 1 : Légende descriptive</figcaption>
-</figure>
 
 <!-- Tableaux (si nécessaire) -->
 <table>
@@ -454,9 +479,9 @@ def example():
 **✅ FAIRE :**
 - Utiliser les balises sémantiques (strong, em, code)
 - Hiérarchie logique : h2 → h3 → p
-- Alt text descriptifs pour les images
-- Légendes explicatives pour les figures
 - Code commenté et formaté
+- **TOUJOURS utiliser `<ul>` et `<ol>` pour les listes** (le style des puces/tirets est géré par le CSS)
+- **Utiliser Mermaid pour tous les diagrammes** (voir section dédiée ci-dessous)
 
 **❌ NE PAS FAIRE :**
 - `style="..."` (styles inline)
@@ -464,30 +489,489 @@ def example():
 - Sauter des niveaux de titres (h2 → h4)
 - Classes ou IDs CSS
 - Balises dépréciées
+- **Convertir des listes `<ul>/<ol>` en paragraphes `<p>`** (cela détruit la sémantique)
+- Utiliser des tirets manuels (—) dans les paragraphes pour simuler des listes
+- Utiliser des diagrammes ASCII/Unicode ou SVG inline (remplacer par Mermaid)
+
+---
+
+## 📊 Diagrammes avec Mermaid
+
+**IMPORTANT :** Tous les diagrammes techniques doivent être créés avec Mermaid.js.
+
+### Format de Base
+
+```html
+<pre><code class="language-mermaid">
+TYPE_DE_DIAGRAMME
+    CONTENU_DU_DIAGRAMME
+</code></pre>
+```
+
+### Types de Diagrammes et Exemples
+
+#### 1. Flowchart (graph) - Processus, Architectures, Flux de Données
+
+**Syntaxe :** `graph TD` (top-down) ou `graph LR` (left-right)
+
+```html
+<pre><code class="language-mermaid">
+graph TD
+    A[Serveur Physique] --> B[Hyperviseur]
+    B --> C[VM 1: OS + App A]
+    B --> D[VM 2: OS + App B]
+    B --> E[VM 3: OS + App C]
+
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#e8f5e9
+    style D fill:#e8f5e9
+    style E fill:#e8f5e9
+</code></pre>
+```
+
+```html
+<pre><code class="language-mermaid">
+graph LR
+    Client[Client HTTP] -->|Requête| Nginx[Proxy Nginx]
+    Nginx -->|Transmission| API[Backend FastAPI]
+    API -->|Requête SQL| DB[(PostgreSQL)]
+    DB -->|Données| API
+    API -->|Réponse| Nginx
+    Nginx -->|Réponse| Client
+</code></pre>
+```
+
+#### 2. Sequence Diagram - Interactions, Protocoles, Communication
+
+```html
+<pre><code class="language-mermaid">
+sequenceDiagram
+    participant Utilisateur
+    participant Navigateur
+    participant API
+    participant BD
+
+    Utilisateur->>Navigateur: Clic sur "Connexion"
+    Navigateur->>API: POST /api/auth/login
+    API->>BD: Requête utilisateur
+    BD-->>API: Données utilisateur
+    API-->>Navigateur: Jeton JWT
+    Navigateur->>Navigateur: Stockage du jeton
+    Navigateur-->>Utilisateur: Redirection tableau de bord
+</code></pre>
+```
+
+#### 3. Class Diagram - Relations entre Objets/Entités
+
+```html
+<pre><code class="language-mermaid">
+classDiagram
+    class Cours {
+        +int id
+        +string slug
+        +string titre
+        +string description
+    }
+
+    class Chapitre {
+        +int id
+        +int cours_id
+        +string slug
+        +string titre
+        +string contenu
+    }
+
+    class Exercice {
+        +int id
+        +int chapitre_id
+        +string type
+        +json contenu
+    }
+
+    Cours "1" --> "*" Chapitre : contient
+    Chapitre "1" --> "*" Exercice : possède
+</code></pre>
+```
+
+#### 4. State Diagram - Machines à États
+
+```html
+<pre><code class="language-mermaid">
+stateDiagram-v2
+    [*] --> Inactif
+    Inactif --> Chargement: Clic utilisateur
+    Chargement --> Succès: Données reçues
+    Chargement --> Erreur: Échec requête
+    Succès --> Inactif: Réinitialisation
+    Erreur --> Inactif: Nouvel essai
+    Erreur --> [*]: Annulation
+</code></pre>
+```
+
+#### 5. ER Diagram - Schémas de Base de Données
+
+```html
+<pre><code class="language-mermaid">
+erDiagram
+    COURS ||--o{ PARTIE : contient
+    COURS ||--o{ CHAPITRE : possède
+    PARTIE ||--o{ CHAPITRE : organise
+    CHAPITRE ||--o{ EXERCICE : inclut
+
+    COURS {
+        int id PK
+        string slug UK
+        string titre
+    }
+
+    CHAPITRE {
+        int id PK
+        int cours_id FK
+        string slug UK
+        text contenu
+    }
+</code></pre>
+```
+
+#### 6. Timeline - Évolution Temporelle
+
+```html
+<pre><code class="language-mermaid">
+timeline
+    title Évolution des Technologies de Déploiement
+    1990-2000 : Serveurs Physiques : 1 app = 1 serveur
+    2000-2010 : Machines Virtuelles : Hyperviseur : Isolation OS complète
+    2010-2015 : Conteneurs : Docker : Partage du kernel
+    2015-2025 : Orchestration : Kubernetes : Gestion à grande échelle
+</code></pre>
+```
+
+### Conventions de Nommage Mermaid
+
+**RÈGLES OBLIGATOIRES pour la cohérence et la lisibilité :**
+
+#### 1. Langue : 100% Français
+
+**✅ FAIRE :**
+- Tout le texte en français (nœuds, labels, descriptions)
+- Cohérence linguistique totale dans le diagramme
+
+**❌ NE PAS FAIRE :**
+- Mélanger français et anglais (franglais)
+- Exemple incorrect : `Client -->|Request| Server`
+- Exemple correct : `Client -->|Requête| Serveur`
+
+#### 2. Nœuds (Boîtes) : Noms Communs
+
+**✅ FAIRE :**
+- Utiliser des noms communs précis et descriptifs
+- Exemples : `Serveur`, `Base de données`, `Client`, `Processeur`, `Mémoire`
+
+**❌ NE PAS FAIRE :**
+- Utiliser des verbes conjugués dans les nœuds
+- Exemple incorrect : `Traite les données`
+- Exemple correct : `Traitement des données` ou `Module de traitement`
+
+#### 3. Labels (Flèches) : Noms d'Actions
+
+**✅ FAIRE :**
+- Utiliser des noms d'actions (substantifs)
+- Exemples : `Requête`, `Réponse`, `Transmission`, `Lecture`, `Écriture`, `Traitement`
+- Court et précis (1-3 mots max)
+
+**❌ NE PAS FAIRE :**
+- Verbes conjugués : ~~`Envoie`~~, ~~`Reçoit`~~, ~~`Traite`~~
+- Verbes à l'infinitif : ~~`Envoyer`~~, ~~`Recevoir`~~
+- Phrases complètes : ~~`L'utilisateur clique sur le bouton`~~
+
+#### 4. Termes Techniques : Noms Propres en Anglais Autorisés
+
+**✅ ACCEPTABLE :**
+- Noms de technologies : `PostgreSQL`, `FastAPI`, `Nginx`, `Docker`
+- Types de données : `JSON`, `JWT`, `HTTP`
+- Protocoles standards : `TCP/IP`, `REST`
+
+**✅ EXEMPLE CORRECT :**
+```mermaid
+graph LR
+    Client[Client HTTP] -->|Requête| API[API FastAPI]
+    API -->|Requête SQL| DB[(PostgreSQL)]
+```
+
+---
+
+### Exemples Avant/Après : Corrections Appliquées
+
+#### ❌ Exemple INCORRECT (Franglais + Verbes)
+
+```mermaid
+graph LR
+    User[Utilisateur] -->|Click| UI[Interface]
+    UI -->|Send Request| API[Backend]
+    API -->|Query| DB[(Database)]
+    DB -->|Returns Data| API
+    API -->|Sends Response| UI
+    UI -->|Display| User
+```
+
+**Problèmes :**
+- Mélange français/anglais : "Utilisateur", "Click", "Send Request"
+- Verbes conjugués : "Returns", "Sends", "Display"
+- Incohérence : "User" vs "Utilisateur"
+
+#### ✅ Exemple CORRECT (Français cohérent + Noms)
+
+```mermaid
+graph LR
+    Utilisateur[Utilisateur] -->|Action| Interface[Interface]
+    Interface -->|Requête| API[Backend]
+    API -->|Requête SQL| BD[(Base de données)]
+    BD -->|Données| API
+    API -->|Réponse| Interface
+    Interface -->|Affichage| Utilisateur
+```
+
+**Améliorations :**
+- 100% français cohérent
+- Noms d'actions uniquement : "Action", "Requête", "Données", "Réponse", "Affichage"
+- Pas de verbes conjugués
+
+---
+
+#### ❌ Exemple INCORRECT (Sequence Diagram)
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Server
+
+    User->>Server: Envoie une requête
+    Server->>Server: Traite les données
+    Server-->>User: Retourne le résultat
+```
+
+**Problèmes :**
+- Mélange "User" (anglais) et "Envoie une requête" (français)
+- Verbes conjugués : "Envoie", "Traite", "Retourne"
+- Phrases complètes trop longues
+
+#### ✅ Exemple CORRECT (Sequence Diagram)
+
+```mermaid
+sequenceDiagram
+    participant Utilisateur
+    participant Serveur
+
+    Utilisateur->>Serveur: Requête
+    Serveur->>Serveur: Traitement
+    Serveur-->>Utilisateur: Résultat
+```
+
+**Améliorations :**
+- Participants en français
+- Noms d'actions courts : "Requête", "Traitement", "Résultat"
+- Concis et clair
+
+### Bonnes Pratiques Mermaid
+
+**✅ FAIRE :**
+- Respecter les conventions de nommage ci-dessus (français, noms communs, noms d'actions)
+- Utiliser des noms de nœuds descriptifs et courts
+- Ajouter des styles pour différencier les types de composants
+- Garder les diagrammes simples et focalisés (max 8-10 nœuds)
+- Utiliser le bon type de diagramme pour le concept
+- Ajouter des légendes si nécessaire
+
+**❌ ÉVITER :**
+- Franglais ou mélange de langues
+- Verbes conjugués dans les nœuds ou sur les flèches
+- Diagrammes trop complexes avec 15+ nœuds (diviser en sous-diagrammes)
+- Utiliser `graph` quand `sequenceDiagram` serait plus clair
+- Oublier les labels sur les flèches dans les flowcharts
+- Syntaxe invalide (toujours vérifier la documentation Mermaid)
+
+### Quand Utiliser Quel Type ?
+
+| Concept à Illustrer | Type Mermaid |
+|---------------------|--------------|
+| Architecture système | `graph TD/LR` |
+| Flux de données | `graph LR` |
+| Communication entre services | `sequenceDiagram` |
+| Modèle de données | `classDiagram` ou `erDiagram` |
+| États d'une application | `stateDiagram-v2` |
+| Pipeline/Process | `graph LR` |
+| Évolution historique | `timeline` |
+| Hiérarchie/Organisation | `graph TD` |
 
 ---
 
 ## 🌍 Langue : Français
 
-**Tout le contenu doit être en français :**
+**RÈGLE : Français pour le texte courant, termes techniques en anglais avec explication.**
 
-- ✅ Traduire les termes techniques quand un équivalent français existe
-- ✅ Garder les termes anglais standards de l'industrie (entre guillemets ou en italique si premier usage)
-- ✅ Utiliser le "vous" formel
-- ✅ Français professionnel et clair
+### Principe Fondamental
 
-**Exemples de traduction :**
-- "storage" → "stockage"
-- "pipeline" → "pipeline de données" (terme accepté)
-- "big data" → "big data" (terme standard)
-- "you will learn" → "vous apprendrez"
-- "computer system" → "système informatique"
+**✅ TERMES TECHNIQUES :** Garder les termes techniques en anglais (buffer, thread, cache, parser, etc.)
 
-**Exemple de premier usage d'un terme anglais :**
+**✅ EXPLICATION OBLIGATOIRE :** À la première mention, expliquer le sens en français
+
+**❌ PAS DE FRANGLAIS :** Ne pas mélanger anglais et français dans le texte courant (verbes, mots courants)
+
+### Règles de Rédaction
+
+#### 1. Termes Techniques : Garder en Anglais + Expliquer
+
+**✅ FORMAT OBLIGATOIRE à la première mention :**
 ```html
-<p>Le <em>pipeline de données</em> (data pipeline) est une suite de traitements
-automatisés qui transforment les données brutes en informations exploitables.</p>
+<p>Un <strong>buffer</strong> (tampon mémoire temporaire) stocke les données...</p>
 ```
+
+**✅ Mentions suivantes : Utiliser directement le terme technique :**
+```html
+<p>Lorsque le buffer est plein, les données sont transférées.</p>
+```
+
+**Exemples de termes techniques à garder en anglais :**
+- Concepts : buffer, cache, thread, process, stack, heap, pipeline, queue
+- Structures : array, hash table, linked list, tree, graph
+- Patterns : observer, singleton, factory, adapter, proxy
+- Opérations : parsing, mapping, serialization, hashing
+- Composants : parser, compiler, interpreter, loader, scheduler
+
+**Exemples corrects :**
+
+```html
+<!-- Première mention : expliquer -->
+<p>Un <strong>thread</strong> (fil d'exécution léger) permet d'exécuter plusieurs
+tâches en parallèle dans un même processus.</p>
+
+<!-- Mentions suivantes : utiliser directement -->
+<p>Chaque thread possède sa propre pile d'exécution (stack).</p>
+```
+
+```html
+<p>Le <strong>parser</strong> (analyseur syntaxique) transforme le code source
+en arbre de syntaxe abstraite (AST).</p>
+```
+
+#### 2. Texte Courant : 100% Français
+
+**❌ INTERDIT dans le texte courant :**
+- Verbes en anglais : ~~"parser"~~, ~~"implémenter"~~, ~~"builder"~~
+- Mots courants en anglais : ~~"data"~~, ~~"file"~~, ~~"output"~~
+
+**✅ CORRECT :**
+- Utiliser les verbes français : analyser, implémenter, construire
+- Utiliser les mots français : données, fichier, sortie
+
+**Exemples :**
+
+❌ **INCORRECT (franglais) :**
+```html
+<p>On va parser le fichier JSON pour extraire la data et la store dans un buffer.</p>
+```
+
+✅ **CORRECT :**
+```html
+<p>On va analyser le fichier JSON pour extraire les données et les stocker dans un buffer.</p>
+```
+
+❌ **INCORRECT :**
+```html
+<p>Le thread va process les requests et return les résultats.</p>
+```
+
+✅ **CORRECT :**
+```html
+<p>Le thread va traiter les requêtes et retourner les résultats.</p>
+```
+
+#### 3. Noms Propres et Technologies : Garder en Anglais
+
+**✅ PAS besoin d'explication (noms propres) :**
+- Langages : Python, JavaScript, C++, Rust, Java
+- Technologies : PostgreSQL, Docker, Kubernetes, Redis, Nginx
+- Protocoles : HTTP, TCP/IP, REST, WebSocket, gRPC
+- Formats : JSON, XML, YAML, CSV
+- Normes : IEEE 754, UTF-8, ASCII, Unicode
+
+**Exemple correct :**
+```html
+<p>PostgreSQL utilise le protocole TCP/IP pour communiquer avec les clients.</p>
+```
+
+#### 4. Structure des Explications
+
+**Format recommandé pour introduire un terme technique :**
+
+```html
+<p>Un <strong>terme_technique</strong> (explication courte en français) est...</p>
+```
+
+**Exemples :**
+- `<strong>cache</strong> (mémoire rapide temporaire)`
+- `<strong>stack</strong> (pile d'exécution)`
+- `<strong>heap</strong> (tas mémoire dynamique)`
+- `<strong>deadlock</strong> (interblocage)`
+- `<strong>race condition</strong> (condition de concurrence)`
+
+### Exemples Complets Avant/Après
+
+#### ❌ Exemple INCORRECT (Franglais)
+
+```html
+<p>Pour améliorer les performances, on peut utiliser un cache qui va store
+les résultats. Le load balancer va distribuer les requests entre les workers
+qui vont process la data.</p>
+```
+
+**Problèmes :**
+- Verbes anglais : "store", "process"
+- Mots courants anglais : "requests", "data"
+- Termes techniques non expliqués : "load balancer", "workers"
+
+#### ✅ Exemple CORRECT
+
+```html
+<p>Pour améliorer les performances, on peut utiliser un <strong>cache</strong>
+(mémoire rapide temporaire) qui va stocker les résultats. Le <strong>load balancer</strong>
+(répartiteur de charge) va distribuer les requêtes entre les <strong>workers</strong>
+(processus de traitement) qui vont traiter les données.</p>
+```
+
+**Améliorations :**
+- Termes techniques gardés : "cache", "load balancer", "workers"
+- Explications ajoutées à la première mention
+- Verbes en français : "stocker", "distribuer", "traiter"
+- Mots courants en français : "requêtes", "données"
+
+---
+
+#### ❌ Exemple INCORRECT
+
+```html
+<p>On va parser le JSON et map les fields sur notre data structure.</p>
+```
+
+#### ✅ Exemple CORRECT
+
+```html
+<p>On va analyser le JSON avec un <strong>parser</strong> (analyseur syntaxique)
+et établir la correspondance des champs avec notre structure de données.</p>
+```
+
+### Checklist Langue
+
+Avant de finaliser le contenu, vérifier :
+
+- [ ] Termes techniques gardés en anglais avec explication à la première mention
+- [ ] Aucun verbe en anglais dans le texte courant (analyser, pas "parser")
+- [ ] Aucun mot courant en anglais (données, pas "data" / fichier, pas "file")
+- [ ] Noms propres (technologies, langages) utilisés sans traduction
+- [ ] Utilisation cohérente du "vous" formel
+- [ ] Français professionnel et clair
+- [ ] Explications techniques précises et complètes
 
 ---
 

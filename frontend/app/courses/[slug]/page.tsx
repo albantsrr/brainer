@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, FileText, Award, ArrowRight, Clock } from 'lucide-react';
+import { BookOpen, FileText, Award, ArrowRight, Clock, ArrowLeft } from 'lucide-react';
 
 export default function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
@@ -65,6 +65,18 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
 
   return (
     <div className="min-h-screen">
+      {/* Back to courses button */}
+      <div className="border-b bg-muted/30">
+        <div className="container py-4">
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/" className="gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Retour aux cours
+            </Link>
+          </Button>
+        </div>
+      </div>
+
       <CourseHeader course={course} stats={stats} />
 
       <div className="container py-12">
@@ -132,9 +144,11 @@ export default function CoursePage({ params }: { params: Promise<{ slug: string 
                       <p className="text-sm font-medium">
                         {stats.chaptersCount} chapitre{stats.chaptersCount > 1 ? 's' : ''}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        Répartis en {stats.partsCount} partie{stats.partsCount > 1 ? 's' : ''}
-                      </p>
+                      {stats.partsCount > 0 && (
+                        <p className="text-xs text-muted-foreground">
+                          Répartis en {stats.partsCount} partie{stats.partsCount > 1 ? 's' : ''}
+                        </p>
+                      )}
                     </div>
                   </div>
 

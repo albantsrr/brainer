@@ -14,8 +14,9 @@ export function List({ ordered = false, children, className }: ListProps) {
     <Tag
       className={cn(
         'my-4 space-y-2',
-        ordered ? 'list-decimal' : 'list-disc',
-        'pl-6 marker:text-muted-foreground',
+        ordered
+          ? 'list-decimal pl-3 marker:text-muted-foreground'
+          : 'list-none pl-0',
         className
       )}
     >
@@ -34,7 +35,7 @@ export function ListItem({ children, className }: ListItemProps) {
     <li
       className={cn(
         'text-foreground/90 leading-7',
-        'pl-2',
+        'pl-6', // Indentation pour le contenu après le tiret
         className
       )}
     >

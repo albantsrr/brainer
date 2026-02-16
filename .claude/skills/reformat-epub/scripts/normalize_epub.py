@@ -157,7 +157,7 @@ def normalize_epub(source_path: Path, output_dir: Path = None, dry_run: bool = F
         course_plan = _generate_course_plan(book_meta, parts, chapters, oebps_dir)
 
         # Write course-plan.json
-        plan_path = output_dir.parent / "course-plan.json"
+        plan_path = output_dir / "course-plan.json"
         with open(plan_path, 'w', encoding='utf-8') as f:
             json.dump(course_plan, f, indent=2, ensure_ascii=False)
             f.write('\n')
@@ -261,7 +261,7 @@ def _generate_course_plan(book_meta: dict, parts: list, chapters: list, oebps_di
             'title': book_meta['title'],
             'author': book_meta['author'],
             'slug': slug,
-            'output_dir': f"{oebps_dir.parent.name}/OEBPS/"
+            'output_dir': "OEBPS/"
         },
         'parts': parts_data,
         'summary': {

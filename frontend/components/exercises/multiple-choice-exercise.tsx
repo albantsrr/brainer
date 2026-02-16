@@ -50,12 +50,20 @@ export function MultipleChoiceExercise({ content }: MultipleChoiceExerciseProps)
       )}
 
       {submitted && (
-        <Alert variant={isCorrect ? 'default' : 'destructive'}>
+        <Alert
+          variant={isCorrect ? 'default' : 'destructive'}
+          className={isCorrect ? 'bg-success/10 border-success text-success-foreground' : 'bg-destructive/10 border-destructive'}
+        >
           <div className="flex items-start gap-2">
-            <Badge variant={isCorrect ? 'default' : 'destructive'}>
+            <Badge
+              variant={isCorrect ? 'default' : 'destructive'}
+              className={isCorrect ? 'bg-success text-success-foreground' : ''}
+            >
               {isCorrect ? 'Correct !' : 'Incorrect'}
             </Badge>
-            <AlertDescription>{content.explanation}</AlertDescription>
+            <AlertDescription className={isCorrect ? 'text-foreground' : ''}>
+              {content.explanation}
+            </AlertDescription>
           </div>
         </Alert>
       )}

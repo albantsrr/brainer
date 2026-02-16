@@ -1,0 +1,908 @@
+<h2>Objectifs d'apprentissage</h2>
+
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+
+<ul>
+<li>Identifier et décrire les cinq étapes principales du cycle de vie du Data Engineering et leurs interactions</li>
+<li>Analyser les considérations techniques critiques pour chaque étape (génération, stockage, ingestion, transformation, service)</li>
+<li>Évaluer les six undercurrents (courants transversaux) qui soutiennent l'ensemble du cycle de vie des données</li>
+<li>Comparer les patterns d'ingestion (batch vs streaming, push vs pull) et choisir l'approche appropriée selon le contexte</li>
+<li>Appliquer les principes de DataOps (automation, observability, incident response) à vos pipelines de données</li>
+</ul>
+
+<h2>Pourquoi c'est important</h2>
+
+<p>Le paysage des technologies de données connaît une explosion d'outils et de pratiques avec des niveaux d'abstraction croissants. Dans ce contexte, les data engineers évoluent vers un rôle de <em>data lifecycle engineers</em>, pensant et opérant en termes de principes de gestion du cycle de vie plutôt qu'en termes de technologies spécifiques.</p>
+
+<p>La plupart des discussions passées sur le data engineering se concentraient sur les technologies mais manquaient la vision globale de la gestion du cycle de vie des données. À mesure que les technologies deviennent plus abstraites et accomplissent davantage de tâches, le data engineer peut penser et agir à un niveau supérieur. Le cycle de vie du data engineering, soutenu par ses undercurrents, constitue un modèle mental extrêmement utile pour organiser le travail de data engineering.</p>
+
+<p>Comprendre ce cycle de vie vous permet de produire un ROI optimal, réduire les coûts (financiers et opportunités manquées), diminuer les risques (sécurité, qualité des données) et maximiser la valeur et l'utilité des données. Sans cette vision systémique, vous opérez dans le vide, en simple technicien plutôt qu'en architecte de la valeur des données.</p>
+
+<h2>Le cycle de vie du Data Engineering : vue d'ensemble</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Le cycle de vie du data engineering comprend les étapes qui transforment des données brutes en un produit final utile, prêt à être consommé par des analystes, data scientists, ML engineers et autres utilisateurs. Ce cycle se divise en cinq étapes principales :</p>
+
+<ul>
+<li><strong>Generation</strong> (Génération) : origine des données dans les systèmes sources</li>
+<li><strong>Storage</strong> (Stockage) : persistance des données à travers le cycle de vie</li>
+<li><strong>Ingestion</strong> : collecte des données depuis les sources</li>
+<li><strong>Transformation</strong> : modification des données pour les rendre utiles</li>
+<li><strong>Serving Data</strong> (Service des données) : mise à disposition pour consommation finale</li>
+</ul>
+
+<h3>Mécanisme interne</h3>
+
+<p>Le stockage se produit tout au long du cycle de vie à mesure que les données circulent du début à la fin. C'est pourquoi les diagrammes le montrent comme une fondation qui sous-tend les autres étapes. En réalité, les étapes intermédiaires (stockage, ingestion, transformation) peuvent s'entremêler. Les différentes étapes peuvent se répéter, se produire dans le désordre, se chevaucher ou s'entrelacer de manières intéressantes et inattendues.</p>
+
+<p>Agissant comme un socle, les <strong>undercurrents</strong> traversent plusieurs étapes du cycle de vie :</p>
+
+<ul>
+<li><strong>Security</strong> (Sécurité)</li>
+<li><strong>Data Management</strong> (Gestion des données)</li>
+<li><strong>DataOps</strong></li>
+<li><strong>Data Architecture</strong> (Architecture des données)</li>
+<li><strong>Orchestration</strong></li>
+<li><strong>Software Engineering</strong> (Ingénierie logicielle)</li>
+</ul>
+
+<p>Aucune partie du cycle de vie ne peut fonctionner correctement sans ces undercurrents.</p>
+
+<h3>Diagramme : Cycle de vie et undercurrents</h3>
+
+<pre><code class="language-mermaid">
+graph TB
+    subgraph "Cycle de vie Data Engineering"
+        Gen[Generation] --&gt; Ing[Ingestion]
+        Ing --&gt; Trans[Transformation]
+        Trans --&gt; Serv[Serving Data]
+        Sto[Storage]
+    end
+
+    subgraph "Undercurrents"
+        Sec[Security]
+        DM[Data Management]
+        DO[DataOps]
+        DA[Data Architecture]
+        Orch[Orchestration]
+        SE[Software Engineering]
+    end
+
+    Sto -.Fondation.- Gen
+    Sto -.Fondation.- Ing
+    Sto -.Fondation.- Trans
+    Sto -.Fondation.- Serv
+
+    Sec -.Soutien.- Gen
+    Sec -.Soutien.- Ing
+    Sec -.Soutien.- Trans
+    Sec -.Soutien.- Serv
+
+    style Sto fill:#e1f5ff
+    style Sec fill:#fff4e1
+    style DM fill:#fff4e1
+    style DO fill:#fff4e1
+</code></pre>
+
+<h3>Distinction cycle de vie complet vs cycle de vie Data Engineering</h3>
+
+<p>Le cycle de vie du data engineering est un sous-ensemble du cycle de vie complet des données. Le cycle de vie complet englobe les données sur toute leur durée de vie, tandis que le cycle de vie du data engineering se concentre sur les étapes qu'un data engineer contrôle directement.</p>
+
+<h2>Étape 1 : Generation (Systèmes sources)</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Un <strong>source system</strong> (système source) est l'origine des données utilisées dans le cycle de vie du data engineering. Exemples : un appareil IoT, une file de messages d'application, une base de données transactionnelle. Le data engineer consomme des données depuis un système source mais ne possède généralement pas ni ne contrôle ce système.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Le data engineer doit comprendre comment les systèmes sources fonctionnent, comment ils génèrent les données, la fréquence et la vélocité des données, ainsi que la variété des données générées. Il doit maintenir une communication ouverte avec les propriétaires des systèmes sources sur les changements qui pourraient casser les pipelines et les analytics.</p>
+
+<p>Un défi majeur est la diversité vertigineuse des systèmes sources. Exemples courants :</p>
+
+<ul>
+<li><strong>Application + Database pattern</strong> : plusieurs serveurs d'application soutenus par une base de données (pattern populaire depuis les années 1980 avec les RDBMS)</li>
+<li><strong>IoT swarm</strong> : flotte d'appareils envoyant des messages de données vers un système de collecte central</li>
+</ul>
+
+<h3>Diagramme : Système source IoT swarm</h3>
+
+<pre><code class="language-mermaid">
+graph LR
+    subgraph "IoT Swarm"
+        D1[Capteur 1]
+        D2[Capteur 2]
+        D3[Capteur 3]
+        D4[Capteur 4]
+    end
+
+    D1 --Message-- Q[File de messages]
+    D2 --Message-- Q
+    D3 --Message-- Q
+    D4 --Message-- Q
+
+    Q --Collecte-- CS[Système central]
+
+    style Q fill:#ffecb3
+    style CS fill:#c8e6c9
+</code></pre>
+
+<h3>Considérations clés d'ingénierie</h3>
+
+<p>Questions essentielles pour évaluer les systèmes sources :</p>
+
+<ul>
+<li>Quelles sont les caractéristiques essentielles de la source ? (application, swarm IoT, etc.)</li>
+<li>Comment les données sont-elles persistées ? Long terme ou temporaire ?</li>
+<li>À quel rythme les données sont-elles générées ? (événements/seconde, gigabytes/heure)</li>
+<li>Quel niveau de cohérence attendre ? Fréquence des incohérences (nulls inattendus, formatage incorrect) ?</li>
+<li>Fréquence des erreurs et des duplications ?</li>
+<li>Certaines données arrivent-elles en retard ?</li>
+<li>Quel est le schema des données ingérées ? Nécessité de joindre plusieurs tables/systèmes ?</li>
+<li>Comment les changements de schema sont-ils gérés et communiqués ?</li>
+<li>Fréquence optimale de récupération des données ?</li>
+<li>Pour les systèmes stateful : données fournies comme snapshots périodiques ou événements de mise à jour via CDC ?</li>
+<li>La lecture depuis la source impacte-t-elle ses performances ?</li>
+</ul>
+
+<h3>Schema des données sources</h3>
+
+<p>Le <strong>schema</strong> définit l'organisation hiérarchique des données. Deux approches populaires :</p>
+
+<ul>
+<li><strong>Schemaless</strong> (sans schema) : l'application définit le schema lors de l'écriture (messaging queue, flat file, blob, document database comme MongoDB). Attention : "schemaless" ne signifie pas absence de schema.</li>
+<li><strong>Fixed schema</strong> (schema fixe) : schema imposé dans la base de données, les écritures de l'application doivent s'y conformer (modèle relationnel traditionnel).</li>
+</ul>
+
+<p>Les deux modèles présentent des défis. Les schemas évoluent avec le temps (encouragé par les approches Agile). Le travail du data engineer devient plus complexe à mesure que le schema source évolue.</p>
+
+<h2>Étape 2 : Storage</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Après avoir ingéré les données, vous avez besoin d'un endroit pour les stocker. Le choix d'une solution de stockage est crucial pour le succès du reste du cycle de vie, mais c'est aussi l'une des étapes les plus compliquées. Les architectures de données cloud exploitent souvent <strong>plusieurs</strong> solutions de stockage simultanément.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Peu de solutions de stockage fonctionnent purement comme du stockage. Beaucoup supportent des requêtes de transformation complexes. Même l'object storage peut offrir des capacités de requête puissantes (ex: Amazon S3 Select).</p>
+
+<p>Le stockage traverse tout le cycle de vie du data engineering, se produisant souvent à plusieurs endroits dans un pipeline de données. Les systèmes de stockage chevauchent les systèmes sources, l'ingestion, la transformation et le service. La façon dont les données sont stockées impacte leur utilisation dans toutes les étapes. Exemples :</p>
+
+<ul>
+<li>Les cloud data warehouses peuvent stocker, traiter dans des pipelines et servir aux analystes</li>
+<li>Les frameworks de streaming (Apache Kafka, Pulsar) fonctionnent simultanément comme systèmes d'ingestion, de stockage et de requête pour les messages</li>
+<li>L'object storage est une couche standard pour la transmission de données</li>
+</ul>
+
+<h3>Considérations clés d'ingénierie</h3>
+
+<p>Questions essentielles pour choisir un système de stockage :</p>
+
+<ul>
+<li>Cette solution est-elle compatible avec les vitesses de lecture/écriture requises ?</li>
+<li>Le stockage créera-t-il un goulot d'étranglement pour les processus en aval ?</li>
+<li>Comprenez-vous comment cette technologie fonctionne ? L'utilisez-vous de manière optimale ?</li>
+<li>Le système gérera-t-il l'échelle future anticipée ? (capacité totale, taux d'opérations de lecture, volume d'écriture)</li>
+<li>Les utilisateurs et processus en aval pourront-ils récupérer les données selon le SLA requis ?</li>
+<li>Capturez-vous les metadata sur l'évolution du schema, les flux de données, la lineage ?</li>
+<li>Solution de stockage pure (object storage) ou support de patterns de requête complexes (cloud data warehouse) ?</li>
+<li>Système schema-agnostic (object storage), flexible (Cassandra) ou enforced (cloud data warehouse) ?</li>
+<li>Comment gérez-vous le master data, les golden records, la qualité et la lineage pour la data governance ?</li>
+<li>Comment gérez-vous la conformité réglementaire et la souveraineté des données ?</li>
+</ul>
+
+<h3>Fréquence d'accès aux données : températures</h3>
+
+<p>Les patterns de récupération varient selon les données stockées. Notion des "températures" des données :</p>
+
+<ul>
+<li><strong>Hot data</strong> (données chaudes) : accédées fréquemment (plusieurs fois par jour/seconde), doivent être stockées pour récupération rapide</li>
+<li><strong>Lukewarm data</strong> (données tièdes) : accédées occasionnellement (chaque semaine/mois)</li>
+<li><strong>Cold data</strong> (données froides) : rarement requêtées, appropriées pour archivage. Souvent conservées pour conformité ou en cas de défaillance catastrophique. Dans le cloud : tiers de stockage spécialisés avec coûts mensuels très bas mais prix élevés pour récupération.</li>
+</ul>
+
+<h2>Étape 3 : Ingestion</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Après avoir compris la source et ses caractéristiques, vous devez collecter les données. L'<strong>ingestion</strong> est la deuxième étape du cycle de vie : rassembler les données depuis les systèmes sources.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Les systèmes sources et l'ingestion représentent les goulots d'étranglement les plus significatifs du cycle de vie. Les systèmes sources sont normalement hors de votre contrôle direct et peuvent devenir non réactifs aléatoirement ou fournir des données de qualité médiocre. Votre service d'ingestion peut mystérieusement cesser de fonctionner. Résultat : le flux de données s'arrête ou livre des données insuffisantes.</p>
+
+<p>Les systèmes sources et d'ingestion non fiables ont un effet d'entraînement sur tout le cycle de vie du data engineering.</p>
+
+<h3>Considérations clés d'ingénierie</h3>
+
+<p>Questions primaires sur l'ingestion :</p>
+
+<ul>
+<li>Quels sont les cas d'usage pour les données que j'ingère ? Puis-je réutiliser ces données plutôt que créer plusieurs versions du même dataset ?</li>
+<li>Les systèmes générant et ingérant ces données sont-ils fiables ? Les données sont-elles disponibles quand j'en ai besoin ?</li>
+<li>Quelle est la destination après ingestion ?</li>
+<li>À quelle fréquence devrai-je accéder aux données ?</li>
+<li>En quel volume les données arrivent-elles typiquement ?</li>
+<li>Quel est le format des données ? Mes systèmes de stockage et transformation en aval peuvent-ils gérer ce format ?</li>
+<li>Les données sources sont-elles en bon état pour utilisation immédiate en aval ? Pour combien de temps ?</li>
+<li>Si source streaming : transformation nécessaire avant destination ? Transformation en vol appropriée ?</li>
+</ul>
+
+<h3>Batch versus Streaming</h3>
+
+<h4>Concepts clés</h4>
+
+<p>Pratiquement toutes les données sont intrinsèquement en <strong>streaming</strong>. Les données sont presque toujours produites et mises à jour continuellement à leur source. L'<strong>ingestion batch</strong> est simplement une façon spécialisée et pratique de traiter ce flux en gros morceaux (ex: traiter les données d'une journée complète en un seul batch).</p>
+
+<p>L'<strong>ingestion streaming</strong> permet de fournir des données aux systèmes en aval (applications, bases de données, systèmes analytics) de manière continue et en temps réel. <strong>Real-time</strong> (ou <strong>near real-time</strong>) signifie que les données sont disponibles pour un système en aval peu après leur production (ex: moins d'une seconde). La latence requise pour qualifier de "real-time" varie selon le domaine.</p>
+
+<p>Le batch ingère selon un intervalle de temps prédéterminé ou quand les données atteignent un seuil de taille. Le batch est une porte à sens unique : une fois les données divisées en batches, la latence pour les consommateurs en aval est intrinsèquement contrainte. Le batch reste extrêmement populaire pour l'ingestion, particulièrement en analytics et ML.</p>
+
+<h4>Diagramme : Batch vs Streaming</h4>
+
+<pre><code class="language-mermaid">
+graph TB
+    subgraph "Ingestion Batch"
+        SB[Source] --Collecte périodique-- BB[Batch]
+        BB --Traitement groupé-- DB[Destination]
+    end
+
+    subgraph "Ingestion Streaming"
+        SS[Source] --Flux continu-- ST[Stream]
+        ST --Traitement temps réel-- DS[Destination]
+    end
+
+    style BB fill:#ffccbc
+    style ST fill:#c5e1a5
+</code></pre>
+
+<h4>Considérations pour choisir batch ou streaming</h4>
+
+<p>Questions à se poser avant d'adopter le streaming :</p>
+
+<ul>
+<li>Si j'ingère en temps réel, les systèmes de stockage en aval peuvent-ils gérer le débit de données ?</li>
+<li>Ai-je besoin d'ingestion en temps réel milliseconde ? Ou une approche micro-batch fonctionnerait-elle (accumulation et ingestion chaque minute) ?</li>
+<li>Quels sont mes cas d'usage pour le streaming ? Quels bénéfices spécifiques ? Si j'obtiens les données en temps réel, quelles actions puis-je prendre qui seraient une amélioration par rapport au batch ?</li>
+<li>Mon approche streaming-first coûtera-t-elle plus en termes de temps, argent, maintenance, downtime et coût d'opportunité que simplement faire du batch ?</li>
+<li>Mon pipeline et système streaming sont-ils fiables et redondants si l'infrastructure tombe en panne ?</li>
+<li>Quels outils sont les plus appropriés ? Service managé (Amazon Kinesis, Google Cloud Pub/Sub, Dataflow) ou instances personnalisées (Kafka, Flink, Spark, Pulsar) ? Qui les gérera ?</li>
+<li>Si je déploie un modèle ML, quels bénéfices avec des prédictions online et possiblement continuous training ?</li>
+<li>Est-ce que j'obtiens des données d'une instance de production live ? Quel est l'impact de mon processus d'ingestion sur ce système source ?</li>
+</ul>
+
+<p>Le streaming-first peut sembler une bonne idée, mais n'est pas toujours simple : coûts et complexités supplémentaires inhérents. Le batch est une excellente approche pour de nombreux cas d'usage courants (entraînement de modèles, rapports hebdomadaires). Adoptez le true real-time streaming seulement après avoir identifié un cas d'usage business qui justifie les compromis.</p>
+
+<h3>Push versus Pull</h3>
+
+<h4>Concepts clés</h4>
+
+<p>Dans le modèle <strong>push</strong> d'ingestion, un système source écrit des données vers une cible (base de données, object store, filesystem). Dans le modèle <strong>pull</strong>, les données sont récupérées depuis le système source. La frontière entre push et pull peut être floue ; les données sont souvent pushed et pulled à mesure qu'elles avancent dans les différentes étapes d'un pipeline.</p>
+
+<h4>Exemples</h4>
+
+<ul>
+<li><strong>ETL (Extract, Transform, Load)</strong> : la partie <em>Extract</em> clarifie qu'on utilise un modèle pull. Dans le ETL traditionnel, le système d'ingestion interroge un snapshot de table source selon un calendrier fixe.</li>
+<li><strong>Continuous CDC</strong> : plusieurs façons de l'accomplir. Une méthode courante déclenche un message chaque fois qu'une ligne est modifiée dans la base de données source. Ce message est <em>pushed</em> vers une file, où le système d'ingestion le récupère. Autre méthode CDC : binary logs, qui enregistrent chaque commit vers la base. La base <em>push</em> vers ses logs. Le système d'ingestion lit les logs mais n'interagit pas directement avec la base.</li>
+<li><strong>Streaming ingestion</strong> : les données contournent une base de données backend et sont pushed directement vers un endpoint, typiquement avec buffering par une event-streaming platform. Pattern utile avec des flottes de capteurs IoT émettant des données. Plutôt que maintenir l'état actuel dans une base, on pense simplement chaque lecture comme un événement.</li>
+</ul>
+
+<h2>Étape 4 : Transformation</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Après avoir ingéré et stocké les données, vous devez en faire quelque chose. La <strong>transformation</strong> signifie que les données doivent être changées de leur forme originale en quelque chose d'utile pour les cas d'usage en aval. Sans transformations appropriées, les données resteront inertes et ne seront pas dans une forme utile pour rapports, analyses ou ML. La transformation est typiquement l'étape où les données commencent à créer de la valeur pour la consommation par les utilisateurs en aval.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Immédiatement après l'ingestion, les transformations basiques mappent les données vers les types corrects (changer les string ingérées en types numériques et dates), mettent les enregistrements dans des formats standards et retirent les mauvais. Les étapes ultérieures peuvent transformer le schema et appliquer la normalisation. En aval, on peut appliquer des agrégations à grande échelle pour reporting ou featuriser les données pour les processus ML.</p>
+
+<h3>Considérations clés pour la transformation</h3>
+
+<p>Questions à considérer :</p>
+
+<ul>
+<li>Quel est le coût et le ROI de la transformation ? Quelle est la valeur business associée ?</li>
+<li>La transformation est-elle aussi simple et auto-isolée que possible ?</li>
+<li>Quelles règles business les transformations supportent-elles ?</li>
+<li>Est-ce que je minimise le mouvement de données entre la transformation et le système de stockage ?</li>
+</ul>
+
+<h3>Batch et streaming dans la transformation</h3>
+
+<p>Vous pouvez transformer les données en batch ou en streaming pendant le vol. Comme mentionné précédemment, pratiquement toutes les données commencent comme un flux continu ; le batch est juste une façon spécialisée de traiter un flux de données. Les transformations batch sont massivement populaires, mais avec la popularité croissante des solutions de stream-processing et l'augmentation générale des données streaming, on s'attend à ce que la popularité des transformations streaming continue de croître.</p>
+
+<h3>Enchevêtrement avec d'autres phases</h3>
+
+<p>Logiquement, on traite la transformation comme une zone autonome du cycle de vie, mais les réalités peuvent être beaucoup plus compliquées. La transformation est souvent enchevêtrée avec d'autres phases. Typiquement, les données sont transformées dans les systèmes sources ou en vol pendant l'ingestion. Exemples :</p>
+
+<ul>
+<li>Un système source peut ajouter un timestamp d'événement à un enregistrement avant de le transférer à un processus d'ingestion</li>
+<li>Un enregistrement dans un pipeline streaming peut être "enrichi" avec des champs et calculs supplémentaires avant d'être envoyé vers un data warehouse</li>
+</ul>
+
+<p>Les transformations sont omniprésentes dans diverses parties du cycle de vie. Data preparation, data wrangling, cleaning : ces tâches transformatives ajoutent de la valeur pour les consommateurs finaux de données.</p>
+
+<h3>Business logic et data modeling</h3>
+
+<p>La business logic est un moteur majeur de la transformation de données, souvent dans le data modeling. Les données traduisent la business logic en éléments réutilisables (ex: une vente signifie "quelqu'un m'a acheté 12 cadres photo à 30$ chacun, soit 360$ au total"). Le data modeling est critique pour obtenir une image claire et actuelle des processus business.</p>
+
+<p>Une vue simple des transactions retail brutes peut ne pas être utile sans ajouter la logique des règles comptables pour que le CFO ait une image claire de la santé financière. Assurez-vous d'une approche standard pour implémenter la business logic à travers vos transformations.</p>
+
+<h3>Featurization pour ML</h3>
+
+<p>La featurization de données pour ML est un autre processus de transformation. L'intention de la featurization est d'extraire et améliorer les features de données utiles pour entraîner des modèles ML. La featurization peut être un art obscur, combinant expertise du domaine (identifier quelles features pourraient être importantes pour la prédiction) avec expérience extensive en data science. Le point principal : une fois que les data scientists déterminent comment featuriser les données, les processus de featurization peuvent être automatisés par les data engineers dans l'étape de transformation d'un pipeline.</p>
+
+<h2>Étape 5 : Serving Data</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Vous avez atteint la dernière étape du cycle de vie. Maintenant que les données ont été ingérées, stockées et transformées en structures cohérentes et utiles, il est temps d'obtenir de la valeur de vos données. "Obtenir de la valeur" signifie différentes choses pour différents utilisateurs.</p>
+
+<p>Les données ont de la <strong>valeur</strong> quand elles sont utilisées à des fins pratiques. Les données qui ne sont pas consommées ou requêtées sont simplement inertes. Les projets de vanité de données sont un risque majeur pour les entreprises. Beaucoup d'entreprises ont poursuivi des projets de vanité dans l'ère big data, rassemblant des datasets massifs dans des data lakes qui n'ont jamais été consommés de manière utile. Les projets de données doivent être intentionnels à travers le cycle de vie. Quel est le but business ultime des données si soigneusement collectées, nettoyées et stockées ?</p>
+
+<h3>Principaux cas d'usage</h3>
+
+<p>Le serving de données est peut-être la partie la plus excitante du cycle de vie. C'est où la magie se produit. Principaux usages des données :</p>
+
+<ul>
+<li><strong>Analytics</strong></li>
+<li><strong>Machine Learning</strong></li>
+<li><strong>Reverse ETL</strong></li>
+</ul>
+
+<h3>Analytics</h3>
+
+<h4>Types d'analytics</h4>
+
+<p>L'analytics est au cœur de la plupart des efforts de données. Une fois vos données stockées et transformées, vous êtes prêt à générer des rapports ou dashboards et faire des analyses ad hoc. L'analytics englobe maintenant plusieurs facettes :</p>
+
+<ul>
+<li><strong>Business Intelligence (BI)</strong> : marshale les données collectées pour décrire l'état passé et actuel d'une entreprise. Nécessite l'utilisation de business logic pour traiter les données brutes. À mesure qu'une entreprise développe sa maturité de données, elle évoluera de l'analyse ad hoc vers la self-service analytics, permettant un accès démocratisé aux données pour les utilisateurs business sans nécessiter l'intervention de l'IT.</li>
+<li><strong>Operational Analytics</strong> : se concentre sur les détails granulaires des opérations, promouvant des actions que l'utilisateur peut entreprendre immédiatement. Peut être une vue live de l'inventaire ou dashboarding temps réel de la santé du site web. Les données sont consommées en temps réel, soit directement depuis un système source, soit depuis un pipeline de données streaming.</li>
+<li><strong>Embedded Analytics (Customer-facing)</strong> : analytics fournie aux clients sur une plateforme SaaS. Vient avec un ensemble séparé d'exigences et complications. Le taux de requêtes pour rapports augmente dramatiquement ; le contrôle d'accès est significativement plus compliqué et critique. Les entreprises peuvent servir des analytics et données séparées à des milliers de clients ou plus. Chaque client doit voir ses données et seulement ses données.</li>
+</ul>
+
+<h4>Diagramme : Types d'analytics</h4>
+
+<pre><code class="language-mermaid">
+graph LR
+    A[Analytics] --&gt; BI[Business Intelligence]
+    A --&gt; OA[Operational Analytics]
+    A --&gt; EA[Embedded Analytics]
+
+    BI --&gt; R1[Rapports historiques]
+    BI --&gt; R2[Self-service]
+
+    OA --&gt; R3[Vue temps réel]
+    OA --&gt; R4[Action immédiate]
+
+    EA --&gt; R5[SaaS plateforme]
+    EA --&gt; R6[Multitenancy]
+
+    style A fill:#b3e5fc
+    style BI fill:#c8e6c9
+    style OA fill:#fff9c4
+    style EA fill:#ffccbc
+</code></pre>
+
+<h4>Multitenancy</h4>
+
+<p>De nombreux systèmes de stockage et analytics actuels supportent le multitenancy de diverses façons. Les data engineers peuvent choisir de loger des données pour de nombreux clients dans des tables communes pour permettre une vue unifiée pour analytics internes et ML. Ces données sont présentées extérieurement aux clients individuels via des vues logiques avec contrôles et filtres appropriés. Il incombe aux data engineers de comprendre les minuties du multitenancy dans les systèmes qu'ils déploient pour assurer une sécurité et isolation absolues des données.</p>
+
+<h3>Machine Learning</h3>
+
+<h4>Concept fondamental</h4>
+
+<p>L'émergence et le succès du ML est l'une des révolutions technologiques les plus excitantes. Une fois que les organisations atteignent un haut niveau de maturité de données, elles peuvent commencer à identifier des problèmes adaptés au ML et organiser une pratique autour de cela.</p>
+
+<h4>Responsabilités et frontières</h4>
+
+<p>Les responsabilités des data engineers chevauchent significativement analytics et ML, et les frontières entre data engineering, ML engineering et analytics engineering peuvent être floues. Exemples :</p>
+
+<ul>
+<li>Un data engineer peut devoir supporter des clusters Spark qui facilitent des pipelines analytics et entraînement de modèles ML</li>
+<li>Fournir un système qui orchestre les tâches à travers les équipes</li>
+<li>Supporter des systèmes de metadata et catalogage qui trackent l'historique et la lineage des données</li>
+</ul>
+
+<h4>Feature stores</h4>
+
+<p>Le <strong>feature store</strong> est un outil récemment développé qui combine data engineering et ML engineering. Les feature stores sont conçus pour réduire le fardeau opérationnel pour les ML engineers en maintenant l'historique et les versions des features, supportant le partage de features entre équipes, et fournissant des capacités opérationnelles et d'orchestration basiques (comme backfilling). En pratique, les data engineers font partie de l'équipe de support core pour les feature stores.</p>
+
+<h4>Considérations pour le serving ML</h4>
+
+<ul>
+<li>Les données sont-elles de qualité suffisante pour effectuer une feature engineering fiable ? Les exigences de qualité et évaluations sont développées en collaboration étroite avec les équipes consommant les données.</li>
+<li>Les données sont-elles découvrables ? Les data scientists et ML engineers peuvent-ils facilement trouver des données précieuses ?</li>
+<li>Où sont les frontières techniques et organisationnelles entre data engineering et ML engineering ?</li>
+<li>Le dataset représente-t-il correctement la ground truth ? Est-il injustement biaisé ?</li>
+</ul>
+
+<h4>Conseil important</h4>
+
+<p>Bien que le ML soit excitant, notre expérience montre que les entreprises s'y plongent souvent prématurément. Avant d'investir massivement dans le ML, prenez le temps de construire une fondation de données solide. Cela signifie mettre en place les meilleurs systèmes et architecture à travers le cycle de vie data engineering et ML. Il est généralement préférable de développer la compétence en analytics avant de passer au ML. De nombreuses entreprises ont brisé leurs rêves ML parce qu'elles ont entrepris des initiatives sans fondations appropriées.</p>
+
+<h3>Reverse ETL</h3>
+
+<h4>Concept fondamental</h4>
+
+<p>Le <strong>Reverse ETL</strong> a longtemps été une réalité pratique dans les données, vue comme un antipattern dont on n'aimait pas parler. Le Reverse ETL prend des données traitées du côté output du cycle de vie du data engineering et les renvoie vers les systèmes sources. En réalité, ce flux est bénéfique et souvent nécessaire ; il permet de prendre des analytics, modèles scorés, etc., et de les renvoyer vers des systèmes de production ou plateformes SaaS.</p>
+
+<h4>Diagramme : Reverse ETL</h4>
+
+<pre><code class="language-mermaid">
+graph LR
+    S[Systèmes sources] --ETL-- DW[Data Warehouse]
+    DW --Transformation-- A[Analytics/ML]
+    A --Reverse ETL-- S
+    A --Reverse ETL-- SP[Plateformes SaaS]
+
+    style DW fill:#b3e5fc
+    style A fill:#c8e6c9
+    style S fill:#ffccbc
+    style SP fill:#f8bbd0
+</code></pre>
+
+<h4>Cas d'usage</h4>
+
+<p>Exemples courants :</p>
+
+<ul>
+<li>Des analystes marketing peuvent calculer des enchères dans Microsoft Excel en utilisant les données de leur data warehouse, puis uploader ces enchères vers Google Ads</li>
+<li>Pousser des métriques spécifiques depuis le data warehouse vers une customer data platform ou système CRM</li>
+<li>Plateformes publicitaires (exemple Google Ads)</li>
+</ul>
+
+<h4>Évolution et outils</h4>
+
+<p>Alors que nous avons écrit ce livre, plusieurs vendors ont embrassé le concept de Reverse ETL et construit des produits autour (Hightouch, Census). Le Reverse ETL reste naissant comme domaine, mais nous suspectons qu'il est là pour rester. Il est devenu particulièrement important à mesure que les entreprises s'appuient de plus en plus sur SaaS et plateformes externes.</p>
+
+<p>Le jury est dehors sur la permanence du terme "reverse ETL". La pratique peut évoluer. Certains ingénieurs affirment qu'on peut éliminer le reverse ETL en gérant les transformations de données dans un event stream et en renvoyant ces événements vers les systèmes sources au besoin. L'essentiel est que les données transformées devront être retournées aux systèmes sources d'une manière ou d'une autre, idéalement avec la lineage correcte et le processus business associé au système source.</p>
+
+<h2>Undercurrents : Security</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>La sécurité doit être une priorité absolue pour les data engineers. Ceux qui l'ignorent le font à leurs risques et périls. C'est pourquoi la sécurité est le premier undercurrent. Les data engineers doivent comprendre la sécurité des données et des accès, exerçant le principe du moindre privilège.</p>
+
+<h3>Principe du moindre privilège</h3>
+
+<p>Le <strong>principe du moindre privilège</strong> signifie donner à un utilisateur ou système accès seulement aux données et ressources essentielles pour effectuer une fonction prévue. Un antipattern courant : donner un accès admin à tous les utilisateurs. C'est une catastrophe qui attend de se produire !</p>
+
+<p>Donnez aux utilisateurs seulement l'accès dont ils ont besoin pour faire leur travail aujourd'hui, rien de plus. N'opérez pas depuis un root shell quand vous cherchez juste des fichiers visibles avec accès utilisateur standard. Lors de requêtes de tables avec un rôle moindre, n'utilisez pas le rôle superuser dans une base de données. Imposer le principe du moindre privilège sur nous-mêmes peut prévenir des dommages accidentels et nous maintenir dans un mindset security-first.</p>
+
+<h3>Culture de sécurité</h3>
+
+<p>Les personnes et la structure organisationnelle sont toujours les plus grandes vulnérabilités de sécurité dans toute entreprise. Quand nous entendons parler de violations de sécurité majeures dans les médias, il s'avère souvent que quelqu'un dans l'entreprise a ignoré les précautions basiques, est tombé victime d'une attaque de phishing, ou a agi de manière irresponsable. La première ligne de défense pour la sécurité des données est de créer une culture de sécurité qui imprègne l'organisation.</p>
+
+<h3>Timing et protection des données</h3>
+
+<p>La sécurité des données concerne aussi le timing : fournir l'accès aux données exactement aux personnes et systèmes qui en ont besoin et <strong>seulement pour la durée nécessaire pour effectuer leur travail</strong>. Les données doivent être protégées de la visibilité non désirée, à la fois en transit et au repos, en utilisant chiffrement, tokenization, data masking, obfuscation et contrôles d'accès simples et robustes.</p>
+
+<h3>Compétences requises</h3>
+
+<p>Les data engineers doivent être des administrateurs de sécurité compétents, car la sécurité relève de leur domaine. Un data engineer devrait comprendre les best practices de sécurité pour le cloud et on-premises. Connaissance de :</p>
+
+<ul>
+<li>User and identity access management (IAM) roles</li>
+<li>Policies</li>
+<li>Groups</li>
+<li>Network security</li>
+<li>Password policies</li>
+<li>Encryption</li>
+</ul>
+
+<h2>Undercurrents : Data Management</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Le data management semble très... corporate. Les pratiques "old school" de data management font leur chemin dans data et ML engineering. Ce qui est ancien redevient nouveau. Le data management existe depuis des décennies mais n'a pas obtenu beaucoup de traction en data engineering jusqu'à récemment. Les outils de données deviennent plus simples, et il y a moins de complexité à gérer pour les data engineers. En conséquence, le data engineer monte dans la chaîne de valeur vers le prochain niveau de best practices.</p>
+
+<h3>Définition DAMA</h3>
+
+<p>La Data Management Association International (DAMA) dans le <em>Data Management Body of Knowledge</em> (<em>DMBOK</em>) offre cette définition :</p>
+
+<blockquote>
+<p>Le data management est le développement, l'exécution et la supervision de plans, politiques, programmes et pratiques qui livrent, contrôlent, protègent et améliorent la valeur des données et actifs d'information à travers leur cycle de vie.</p>
+</blockquote>
+
+<h3>Lien avec le data engineering</h3>
+
+<p>Les data engineers gèrent le cycle de vie des données, et le data management englobe l'ensemble des best practices que les data engineers utiliseront pour accomplir cette tâche, à la fois techniquement et stratégiquement. Sans framework pour gérer les données, les data engineers sont simplement des techniciens opérant dans le vide. Les data engineers ont besoin d'une perspective plus large de l'utilité des données à travers l'organisation, des systèmes sources au C-suite, et partout entre les deux.</p>
+
+<h3>Importance du data management</h3>
+
+<p>Le data management démontre que les données sont vitales pour les opérations quotidiennes, tout comme les entreprises voient les ressources financières, produits finis ou immobilier comme des actifs. Les pratiques de data management forment un framework cohésif que tout le monde peut adopter pour assurer que l'organisation obtient de la valeur des données et les gère de manière appropriée.</p>
+
+<h3>Facettes principales</h3>
+
+<ul>
+<li><strong>Data governance</strong> (gouvernance des données) : incluant discoverability et accountability</li>
+<li><strong>Data modeling and design</strong> (modélisation et conception)</li>
+<li><strong>Data lineage</strong> (lignage des données)</li>
+<li><strong>Storage and operations</strong> (stockage et opérations)</li>
+<li><strong>Data integration and interoperability</strong> (intégration et interopérabilité)</li>
+<li><strong>Data lifecycle management</strong> (gestion du cycle de vie)</li>
+<li><strong>Data systems for advanced analytics and ML</strong> (systèmes pour analytics et ML avancés)</li>
+<li><strong>Ethics and privacy</strong> (éthique et confidentialité)</li>
+</ul>
+
+<h3>Data Governance</h3>
+
+<h4>Définition</h4>
+
+<p>Selon <em>Data Governance: The Definitive Guide</em> : "La data governance est, avant tout, une fonction de gestion des données pour assurer la qualité, l'intégrité, la sécurité et l'utilisabilité des données collectées par une organisation."</p>
+
+<p>On peut étendre cette définition : la data governance engage personnes, processus et technologies pour maximiser la valeur des données à travers une organisation tout en protégeant les données avec des contrôles de sécurité appropriés. Une data governance efficace est développée avec intention et soutenue par l'organisation.</p>
+
+<h4>Exemple de mauvaise governance</h4>
+
+<p>Un analyste business reçoit une demande de rapport mais ne sait pas quelles données utiliser. Il peut passer des heures à fouiller dans des dizaines de tables d'une base transactionnelle, devinant au hasard quels champs pourraient être utiles. L'analyste compile un rapport "directionnellement correct" mais n'est pas entièrement sûr que les données sous-jacentes sont exactes ou solides. Le destinataire du rapport questionne aussi la validité des données. L'intégrité de l'analyste et de toutes les données dans les systèmes de l'entreprise est mise en question.</p>
+
+<h4>Catégories core de data governance</h4>
+
+<p>Les catégories core sont :</p>
+
+<ul>
+<li><strong>Discoverability</strong> (découvrabilité) : les données doivent être disponibles et découvrables. Les utilisateurs finaux doivent avoir un accès rapide et fiable aux données dont ils ont besoin. Ils doivent savoir d'où viennent les données, comment elles se rapportent à d'autres données, et ce qu'elles signifient.</li>
+<li><strong>Security</strong> (sécurité) : déjà couverte ci-dessus</li>
+<li><strong>Accountability</strong> (responsabilité) : assigner un individu pour gouverner une portion de données. La personne responsable coordonne ensuite les activités de gouvernance des autres parties prenantes.</li>
+</ul>
+
+<h4>Metadata</h4>
+
+<p>La <strong>metadata</strong> est "data about data" (données sur les données), et elle sous-tend chaque section du cycle de vie du data engineering. La metadata est exactement les données nécessaires pour rendre les données découvrables et gouvernables.</p>
+
+<p>On divise la metadata en deux catégories majeures :</p>
+
+<ul>
+<li><strong>Autogenerated</strong> (auto-générée) : crawling de bases pour chercher des relations, monitoring de pipelines pour tracker d'où viennent les données et où elles vont</li>
+<li><strong>Human generated</strong> (générée par humains) : effort interne où diverses parties prenantes crowdsourcent la collecte de metadata au sein de l'organisation</li>
+</ul>
+
+<p>Quatre catégories principales de metadata utiles aux data engineers (selon <em>DMBOK</em>) :</p>
+
+<ul>
+<li><strong>Business metadata</strong> : se rapporte à la façon dont les données sont utilisées dans le business (définitions business et data, règles et logique, comment et où les données sont utilisées, propriétaires des données)</li>
+<li><strong>Technical metadata</strong> : décrit les données créées et utilisées par les systèmes (data model et schema, lineage, field mappings, pipeline workflows)</li>
+<li><strong>Operational metadata</strong> : décrit les résultats opérationnels de divers systèmes (statistiques sur processus, job IDs, logs de runtime, données utilisées dans un processus, error logs)</li>
+<li><strong>Reference metadata</strong> : données utilisées pour classifier d'autres données (aussi appelée lookup data : codes internes, codes géographiques, unités de mesure, standards calendrier internes)</li>
+</ul>
+
+<h4>Data Quality</h4>
+
+<blockquote>
+<p>Puis-je faire confiance à ces données ?</p>
+<p>— Tout le monde dans le business</p>
+</blockquote>
+
+<p>La <strong>data quality</strong> est l'optimisation des données vers l'état désiré et orbite autour de la question : "Qu'obtenez-vous comparé à ce que vous attendez ?" Les données devraient se conformer aux attentes dans la business metadata.</p>
+
+<p>Selon <em>Data Governance: The Definitive Guide</em>, la data quality est définie par trois caractéristiques principales :</p>
+
+<ul>
+<li><strong>Accuracy</strong> (précision) : les données collectées sont-elles factuellement correctes ? Y a-t-il des valeurs dupliquées ? Les valeurs numériques sont-elles exactes ?</li>
+<li><strong>Completeness</strong> (complétude) : les enregistrements sont-ils complets ? Tous les champs requis contiennent-ils des valeurs valides ?</li>
+<li><strong>Timeliness</strong> (ponctualité) : les enregistrements sont-ils disponibles en temps opportun ?</li>
+</ul>
+
+<h4>Master Data Management (MDM)</h4>
+
+<p>Le <strong>master data</strong> concerne les entités business (employés, clients, produits, localisations). À mesure que les organisations deviennent plus grandes et complexes via croissance organique et acquisitions, et collaborent avec d'autres businesses, maintenir une image cohérente des entités et identités devient de plus en plus difficile.</p>
+
+<p>Le <strong>Master Data Management</strong> (MDM) est la pratique de construire des définitions d'entités cohérentes connues sous le nom de <strong>golden records</strong>. Les golden records harmonisent les données d'entités à travers une organisation et avec ses partenaires. Le MDM est un processus d'opérations business facilité par la construction et le déploiement d'outils technologiques.</p>
+
+<h3>Data Modeling and Design</h3>
+
+<p>Pour dériver des insights business des données, via business analytics et data science, les données doivent être dans une forme utilisable. Le processus de conversion des données en forme utilisable est connu sous le nom de <strong>data modeling and design</strong>.</p>
+
+<p>Le data modeling est devenu plus difficile en raison de la variété de nouvelles sources de données et cas d'usage. Heureusement, une nouvelle génération d'outils de données augmente la flexibilité des data models, tout en conservant des séparations logiques de mesures, dimensions, attributs et hiérarchies. Les cloud data warehouses supportent l'ingestion d'énormes quantités de données dénormalisées et semi-structurées, tout en supportant des patterns de modeling courants (Kimball, Inmon, data vault).</p>
+
+<h3>Data Lineage</h3>
+
+<p>À mesure que les données se déplacent dans leur cycle de vie, comment savez-vous quel système a affecté les données ou de quoi les données sont composées au fur et à mesure qu'elles sont passées et transformées ? La <strong>data lineage</strong> décrit l'enregistrement d'une piste d'audit des données à travers leur cycle de vie, trackant à la fois les systèmes qui traitent les données et les données en amont dont elles dépendent.</p>
+
+<p>La data lineage aide avec le tracking d'erreurs, la responsabilité et le débogage des données et des systèmes qui les traitent. Bénéfices :</p>
+
+<ul>
+<li>Piste d'audit pour le cycle de vie des données</li>
+<li>Aide avec compliance</li>
+<li>Si un utilisateur souhaite que ses données soient supprimées de vos systèmes, avoir la lineage vous permet de savoir où ces données sont stockées et leurs dépendances</li>
+</ul>
+
+<h3>Data Integration and Interoperability</h3>
+
+<p>L'<strong>intégration et interopérabilité des données</strong> est le processus d'intégration des données à travers les outils et processus. À mesure qu'on s'éloigne d'une approche single-stack vers analytics et vers un environnement cloud hétérogène où divers outils traitent les données à la demande, l'intégration et l'interopérabilité occupent une part de plus en plus large du travail du data engineer.</p>
+
+<p>De plus en plus, l'intégration se produit via des APIs general-purpose plutôt que des connexions de base de données personnalisées. Exemple : un pipeline de données peut tirer des données de l'API Salesforce, les stocker sur Amazon S3, appeler l'API Snowflake pour les charger dans une table, appeler l'API à nouveau pour exécuter une requête, puis exporter les résultats vers S3 où Spark peut les consommer.</p>
+
+<h3>Data Lifecycle Management</h3>
+
+<p>L'avènement des data lakes a encouragé les organisations à ignorer l'archivage et la destruction des données. Pourquoi jeter des données quand on peut simplement ajouter du stockage ad infinitum ? Deux changements ont encouragé les ingénieurs à prêter plus d'attention à ce qui se passe en fin de cycle de vie :</p>
+
+<ul>
+<li><strong>Stockage cloud</strong> : coûts pay-as-you-go au lieu de grandes dépenses capitales initiales pour un data lake on-premises. Quand chaque byte apparaît sur un relevé mensuel AWS, les CFOs voient des opportunités d'économies.</li>
+<li><strong>Lois de confidentialité et rétention</strong> (GDPR, CCPA) : exigent que les data engineers gèrent activement la destruction des données pour respecter le "droit à l'oubli" des utilisateurs.</li>
+</ul>
+
+<p>La destruction de données est simple dans un cloud data warehouse (sémantique SQL permet suppression de lignes conformes à une clause <code>where</code>). C'était plus difficile dans les data lakes où write-once, read-many était le pattern de stockage par défaut. Des outils comme Hive ACID et Delta Lake permettent une gestion facile des transactions de suppression à l'échelle.</p>
+
+<h3>Ethics and Privacy</h3>
+
+<blockquote>
+<p>Le comportement éthique consiste à faire la bonne chose quand personne d'autre ne regarde.</p>
+<p>— Aldo Leopold</p>
+</blockquote>
+
+<p>Les dernières années de violations de données, désinformation et mauvaise gestion des données rendent une chose claire : les données impactent les personnes. Les jours où les données vivaient dans le Wild West, librement collectées et échangées comme des cartes de baseball, sont révolus.</p>
+
+<p>Les implications éthiques et de confidentialité des données, autrefois considérées comme nice to have, sont maintenant centrales au cycle de vie général des données. Les data engineers doivent faire la bonne chose quand personne d'autre ne regarde, car tout le monde regardera un jour.</p>
+
+<p>Impact sur le cycle de vie :</p>
+
+<ul>
+<li>Les data engineers doivent assurer que les datasets masquent les PII (personally identifiable information) et autres informations sensibles</li>
+<li>Les biais peuvent être identifiés et trackés dans les datasets au fur et à mesure qu'ils sont transformés</li>
+<li>Les exigences réglementaires et pénalités de compliance ne font que croître</li>
+<li>Assurez-vous que vos actifs de données sont conformes à un nombre croissant de régulations (GDPR, CCPA)</li>
+</ul>
+
+<h2>Undercurrents : Orchestration</h2>
+
+<h3>Concept fondamental</h3>
+
+<blockquote>
+<p>Nous pensons que l'orchestration compte parce que nous la voyons comme le véritable centre de gravité à la fois de la plateforme de données et du cycle de vie des données, du cycle de vie du développement logiciel tel qu'il concerne les données.</p>
+<p>— Nick Schrock, fondateur de Elementl</p>
+</blockquote>
+
+<p>L'orchestration n'est pas seulement un processus DataOps central, mais aussi une partie critique du flux d'engineering et de déploiement pour les jobs de données.</p>
+
+<h3>Définition et mécanisme</h3>
+
+<p>L'<strong>orchestration</strong> est le processus de coordination de nombreux jobs pour s'exécuter aussi rapidement et efficacement que possible selon une cadence planifiée. Les gens se réfèrent souvent aux outils d'orchestration comme Apache Airflow comme des <em>schedulers</em>. Ce n'est pas tout à fait exact.</p>
+
+<p>Un scheduler pur, comme cron, est conscient seulement du temps ; un moteur d'orchestration intègre des metadata sur les dépendances de jobs, généralement sous forme de <strong>directed acyclic graph (DAG)</strong>. Le DAG peut être exécuté une fois ou planifié pour s'exécuter à un intervalle fixe (quotidien, hebdomadaire, chaque heure, toutes les cinq minutes, etc.).</p>
+
+<h3>Capacités clés</h3>
+
+<p>Un système d'orchestration reste en ligne avec haute disponibilité. Cela permet au système de :</p>
+
+<ul>
+<li>Surveiller et monitorer constamment sans intervention humaine</li>
+<li>Exécuter de nouveaux jobs à tout moment après leur déploiement</li>
+<li>Monitorer les jobs qu'il gère et déclencher de nouvelles tâches quand les dépendances internes du DAG sont complétées</li>
+<li>Monitorer les systèmes et outils externes pour surveiller l'arrivée de données et l'atteinte de critères</li>
+<li>Définir des conditions d'erreur et envoyer des alertes via email ou autres canaux quand certaines conditions sortent des limites</li>
+</ul>
+
+<h3>Fonctionnalités avancées</h3>
+
+<p>Les systèmes d'orchestration construisent aussi des capacités d'historique de jobs, visualisation et alerting. Les moteurs avancés peuvent :</p>
+
+<ul>
+<li>Backfill de nouveaux DAGs ou tâches individuelles au fur et à mesure qu'ils sont ajoutés à un DAG</li>
+<li>Supporter des dépendances sur une plage de temps (ex: un job de reporting mensuel peut vérifier qu'un job ETL a été complété pour le mois entier avant de démarrer)</li>
+</ul>
+
+<h3>Évolution des outils</h3>
+
+<p>L'orchestration a longtemps été une capacité clé pour le traitement de données mais n'était pas souvent en tête de liste ni accessible à quiconque sauf les plus grandes entreprises. Les entreprises utilisaient divers outils pour gérer les flux de jobs, mais ceux-ci étaient coûteux, hors de portée des petites startups et généralement non extensibles.</p>
+
+<p>Apache Oozie était extrêmement populaire dans les années 2010, mais conçu pour fonctionner au sein d'un cluster Hadoop et difficile à utiliser dans un environnement plus hétérogène. Facebook a développé Dataswarm pour usage interne fin 2000 ; cela a inspiré des outils populaires comme Airflow, introduit par Airbnb en 2014.</p>
+
+<p>Airflow était open source dès le départ et largement adopté. Écrit en Python, le rendant hautement extensible à presque n'importe quel cas d'usage imaginable. Au moment de l'écriture, plusieurs projets open source naissants visent à imiter les meilleurs éléments du design core d'Airflow tout en améliorant des zones clés :</p>
+
+<ul>
+<li><strong>Prefect et Dagster</strong> : visent à améliorer la portabilité et testabilité des DAGs pour permettre aux ingénieurs de passer du développement local à la production plus facilement</li>
+<li><strong>Argo</strong> : moteur d'orchestration construit autour des primitives Kubernetes</li>
+<li><strong>Metaflow</strong> : projet open source de Netflix visant à améliorer l'orchestration data science</li>
+</ul>
+
+<h3>Orchestration vs Streaming</h3>
+
+<p>Nous devons souligner que l'orchestration est strictement un concept batch. L'alternative streaming aux DAGs de tâches orchestrées est le <strong>streaming DAG</strong>. Les DAGs de streaming restent difficiles à construire et maintenir, mais les plateformes de streaming de nouvelle génération comme Pulsar visent à réduire dramatiquement le fardeau d'engineering et opérationnel.</p>
+
+<h2>Undercurrents : DataOps</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>DataOps mappe les best practices de la méthodologie Agile, DevOps et statistical process control (SPC) aux données. Alors que DevOps vise à améliorer la release et la qualité des produits logiciels, DataOps fait la même chose pour les produits de données.</p>
+
+<h3>Différence data products vs software products</h3>
+
+<p>Les produits de données diffèrent des produits logiciels en raison de la façon dont les données sont utilisées :</p>
+
+<ul>
+<li><strong>Software product</strong> : fournit des fonctionnalités spécifiques et features techniques pour les utilisateurs finaux</li>
+<li><strong>Data product</strong> : construit autour de logique business et métriques solides, dont les utilisateurs prennent des décisions ou construisent des modèles qui effectuent des actions automatisées</li>
+</ul>
+
+<p>Un data engineer doit comprendre à la fois les aspects techniques de construction de produits logiciels, et la logique business, qualité et métriques qui créeront d'excellents produits de données.</p>
+
+<h3>Définition Data Kitchen</h3>
+
+<blockquote>
+<p>DataOps est une collection de pratiques techniques, workflows, normes culturelles et patterns architecturaux qui permettent :</p>
+<ul>
+<li>Innovation et expérimentation rapides livrant de nouveaux insights aux clients avec vélocité croissante</li>
+<li>Qualité de données extrêmement élevée et taux d'erreur très faibles</li>
+<li>Collaboration à travers des arrays complexes de personnes, technologie et environnements</li>
+<li>Mesure, monitoring et transparence des résultats clairs</li>
+</ul>
+</blockquote>
+
+<h3>Aspect culturel</h3>
+
+<p>Avant tout, DataOps est un ensemble d'habitudes culturelles ; l'équipe de data engineering doit adopter un cycle de communication et collaboration avec le business, briser les silos, apprendre continuellement des succès et erreurs, et itération rapide. Seulement quand ces habitudes culturelles sont en place, l'équipe peut obtenir les meilleurs résultats de la technologie et des outils.</p>
+
+<h3>Trois piliers techniques de DataOps</h3>
+
+<h4>1. Automation</h4>
+
+<p>L'automation permet fiabilité et cohérence dans le processus DataOps et permet aux data engineers de déployer rapidement de nouvelles features de produits et améliorations aux workflows existants. L'automation DataOps a un framework et workflow similaires à DevOps :</p>
+
+<ul>
+<li><strong>Change management</strong> : version control d'environnement, code et données</li>
+<li><strong>CI/CD</strong> : continuous integration/continuous deployment</li>
+<li><strong>Configuration as code</strong></li>
+</ul>
+
+<p>Comme DevOps, les pratiques DataOps monitorent et maintiennent la fiabilité de la technologie et des systèmes (pipelines de données, orchestration, etc.), avec la dimension ajoutée de vérifier la qualité des données, drift de données/modèles, intégrité des metadata, et plus.</p>
+
+<h4>Évolution de l'automation dans une organisation</h4>
+
+<p>Exemple d'évolution de maturité DataOps :</p>
+
+<ol>
+<li><strong>Niveau faible</strong> : utilisation de cron jobs pour planifier des étapes de transformation. Fonctionne un moment. Problèmes : l'instance cloud peut avoir un problème opérationnel (jobs s'arrêtent inopinément), espacement entre jobs devient serré (un job qui tourne longtemps cause l'échec du suivant), les ingénieurs ne sont pas conscients des échecs jusqu'à ce que les analystes signalent des rapports périmés.</li>
+<li><strong>Niveau moyen</strong> : adoption d'un framework d'orchestration (Airflow, Dagster). Les dépendances sont vérifiées avant l'exécution des jobs. Plus de jobs de transformation peuvent être packés dans un temps donné car chaque job peut démarrer dès que les données en amont sont prêtes.</li>
+<li><strong>Niveau élevé</strong> : après plusieurs incidents (ex: DAG cassé abattant le serveur web Airflow), l'équipe adopte le déploiement automatisé de DAG. Les DAGs sont testés avant déploiement, et les processus de monitoring assurent que les nouveaux DAGs commencent à s'exécuter correctement. Les dépendances Python sont bloquées jusqu'à validation d'installation.</li>
+</ol>
+
+<h4>2. Observability and Monitoring</h4>
+
+<blockquote>
+<p>Les données sont un tueur silencieux.</p>
+</blockquote>
+
+<p>Nous avons vu d'innombrables exemples de mauvaises données persistant dans des rapports pendant des mois ou années. Les exécutifs peuvent prendre des décisions clés basées sur ces mauvaises données, découvrant l'erreur seulement beaucoup plus tard. Les résultats sont généralement mauvais et parfois catastrophiques pour le business.</p>
+
+<p>Autre histoire d'horreur : les systèmes qui créent les données pour rapports s'arrêtent aléatoirement, résultant en rapports retardés de plusieurs jours. L'équipe de données ne le sait pas jusqu'à ce que les parties prenantes demandent pourquoi les rapports sont en retard. Éventuellement, diverses parties prenantes perdent confiance dans les capacités de l'équipe de données core et démarrent leurs propres équipes scindées. Résultat : nombreux systèmes instables différents, rapports incohérents et silos.</p>
+
+<p>Si vous n'observez et ne monitorez pas vos données et les systèmes qui les produisent, vous allez inévitablement expérimenter votre propre histoire d'horreur de données. Observability, monitoring, logging, alerting et tracing sont tous critiques pour prendre de l'avance sur les problèmes le long du cycle de vie.</p>
+
+<h4>Data Observability Driven Development (DODD)</h4>
+
+<p>La méthode DODD de Petrella fournit un excellent framework pour penser l'observabilité des données. DODD est similaire au test-driven development (TDD) en software engineering :</p>
+
+<blockquote>
+<p>Le but de DODD est de donner à tous les impliqués dans la chaîne de données visibilité sur les données et applications de données pour que tous les impliqués dans la chaîne de valeur des données aient la capacité d'identifier les changements aux données ou applications de données à chaque étape — de l'ingestion à la transformation à l'analyse — pour aider à troubleshooter ou prévenir les problèmes de données. DODD se concentre sur faire de l'observabilité des données une considération de première classe dans le cycle de vie du data engineering.</p>
+</blockquote>
+
+<h4>3. Incident Response</h4>
+
+<p>Une équipe de données hautement fonctionnelle utilisant DataOps sera capable de livrer de nouveaux produits de données rapidement. Mais les erreurs arriveront inévitablement. Un système peut avoir du downtime, un nouveau data model peut casser des rapports en aval, un modèle ML peut devenir périmé et fournir de mauvaises prédictions — d'innombrables problèmes peuvent interrompre le cycle de vie du data engineering.</p>
+
+<p>L'<strong>incident response</strong> concerne l'utilisation des capacités d'automation et observability mentionnées précédemment pour identifier rapidement les causes racines d'un incident et le résoudre aussi fiablement et rapidement que possible.</p>
+
+<p>L'incident response ne concerne pas seulement la technologie et les outils ; c'est aussi sur la communication ouverte et sans reproche (blameless), à la fois au sein de l'équipe de data engineering et à travers l'organisation. Comme Werner Vogels est célèbre pour dire : "Everything breaks all the time." Les data engineers doivent être préparés pour un désastre et prêts à répondre aussi rapidement et efficacement que possible.</p>
+
+<h4>Approche proactive</h4>
+
+<p>Les data engineers devraient trouver proactivement les problèmes avant que le business ne les signale. L'échec arrive, et quand les parties prenantes ou utilisateurs finaux voient des problèmes, ils les présenteront. Ils seront mécontents de le faire. Le sentiment est différent quand ils vont soulever ces problèmes à une équipe et voient qu'ils sont activement travaillés pour résolution déjà.</p>
+
+<p>Quelle équipe feriez-vous plus confiance en tant qu'utilisateur final ? La confiance prend longtemps à construire et peut être perdue en minutes. L'incident response concerne autant la réponse rétroactive aux incidents que leur traitement proactif avant qu'ils n'arrivent.</p>
+
+<h2>Undercurrents : Data Architecture</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Une architecture de données reflète l'état actuel et futur des systèmes de données qui supportent les besoins et stratégie de données à long terme d'une organisation. Parce que les exigences de données d'une organisation changeront probablement rapidement, et que de nouveaux outils et pratiques semblent arriver quasi quotidiennement, les data engineers doivent comprendre la bonne architecture de données.</p>
+
+<h3>Rôle du data engineer</h3>
+
+<p>Un data engineer devrait d'abord comprendre les besoins du business et rassembler les exigences pour de nouveaux cas d'usage. Ensuite, un data engineer doit traduire ces exigences pour concevoir de nouvelles façons de capturer et servir les données, équilibré pour coût et simplicité opérationnelle. Cela signifie connaître les compromis avec les design patterns, technologies et outils dans les systèmes sources, ingestion, stockage, transformation et service des données.</p>
+
+<h3>Data engineer vs Data architect</h3>
+
+<p>Cela n'implique pas qu'un data engineer soit un data architect, car ce sont typiquement deux rôles séparés. Si un data engineer travaille aux côtés d'un data architect, le data engineer devrait être capable de livrer sur les designs du data architect et fournir un feedback architectural.</p>
+
+<h2>Undercurrents : Software Engineering</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Le software engineering a toujours été une compétence centrale pour les data engineers. Aux débuts du data engineering contemporain (2000-2010), les data engineers travaillaient sur des frameworks low-level et écrivaient des jobs MapReduce en C, C++ et Java. Au pic de l'ère big data (mi-2010s), les ingénieurs ont commencé à utiliser des frameworks qui abstraient ces détails low-level.</p>
+
+<p>Cette abstraction continue aujourd'hui. Les cloud data warehouses supportent des transformations puissantes utilisant la sémantique SQL ; des outils comme Spark sont devenus plus user-friendly, s'éloignant des détails de codage low-level vers des dataframes faciles à utiliser. Malgré cette abstraction, le software engineering reste critique pour le data engineering.</p>
+
+<h3>Domaines courants de software engineering</h3>
+
+<h4>1. Core Data Processing Code</h4>
+
+<p>Bien qu'il soit devenu plus abstrait et facile à gérer, le core data processing code doit toujours être écrit, et il apparaît à travers le cycle de vie du data engineering. Que ce soit en ingestion, transformation ou service de données, les data engineers doivent être hautement compétents et productifs dans des frameworks et langages comme Spark, SQL ou Beam. Nous rejetons la notion que SQL n'est pas du code.</p>
+
+<p>Il est aussi impératif qu'un data engineer comprenne les méthodologies appropriées de test de code : unit, regression, integration, end-to-end, smoke.</p>
+
+<h4>2. Development of Open Source Frameworks</h4>
+
+<p>Beaucoup de data engineers sont fortement impliqués dans le développement de frameworks open source. Ils adoptent ces frameworks pour résoudre des problèmes spécifiques dans le cycle de vie du data engineering, puis continuent à développer le code du framework pour améliorer les outils pour leurs cas d'usage et contribuer à la communauté.</p>
+
+<p>Dans l'ère big data, nous avons vu une explosion cambrienne de frameworks de traitement de données à l'intérieur de l'écosystème Hadoop. L'emphase s'est déplacée vers le haut de l'échelle d'abstraction, s'éloignant du traitement direct de données. Cette nouvelle génération d'outils open source assiste les ingénieurs dans la gestion, l'amélioration, la connexion, l'optimisation et le monitoring des données.</p>
+
+<p>Avant que les data engineers ne commencent à engineer de nouveaux outils internes, ils feraient bien d'explorer le paysage des outils disponibles publiquement. Gardez un œil sur le TCO (total cost of ownership) et coût d'opportunité associé à l'implémentation d'un outil. Il y a de bonnes chances qu'un projet open source existe déjà pour adresser le problème qu'ils cherchent à résoudre.</p>
+
+<h4>3. Streaming</h4>
+
+<p>Le traitement de données streaming est intrinsèquement plus compliqué que le batch, et les outils et paradigmes sont sans doute moins matures. À mesure que les données streaming deviennent plus omniprésentes à chaque étape du cycle de vie, les data engineers font face à des problèmes intéressants de software engineering.</p>
+
+<p>Par exemple, les tâches de traitement de données comme les joins que nous prenons pour acquis dans le monde du batch deviennent souvent plus compliquées en temps réel, nécessitant un software engineering plus complexe. Les ingénieurs doivent aussi écrire du code pour appliquer diverses méthodes de <strong>windowing</strong>. Le windowing permet aux systèmes temps réel de calculer des métriques précieuses comme des statistiques trailing.</p>
+
+<h4>4. Infrastructure as Code (IaC)</h4>
+
+<p>L'<strong>infrastructure as code</strong> applique les pratiques de software engineering à la configuration et gestion de l'infrastructure. Le fardeau de gestion d'infrastructure de l'ère big data a diminué à mesure que les entreprises ont migré vers des systèmes big data managés (Databricks, Amazon EMR) et cloud data warehouses.</p>
+
+<p>Quand les data engineers doivent gérer leur infrastructure dans un environnement cloud, ils le font de plus en plus via des frameworks IaC plutôt que manuellement spinner des instances et installer des logiciels. Plusieurs frameworks general-purpose et spécifiques aux plateformes cloud permettent le déploiement automatisé d'infrastructure basé sur un ensemble de spécifications.</p>
+
+<p>Ces pratiques sont une partie vitale de DevOps, permettant version control et répétabilité des déploiements. Naturellement, ces capacités sont précieuses à travers le cycle de vie du data engineering, spécialement à mesure qu'on adopte les pratiques DataOps.</p>
+
+<h4>5. Pipelines as Code</h4>
+
+<p>Les <strong>pipelines as code</strong> sont le concept core des systèmes d'orchestration actuels, qui touchent chaque étape du cycle de vie du data engineering. Les data engineers utilisent du code (typiquement Python) pour déclarer des tâches de données et dépendances entre elles. Le moteur d'orchestration interprète ces instructions pour exécuter les étapes utilisant les ressources disponibles.</p>
+
+<h4>6. General-Purpose Problem Solving</h4>
+
+<p>En pratique, quel que soit les outils high-level qu'ils adoptent, les data engineers rencontreront des cas limites à travers le cycle de vie qui nécessitent de résoudre des problèmes en dehors des frontières de leurs outils choisis et d'écrire du code custom. Lors de l'utilisation de frameworks comme Fivetran, Airbyte ou Singer, les data engineers rencontreront des sources de données sans connecteurs existants et devront écrire quelque chose de custom. Ils devraient être compétents en software engineering pour comprendre les APIs, tirer et transformer des données, gérer les exceptions, etc.</p>
+
+<h2>Synthèse</h2>
+
+<h3>Points clés à retenir</h3>
+
+<p>Le cycle de vie du data engineering se décompose en cinq étapes principales :</p>
+
+<ul>
+<li><strong>Generation</strong> : origine des données dans les systèmes sources</li>
+<li><strong>Storage</strong> : persistance des données (fondation du cycle de vie)</li>
+<li><strong>Ingestion</strong> : collecte des données (batch vs streaming, push vs pull)</li>
+<li><strong>Transformation</strong> : modification des données pour créer de la valeur</li>
+<li><strong>Serving Data</strong> : livraison pour analytics, ML, reverse ETL</li>
+</ul>
+
+<p>Six undercurrents soutiennent chaque aspect du cycle de vie :</p>
+
+<ul>
+<li><strong>Security</strong> : principe du moindre privilège, protection des données en transit et au repos</li>
+<li><strong>Data Management</strong> : governance, metadata, quality, lineage, modeling, ethics</li>
+<li><strong>DataOps</strong> : automation, observability, incident response</li>
+<li><strong>Data Architecture</strong> : conception de systèmes alignés avec les besoins business</li>
+<li><strong>Orchestration</strong> : coordination de jobs via DAGs, monitoring, alerting</li>
+<li><strong>Software Engineering</strong> : core processing code, open source, streaming, IaC, pipelines as code</li>
+</ul>
+
+<h3>Objectifs top-level du data engineer</h3>
+
+<p>À travers le cycle de vie des données, un data engineer a plusieurs objectifs de haut niveau :</p>
+
+<ul>
+<li>Produire un ROI optimal et réduire les coûts (financiers et opportunités manquées)</li>
+<li>Réduire les risques (sécurité, qualité des données)</li>
+<li>Maximiser la valeur et l'utilité des données</li>
+</ul>
+
+<h3>Prochaines étapes</h3>
+
+<p>Pour approfondir votre compréhension du cycle de vie du data engineering :</p>
+
+<ol>
+<li>Analysez vos pipelines actuels à travers le prisme des cinq étapes du cycle de vie</li>
+<li>Identifiez les undercurrents manquants ou faibles dans votre organisation</li>
+<li>Évaluez si votre approche batch ou streaming est appropriée pour chaque cas d'usage</li>
+<li>Mettez en place l'observability avant d'ajouter de nouvelles features</li>
+<li>Adoptez les pratiques DataOps progressivement (commencez par monitoring, puis automation)</li>
+<li>Documentez vos metadata (business, technical, operational, reference)</li>
+<li>Établissez une culture de sécurité et data quality</li>
+</ol>
+
+<p>Les prochains chapitres discuteront comment ces éléments impactent le bon design d'architecture et le choix des bonnes technologies. Ensuite, chaque étape du cycle de vie sera couverte en profondeur.</p>

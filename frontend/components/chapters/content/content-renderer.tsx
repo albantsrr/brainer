@@ -1,10 +1,12 @@
-import parse, { HTMLReactParserOptions, Element, domToReact, DOMNode } from 'html-react-parser';
+import parse, { HTMLReactParserOptions, Element, domToReact, DOMNode, Text } from 'html-react-parser';
 import { Paragraph } from './paragraph';
 import { Heading } from './heading';
 import { List, ListItem } from './list';
 import { Blockquote } from './blockquote';
 import { CodeBlock, InlineCode } from './code-block';
 import { Figure, FigureImage, FigureCaption } from './figure';
+import { MermaidDiagram } from './mermaid-diagram';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './table';
 import { cn } from '@/lib/utils';
 
 interface ContentRendererProps {
@@ -54,6 +56,36 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
 
       // Code blocks
       if (name === 'pre') {
+        // Check if it's a Mermaid diagram
+        const codeChild = children?.find(
+          (child) => child instanceof Element && child.name === 'code'
+        ) as Element | undefined;
+
+        if (codeChild) {
+          const className = codeChild.attribs?.class || '';
+          if (className.includes('language-mermaid') || className.includes('mermaid')) {
+            // Extract mermaid code from text nodes
+            const mermaidCode = codeChild.children
+              ?.filter((child) => child instanceof Text)
+              .map((child) => (child as Text).data)
+              .join('') || '';
+
+            if (mermaidCode.trim()) {
+              return <MermaidDiagram chart={mermaidCode.trim()} />;
+            }
+          }
+        }
+
+        // Check if it's inside a figure (diagram)
+        const parent = domNode.parent;
+        if (parent && parent instanceof Element && parent.name === 'figure') {
+          // Diagram in a figure - preserve alignment for ASCII/Unicode diagrams
+          return (
+            <pre className="my-0 overflow-x-auto text-sm font-mono whitespace-pre">
+              {domToReact(children as DOMNode[], options)}
+            </pre>
+          );
+        }
         return <CodeBlock>{domToReact(children as DOMNode[], options)}</CodeBlock>;
       }
 
@@ -73,16 +105,33 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
       }
 
       if (name === 'img') {
+        // Extract width and height from attributes if available
+        const width = attribs?.width ? parseInt(attribs.width) : undefined;
+        const height = attribs?.height ? parseInt(attribs.height) : undefined;
+
         return (
           <FigureImage
             src={attribs?.src || ''}
             alt={attribs?.alt || ''}
+            width={width}
+            height={height}
           />
         );
       }
 
       if (name === 'figcaption') {
         return <FigureCaption>{domToReact(children as DOMNode[], options)}</FigureCaption>;
+      }
+
+      // SVG diagrams
+      if (name === 'svg') {
+        return (
+          <div className="w-full overflow-x-auto">
+            <svg {...attribs} className={cn('mx-auto', attribs?.className)}>
+              {domToReact(children as DOMNode[], options)}
+            </svg>
+          </div>
+        );
       }
 
       // Strong
@@ -111,6 +160,31 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
             {domToReact(children as DOMNode[], options)}
           </a>
         );
+      }
+
+      // Tables
+      if (name === 'table') {
+        return <Table>{domToReact(children as DOMNode[], options)}</Table>;
+      }
+
+      if (name === 'thead') {
+        return <TableHeader>{domToReact(children as DOMNode[], options)}</TableHeader>;
+      }
+
+      if (name === 'tbody') {
+        return <TableBody>{domToReact(children as DOMNode[], options)}</TableBody>;
+      }
+
+      if (name === 'tr') {
+        return <TableRow>{domToReact(children as DOMNode[], options)}</TableRow>;
+      }
+
+      if (name === 'th') {
+        return <TableHead>{domToReact(children as DOMNode[], options)}</TableHead>;
+      }
+
+      if (name === 'td') {
+        return <TableCell>{domToReact(children as DOMNode[], options)}</TableCell>;
       }
 
       // Default: return undefined to keep original behavior

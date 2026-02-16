@@ -368,15 +368,40 @@ def save_extracted_content(course_slug: str, chapter_num: int, content: dict, im
                 'advanced': 'Implementation details, performance analysis, edge cases, architectural implications'
             },
             'html_guidelines': [
-                'Use semantic HTML5 tags only (h2, h3, p, ul, ol, pre, code, blockquote, figure, svg)',
+                'Use semantic HTML5 tags only (h2, h3, p, ul, ol, pre, code, blockquote, figure)',
                 'NO inline styles, NO presentational tags, NO CSS classes',
-                'DO NOT use external images - create diagrams directly in the HTML using:',
-                '  • SVG diagrams for technical concepts (memory layouts, architectures, data flows)',
-                '  • ASCII art diagrams in <pre> tags for simple illustrations',
-                '  • Structured text diagrams using Unicode box-drawing characters',
-                'Each diagram MUST have a descriptive caption in a <figure> tag',
+                'CRITICAL: ALWAYS use <ul> and <ol> for lists - NEVER convert lists to paragraphs',
+                'List styling (bullets/dashes) is handled by CSS - keep semantic HTML structure',
+                'DO NOT use external images - create diagrams directly using Mermaid syntax',
+                'DIAGRAMS: Use Mermaid.js for all technical diagrams:',
+                '  • Syntax: <pre><code class="language-mermaid">DIAGRAM_CODE</code></pre>',
+                '  • Flowcharts: graph TD/LR for processes, architectures, data flows',
+                '  • Sequence diagrams: sequenceDiagram for interactions, protocols',
+                '  • Class diagrams: classDiagram for object relationships',
+                '  • State diagrams: stateDiagram-v2 for state machines',
+                '  • ER diagrams: erDiagram for database schemas',
+                '  • Other types: pie, gantt, gitGraph, mindmap as needed',
+                'MERMAID NAMING CONVENTIONS (MANDATORY):',
+                '  • Language: 100% French (no Franglais mixing)',
+                '  • Nodes (boxes): Use common nouns (e.g., "Serveur", "Client", "Base de données")',
+                '  • Labels (arrows): Use action nouns (e.g., "Requête", "Réponse", "Traitement") - NOT conjugated verbs',
+                '  • NO verbs: ❌ "Envoie", "Reçoit" → ✅ "Envoi", "Réception"',
+                '  • Technical names in English are OK: PostgreSQL, FastAPI, HTTP, JSON',
+                '  • Example: Client[Client HTTP] -->|Requête| API[Backend FastAPI]',
+                'Each diagram should be clear, focused, and directly relevant to the concept',
                 'Code: Complete, executable examples with comments',
-                'IMPORTANT: Images from the original EPUB are NOT available - replace them with inline diagrams'
+                'IMPORTANT: Images from the original EPUB are NOT available - replace them with Mermaid diagrams'
+            ],
+            'language_rules': [
+                'FRENCH for running text, TECHNICAL TERMS in English with explanation',
+                '✅ Keep technical terms in English: buffer, thread, cache, parser, stack, heap, etc.',
+                '✅ MANDATORY: Explain technical terms in French at first mention',
+                '  • Format: Un <strong>buffer</strong> (tampon mémoire temporaire) stocke...',
+                '✅ Use French for verbs and common words: analyser (not "parser"), données (not "data")',
+                '❌ NO Franglais: Do not mix French and English in running text',
+                '❌ NO English verbs: "On va analyser" not "On va parser"',
+                '❌ NO English common words: "les données" not "la data", "fichier" not "file"',
+                'Proper nouns OK without translation: Python, PostgreSQL, Docker, HTTP, JSON'
             ],
             'output_format': 'Return complete HTML content as a string following the mandatory structure'
         }

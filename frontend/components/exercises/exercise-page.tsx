@@ -171,7 +171,7 @@ function MultipleChoiceExerciseContent({
       </RadioGroup>
 
       {submitted && (
-        <Alert variant={isCorrect ? 'default' : 'destructive'} className="mt-6">
+        <Alert variant={isCorrect ? 'default' : 'destructive'} className="mt-6 !flex !flex-col">
           <div className="flex items-start gap-3">
             {isCorrect ? (
               <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
@@ -182,9 +182,9 @@ function MultipleChoiceExerciseContent({
               <p className="font-semibold">
                 {isCorrect ? 'Correct !' : 'Incorrect'}
               </p>
-              <AlertDescription className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
+              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
                 {content.explanation}
-              </AlertDescription>
+              </div>
             </div>
           </div>
         </Alert>
@@ -268,7 +268,7 @@ function TrueFalseExerciseContent({
       )}
 
       {submitted && (
-        <Alert variant={isCorrect ? 'default' : 'destructive'}>
+        <Alert variant={isCorrect ? 'default' : 'destructive'} className="!flex !flex-col">
           <div className="flex items-start gap-3">
             {isCorrect ? (
               <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
@@ -279,9 +279,9 @@ function TrueFalseExerciseContent({
               <p className="font-semibold">
                 {isCorrect ? 'Correct !' : 'Incorrect'}
               </p>
-              <AlertDescription className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
+              <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap">
                 {content.explanation}
-              </AlertDescription>
+              </div>
             </div>
           </div>
         </Alert>
