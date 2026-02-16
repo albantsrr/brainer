@@ -1,0 +1,508 @@
+{
+	"info": {
+		"_postman_id": "brainer-api-collection",
+		"name": "Brainer API",
+		"description": "Complete API collection for Brainer - A private course site that extracts structured courses from books",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						},
+						"description": "Health check endpoint for Docker healthcheck and monitoring"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "List Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses"]
+						},
+						"description": "Get list of all courses"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Course",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Fundamentals of Data Engineering\",\n  \"slug\": \"fundamentals-of-data-engineering\",\n  \"description\": \"A comprehensive guide to modern data engineering practices\",\n  \"image\": \"/static/images/data-engineering.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses"]
+						},
+						"description": "Create a new course"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}"]
+						},
+						"description": "Get a specific course by slug"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Course Title\",\n  \"description\": \"Updated description\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}"]
+						},
+						"description": "Update a course (partial update supported)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}"]
+						},
+						"description": "Delete a course (cascades to parts, chapters, and exercises)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Parts",
+			"item": [
+				{
+					"name": "List Parts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/parts",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "parts"]
+						},
+						"description": "Get all parts for a specific course"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Part",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"order\": 1,\n  \"title\": \"Introduction to Data Engineering\",\n  \"description\": \"Foundational concepts and principles\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/parts",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "parts"]
+						},
+						"description": "Create a new part for a course"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Part",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/parts/{{part_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "parts", "{{part_id}}"]
+						},
+						"description": "Get a specific part by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Part",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Part Title\",\n  \"order\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/parts/{{part_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "parts", "{{part_id}}"]
+						},
+						"description": "Update a part (partial update supported)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Part",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/parts/{{part_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "parts", "{{part_id}}"]
+						},
+						"description": "Delete a part (cascades to chapters and exercises)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chapters",
+			"item": [
+				{
+					"name": "List Chapters",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/chapters",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "chapters"]
+						},
+						"description": "Get all chapters for a specific course (lightweight, without content)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Chapter",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"part_id\": 1,\n  \"order\": 1,\n  \"title\": \"Introduction to Data Engineering\",\n  \"slug\": \"introduction\",\n  \"content\": \"<h1>Introduction</h1><p>This chapter introduces...</p>\",\n  \"image\": \"/static/images/chapter-intro.png\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/chapters",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "chapters"]
+						},
+						"description": "Create a new chapter"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chapter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/chapters/{{chapter_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "chapters", "{{chapter_slug}}"]
+						},
+						"description": "Get a specific chapter by slug (includes full content)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Chapter",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Chapter Title\",\n  \"content\": \"<h1>Updated Content</h1>\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/chapters/{{chapter_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "chapters", "{{chapter_slug}}"]
+						},
+						"description": "Update a chapter (partial update supported)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Chapter",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/courses/{{course_slug}}/chapters/{{chapter_slug}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "courses", "{{course_slug}}", "chapters", "{{chapter_slug}}"]
+						},
+						"description": "Delete a chapter (cascades to exercises)"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Exercises",
+			"item": [
+				{
+					"name": "List Exercises",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/chapters/{{chapter_id}}/exercises",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chapters", "{{chapter_id}}", "exercises"]
+						},
+						"description": "Get all exercises for a specific chapter"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Exercise - Multiple Choice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Data Engineering Fundamentals\",\n  \"type\": \"multiple_choice\",\n  \"content\": {\n    \"question\": \"What is the primary role of a data engineer?\",\n    \"options\": [\n      {\n        \"text\": \"Build and maintain data pipelines\",\n        \"is_correct\": true\n      },\n      {\n        \"text\": \"Create machine learning models\",\n        \"is_correct\": false\n      },\n      {\n        \"text\": \"Design user interfaces\",\n        \"is_correct\": false\n      },\n      {\n        \"text\": \"Write frontend code\",\n        \"is_correct\": false\n      }\n    ],\n    \"explanation\": \"Data engineers focus on building reliable data infrastructure and pipelines.\"\n  },\n  \"auto_generated\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/chapters/{{chapter_id}}/exercises",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chapters", "{{chapter_id}}", "exercises"]
+						},
+						"description": "Create a multiple choice exercise"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Exercise - Code",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Implement a Data Pipeline\",\n  \"type\": \"code\",\n  \"content\": {\n    \"instructions\": \"Write a function that processes CSV data\",\n    \"starter_code\": \"def process_csv(file_path):\\n    # Your code here\\n    pass\",\n    \"solution\": \"import pandas as pd\\n\\ndef process_csv(file_path):\\n    df = pd.read_csv(file_path)\\n    return df.dropna()\",\n    \"tests\": \"assert process_csv('test.csv') is not None\",\n    \"language\": \"python\"\n  },\n  \"auto_generated\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/chapters/{{chapter_id}}/exercises",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chapters", "{{chapter_id}}", "exercises"]
+						},
+						"description": "Create a code exercise"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Exercise - True/False",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Data Engineering Concept Check\",\n  \"type\": \"true_false\",\n  \"content\": {\n    \"statement\": \"ETL stands for Extract, Transform, Load\",\n    \"answer\": true,\n    \"explanation\": \"ETL is a fundamental data integration process that extracts data from sources, transforms it, and loads it into a destination.\"\n  },\n  \"auto_generated\": false\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/chapters/{{chapter_id}}/exercises",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chapters", "{{chapter_id}}", "exercises"]
+						},
+						"description": "Create a true/false exercise"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exercise",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/chapters/{{chapter_id}}/exercises/{{exercise_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chapters", "{{chapter_id}}", "exercises", "{{exercise_id}}"]
+						},
+						"description": "Get a specific exercise by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Exercise",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Updated Exercise Title\",\n  \"auto_generated\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/chapters/{{chapter_id}}/exercises/{{exercise_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chapters", "{{chapter_id}}", "exercises", "{{exercise_id}}"]
+						},
+						"description": "Update an exercise (partial update supported)"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Exercise",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/chapters/{{chapter_id}}/exercises/{{exercise_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "chapters", "{{chapter_id}}", "exercises", "{{exercise_id}}"]
+						},
+						"description": "Delete an exercise"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Images",
+			"item": [
+				{
+					"name": "Upload Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/images/upload",
+							"host": ["{{base_url}}"],
+							"path": ["api", "images", "upload"]
+						},
+						"description": "Upload an image file (returns URL path)"
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "course_slug",
+			"value": "fundamentals-of-data-engineering",
+			"type": "string"
+		},
+		{
+			"key": "part_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "chapter_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "chapter_slug",
+			"value": "introduction",
+			"type": "string"
+		},
+		{
+			"key": "exercise_id",
+			"value": "1",
+			"type": "string"
+		}
+	]
+}

@@ -93,14 +93,18 @@ def find_chapter_file(course_title: str, chapter_num: int, course_slug: str = No
     # Try multiple directory patterns
     search_dirs = [
         BOOKS_DIR / course_title / "OEBPS",                    # Standard structure (with title)
+        BOOKS_DIR / course_title,                              # Root of course directory (with title)
         BOOKS_DIR / f"{course_title}-normalized" / "OEBPS",   # Normalized structure (with title)
+        BOOKS_DIR / f"{course_title}-normalized",             # Root of normalized directory (with title)
     ]
 
     # Also try with slug if provided
     if course_slug:
         search_dirs.extend([
             BOOKS_DIR / course_slug / "OEBPS",                    # Standard structure (with slug)
+            BOOKS_DIR / course_slug,                              # Root of course directory (with slug)
             BOOKS_DIR / f"{course_slug}-normalized" / "OEBPS",   # Normalized structure (with slug)
+            BOOKS_DIR / f"{course_slug}-normalized",             # Root of normalized directory (with slug)
         ])
 
     for book_dir in search_dirs:
