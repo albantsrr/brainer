@@ -24,13 +24,19 @@ Invoke this skill when the user wants to:
 
 **Required information:**
 - Course slug (e.g., `fundamentals-of-data-engineering`)
-- Chapter number (e.g., `1` for ch01.xhtml)
+- Chapter number (e.g., `1` for the first course chapter)
 
 **Actions:**
 1. Verify the course exists in the database via `GET /api/courses/{slug}`
-2. Find the chapter XHTML file: `books/{course-title}/OEBPS/ch{XX}.xhtml` (where XX is zero-padded chapter number)
-3. Retrieve existing chapter info from API: `GET /api/courses/{slug}/chapters`
-4. Identify the chapter slug to update
+2. Retrieve existing chapter info from API: `GET /api/courses/{slug}/chapters`
+3. Identify the target chapter by `order` number → get its `slug`
+4. **Find source XHTML files** via source-map (preferred) or chapter number (fallback):
+   - Search `books/*/source-map.json` for a file where `course_slug` matches the course
+   - Look up the chapter slug in `source_map["chapters"]` to get `source_files: []`
+   - If no source-map exists (older courses): fall back to `books/{course-title}/OEBPS/ch{XX}.xhtml`
+5. For each file in `source_files`, locate it in the book's OEBPS directory (the script handles this)
+
+**Note:** A single course chapter may map to multiple book XHTML files (e.g., `["ch01.xhtml", "ch02.xhtml", "ch03.xhtml"]`). The script concatenates them before extraction — treat the combined content as one source to analyze.
 
 ### Step 2: Extract and Analyze Content
 
@@ -43,6 +49,10 @@ Invoke this skill when the user wants to:
 - Identify main topics and key concepts
 - Determine learning objectives
 - Understand the pedagogical flow
+
+**Après l'analyse, le livre est fermé mentalement.**
+Le fichier XHTML a servi à comprendre quels concepts enseigner.
+Le contenu de l'Étape 4 doit venir de l'expertise de l'enseignant, pas du texte lu.
 
 ### Step 3: Identify Visual Concepts
 
@@ -92,8 +102,17 @@ Instead, identify concepts that benefit from a diagram:
    - Structured summary of key points (3-6 bullets)
    - Next learning steps
 
+**ANTIPLAGIAT — CONTRAINTE ABSOLUE :**
+Le XHTML indique QUOI enseigner. Il ne dicte pas COMMENT l'exprimer.
+- Exemples : inventer de toutes pièces — jamais réutiliser ceux du livre
+- Code : écrire de zéro (variables, scénario, structure différents du livre)
+- Analogies : inventer. Si une vient "naturellement" du livre, la rejeter et en créer une autre
+- Structure des `<h2>` : suivre `01_structure_chapitre.md`, pas l'ordre du livre
+
+Voir `references/00_principes.md` → section "Indépendance de la Source — Règle Absolue"
+
 **Critical Constraints:**
-- ✅ Preserve ALL central mechanisms (technical explanations)
+- ✅ Couvrir TOUS les mécanismes centraux — avec des EXPLICATIONS ORIGINALES
 - ✅ NEVER remove essential technical content
 - ✅ Simplify language WITHOUT making content incorrect/incomplete
 - ✅ Reduce length to 40-60% of original

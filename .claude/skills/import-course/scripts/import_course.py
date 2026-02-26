@@ -143,6 +143,29 @@ def create_parts(course_slug: str, parts: list[dict]) -> dict[int, int]:
     return part_ids
 
 
+def write_source_map(plan_path: Path, plan: dict):
+    """Write books/{book-dir}/source-map.json for create-chapters to find source files."""
+    source_map = {
+        "course_slug": plan["course"]["slug"],
+        "chapters": {}
+    }
+    for part in plan["parts"]:
+        for ch in part["chapters"]:
+            source_files = ch.get("source_files", [])
+            if source_files:
+                source_map["chapters"][ch["slug"]] = {
+                    "source_files": source_files
+                }
+
+    if not source_map["chapters"]:
+        print("   ⚠️  No source_files found in course-plan-fr.json — skipping source-map")
+        return
+
+    out = plan_path.parent / "source-map.json"
+    out.write_text(json.dumps(source_map, indent=2, ensure_ascii=False) + "\n")
+    print(f"   📌 Source map saved: {out}")
+
+
 def create_chapters(course_slug: str, parts: list[dict], part_ids: dict[int, int]):
     """Create chapters via API."""
     total_chapters = sum(len(part["chapters"]) for part in parts)
@@ -238,6 +261,10 @@ def main():
     course_slug = create_course(plan)
     part_ids = create_parts(course_slug, plan["parts"])
     create_chapters(course_slug, plan["parts"], part_ids)
+
+    # Write persistent source map for /create-chapters to use
+    print(f"\n📌 Writing source map...")
+    write_source_map(plan_path, plan)
 
     # Summary
     summary = plan["summary"]

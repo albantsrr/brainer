@@ -1,0 +1,161 @@
+<p>Imaginez un réseau de signalisation qui ne peut que s'allumer ou s'éteindre. Une seule lampe semble ridiculement pauvre pour transmettre quoi que ce soit d'utile. Et pourtant, derrière chaque message envoyé sur Internet, chaque image affichée à l'écran, chaque son joué par une enceinte, se cache exactement ce principe : deux états, rien de plus.</p>
+
+<p>Ce chapitre pose la question fondatrice de l'informatique : comment deux symboles peuvent-ils encoder toute l'information du monde ? La réponse réside dans la combinatoire et dans l'art de composer des codes à plusieurs niveaux.</p>
+
+<p>Nous allons construire cette réponse depuis les bases, en comprenant ce qu'est un code, en calculant sa capacité mathématique avec la formule 2<sup>N</sup>, et en découvrant les mécanismes qui permettent d'étendre cette capacité bien au-delà des limites apparentes.</p>
+
+<h2>Objectifs d'apprentissage</h2>
+
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+  <li><strong>Définir</strong> un code comme une correspondance convenue entre symboles et significations</li>
+  <li><strong>Expliquer</strong> pourquoi deux états distincts suffisent à représenter n'importe quelle information</li>
+  <li><strong>Calculer</strong> le nombre de combinaisons possibles pour N positions binaires avec la formule 2<sup>N</sup></li>
+  <li><strong>Distinguer</strong> les codes à décalage (shift codes) et les codes d'échappement (escape codes)</li>
+  <li><strong>Analyser</strong> l'efficacité d'un code selon la fréquence d'utilisation de ses symboles</li>
+</ul>
+
+<h2>Pourquoi c'est important</h2>
+
+<p>Toute donnée dans un ordinateur est représentée en binaire, qu'il s'agisse de texte, d'images, de programmes exécutables ou de paquets réseau. Comprendre comment les codes binaires fonctionnent n'est pas un détail théorique : c'est le fondement de tout ce qui est abordé dans ce cours.</p>
+
+<p>Sans cette compréhension, des questions concrètes restent opaques. Pourquoi un octet peut-il stocker exactement 256 valeurs ? Pourquoi un encodage de texte comme UTF-8 utilise-t-il 1 à 4 octets selon le caractère ? Pourquoi certains protocoles réseau réservent-ils un code spécial pour signaler que les octets suivants doivent être interprétés différemment ?</p>
+
+<p>Les mécanismes que vous allez apprendre ici, la croissance exponentielle des combinaisons, les shift codes et les escape codes, se retrouvent dans les encodages de caractères, les formats de fichiers, les jeux d'instructions des processeurs, et les protocoles de communication.</p>
+
+<h2>La notion de code</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Un <strong>code</strong> est une convention partagée entre un émetteur et un récepteur qui établit une correspondance entre des symboles et des significations. Le mot "convention" est essentiel : un code n'a de sens que si les deux parties connaissent le même dictionnaire de traduction.</p>
+
+<p>Un code peut utiliser n'importe quel type de symbole : des gestes, des sons, des couleurs, ou des états physiques comme l'ouverture ou la fermeture d'un circuit électrique. Ce qui importe n'est pas la nature des symboles, mais le fait qu'ils soient <em>distincts</em> et <em>reproductibles</em>.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Tout système de communication se modélise comme une table de correspondance. Du côté de l'émetteur, on entre une signification et on obtient la séquence de symboles correspondante. Du côté du récepteur, l'opération inverse s'applique.</p>
+
+<p>L'efficacité d'un code dépend de l'adéquation entre la longueur des séquences et la fréquence d'utilisation des symboles. Un code qui assigne des séquences longues aux symboles fréquents gaspille de la capacité. À l'inverse, un code qui assigne des séquences courtes aux symboles courants transmet davantage d'information avec moins de symboles.</p>
+
+<h3>Exemple pratique</h3>
+
+<p>Un système de gestion de stock utilise des codes pour indiquer l'état de chaque article en entrepôt. Cinq états sont possibles, avec des fréquences très inégales :</p>
+
+<pre><code>Encodage uniforme (3 bits par état) :
+  Disponible → 000   (70% des cas)
+  Réservé    → 001   (15% des cas)
+  En transit → 010   (10% des cas)
+  Rupture    → 011   (4%  des cas)
+  Retiré     → 100   (1%  des cas)
+  (codes 101, 110, 111 inutilisés)
+
+Encodage fréquentiel (longueur variable) :
+  Disponible → 0       (1 bit   — 70% des cas)
+  Réservé    → 10      (2 bits  — 15% des cas)
+  En transit → 110     (3 bits  — 10% des cas)
+  Rupture    → 1110    (4 bits  —  4% des cas)
+  Retiré     → 1111    (4 bits  —  1% des cas)</code></pre>
+
+<p>Le second encodage utilise en moyenne environ 1,6 bit par article contre 3 bits pour le premier, soit près de deux fois moins d'espace pour la même information. C'est le principe fondateur des algorithmes de compression.</p>
+
+<h2>Deux états, combinaisons exponentielles</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Le <strong>binaire</strong> désigne tout système reposant sur exactement deux états distincts. Ces deux états peuvent être réalisés sur de nombreux supports physiques : ouvert/fermé pour un interrupteur, haut/bas pour une tension électrique, creux/bosse pour un disque optique. Ce qui les rend universels, c'est qu'ils sont les plus simples à distinguer de façon fiable, même en présence de bruit ou de perturbations.</p>
+
+<p>La question clé est : combien d'informations différentes peut-on encoder avec N positions binaires ? La réponse est <strong>2<sup>N</sup></strong>, et cette formule est l'une des plus importantes de l'informatique.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>La logique est multiplicative. Avec 1 position, on a 2 possibilités. Chaque position supplémentaire <em>double</em> le nombre de combinaisons, car chaque nouvelle position peut être 0 ou 1 indépendamment de toutes les autres. Ce doublement constant produit une croissance exponentielle :</p>
+
+<pre><code>1 position  →    2 combinaisons  (2¹)
+2 positions →    4 combinaisons  (2²)
+3 positions →    8 combinaisons  (2³)
+4 positions →   16 combinaisons  (2⁴)
+6 positions →   64 combinaisons  (2⁶)
+8 positions →  256 combinaisons  (2⁸)</code></pre>
+
+<p>On peut visualiser ce doublement comme un arbre binaire : chaque niveau ajoute une bifurcation à chaque feuille existante.</p>
+
+<pre><code class="language-mermaid">graph TD
+    S[Départ]
+    S --> A[bit 1 = 0]
+    S --> B[bit 1 = 1]
+    A --> C[00]
+    A --> D[01]
+    B --> E[10]
+    B --> F[11]</code></pre>
+
+<h3>Exemple pratique</h3>
+
+<p>Un système domotique identifie chaque capteur par un numéro binaire. Le nombre de capteurs adressables dépend directement du nombre de bits alloués à cet identifiant :</p>
+
+<pre><code>4 bits  → 2⁴  =      16 capteurs  (maison individuelle)
+8 bits  → 2⁸  =     256 capteurs  (immeuble de bureaux)
+16 bits → 2¹⁶ =  65 536 capteurs  (campus industriel)</code></pre>
+
+<p>C'est exactement cette logique qui gouverne la taille des types numériques en informatique : un <code>uint8</code> (entier non signé sur 8 bits) contient des valeurs de 0 à 255, un <code>uint16</code> (16 bits) de 0 à 65 535.</p>
+
+<h3>Erreurs fréquentes</h3>
+<ul>
+  <li><strong>Erreur :</strong> Additionner au lieu de multiplier, penser que 3 bits donnent 6 combinaisons. → <strong>Solution :</strong> Chaque bit multiplie par 2 le nombre de combinaisons précédentes, d'où 2<sup>N</sup> et non 2×N.</li>
+  <li><strong>Erreur :</strong> Confondre le nombre de bits et le nombre de valeurs représentables. → <strong>Solution :</strong> 8 bits représentent 256 valeurs distinctes (de 0 à 255), pas 8 valeurs.</li>
+</ul>
+
+<h2>Codes à décalage et codes d'échappement</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Quand un espace de codes de taille fixe ne suffit pas à couvrir tous les symboles nécessaires, deux mécanismes permettent d'étendre la capacité sans augmenter le nombre de bits par symbole : les <strong>shift codes</strong> (codes à décalage) et les <strong>escape codes</strong> (codes d'échappement).</p>
+
+<p>Ces deux mécanismes reposent sur le concept de contexte : la signification d'un code ne dépend pas seulement de sa valeur, mais aussi des codes qui le précèdent.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Un <strong>shift code</strong> change le mode d'interprétation de <em>tous</em> les codes suivants, jusqu'à ce qu'un autre shift annule l'effet. C'est une bascule d'état globale et persistante.</p>
+
+<p>Un <strong>escape code</strong> modifie uniquement l'interprétation du <em>prochain</em> code, après quoi le mode précédent reprend. C'est une modification locale et ponctuelle.</p>
+
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --> ModeA
+    ModeA --> ModeB : shift code
+    ModeB --> ModeA : shift code
+    ModeA --> ModeA : escape code
+    ModeB --> ModeB : escape code</code></pre>
+
+<h3>Exemple pratique</h3>
+
+<p>Un protocole de communication entre capteurs industriels utilise des codes sur 4 bits (16 combinaisons). En mode normal, les codes 0 à 11 représentent des mesures. Le code 12 est un shift qui bascule en mode configuration, où les mêmes codes 0 à 11 désignent des paramètres. Le code 13 est un escape qui indique que le code suivant est une alarme prioritaire, quel que soit le mode actuel.</p>
+
+<pre><code>Séquence reçue :  3   12   7   13   9   2
+
+Interprétation :
+  3  → Mesure #3         (mode normal)
+  12 → [SHIFT : passage en mode configuration]
+  7  → Paramètre #7      (mode configuration)
+  13 → [ESCAPE : le prochain code est une alarme]
+  9  → Alarme #9         (escape : retour en mode configuration après)
+  2  → Paramètre #2      (mode configuration)</code></pre>
+
+<h3>Erreurs fréquentes</h3>
+<ul>
+  <li><strong>Erreur :</strong> Confondre shift et escape. → <strong>Solution :</strong> Un shift change l'état durablement pour tous les codes suivants ; un escape n'affecte qu'un seul code.</li>
+  <li><strong>Erreur :</strong> Interpréter les codes de façon isolée sans tenir compte du contexte. → <strong>Solution :</strong> Dans tout système utilisant des shifts ou des escapes, un code ne peut pas être décodé sans connaître l'état courant.</li>
+</ul>
+
+<h2>Synthèse</h2>
+
+<p>Ce chapitre a couvert les points essentiels suivants :</p>
+<ul>
+  <li><strong>Un code</strong> est une convention partagée établissant une correspondance entre symboles et significations ; son efficacité dépend de l'adéquation entre la longueur des séquences et la fréquence des symboles.</li>
+  <li><strong>Le binaire</strong> utilise exactement deux états distincts, ce qui le rend universellement réalisable sur tout support physique.</li>
+  <li><strong>La formule 2<sup>N</sup></strong> donne le nombre de combinaisons encodables avec N positions binaires : chaque bit supplémentaire double la capacité.</li>
+  <li><strong>Les shift codes</strong> modifient l'interprétation de tous les codes suivants jusqu'à révocation explicite.</li>
+  <li><strong>Les escape codes</strong> modifient uniquement l'interprétation du code immédiatement suivant.</li>
+</ul>
+
+<p><strong>À retenir :</strong> Deux états, c'est tout ce qu'il faut. La puissance du binaire ne vient pas de la richesse de ses symboles, mais de la croissance exponentielle des combinaisons et des mécanismes contextuels qui permettent de réutiliser les mêmes codes avec des significations différentes.</p>
+
+<p><strong>Prochaines étapes :</strong> Le chapitre suivant passe du signal à sa transmission physique : comment l'électricité elle-même peut-elle être le porteur de ces états binaires ?</p>

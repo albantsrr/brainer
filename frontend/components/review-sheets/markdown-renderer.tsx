@@ -1,5 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import { cn } from '@/lib/utils';
 
 interface MarkdownRendererProps {
@@ -12,6 +13,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
     <div className={cn('prose prose-neutral dark:prose-invert max-w-none', className)}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={{
           h1: ({ children }) => (
             <h1 className="text-2xl font-bold mt-8 mb-4 first:mt-0">{children}</h1>
@@ -26,7 +28,7 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             <p className="text-sm leading-relaxed mb-3 text-foreground">{children}</p>
           ),
           ul: ({ children }) => (
-            <ul className="list-disc list-outside ml-4 mb-3 space-y-1">{children}</ul>
+            <ul className="list-none ml-4 mb-3 space-y-1">{children}</ul>
           ),
           ol: ({ children }) => (
             <ol className="list-decimal list-outside ml-4 mb-3 space-y-1">{children}</ol>
@@ -61,6 +63,8 @@ export function MarkdownRenderer({ content, className }: MarkdownRendererProps) 
             <strong className="font-semibold text-red-700 dark:text-red-400">{children}</strong>
           ),
           em: ({ children }) => <em className="italic">{children}</em>,
+          sup: ({ children }) => <sup className="text-xs align-super">{children}</sup>,
+          sub: ({ children }) => <sub className="text-xs align-sub">{children}</sub>,
           hr: () => <hr className="my-6 border-none h-px bg-gradient-to-r from-red-500/40 via-red-500/15 to-transparent" />,
           table: ({ children }) => (
             <div className="overflow-x-auto my-4">

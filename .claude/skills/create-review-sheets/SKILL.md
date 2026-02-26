@@ -101,10 +101,12 @@ Using the chapter synopses, synthesize a **fiche de révision** in Markdown.
 - Always use `-` for bullet lists — never `•`, never `*`
 
 **Formatting — punctuation (virgules vs tirets) :**
-- Use commas for parenthetical insertions mid-sentence — not em-dashes (—)
+- **NEVER use em-dashes (—) anywhere in the text** — not mid-sentence, not at end of sentence
+- Always use commas or restructure the sentence instead
 - ❌ `Le pipeline — conçu pour le streaming — traite les données en temps réel.`
+- ❌ `Le shift persiste jusqu'à annulation — distinction fondamentale.`
 - ✅ `Le pipeline, conçu pour le streaming, traite les données en temps réel.`
-- Em-dashes are only allowed to introduce a direct explanation or example at the end of a sentence
+- ✅ `Le shift persiste jusqu'à annulation, une distinction fondamentale.`
 
 **Formatting — mathematical notation:**
 - Never write math expressions in raw ASCII in running text

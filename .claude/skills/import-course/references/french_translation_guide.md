@@ -38,6 +38,20 @@ Ce document explique comment traduire les titres de cours, parties et chapitres 
 - Garder les noms de langages/technologies tels quels (Python, Java, etc.)
 - **Description : 1-2 phrases maximum, résumant les sujets clés du cours (PAS le nom de l'auteur)**
 
+**Règle d'originalité pour les descriptions :**
+
+La description NE DOIT PAS :
+- Paraphraser la 4e de couverture ou la présentation officielle du livre
+- Reprendre le résumé de l'introduction ou de la préface
+- Mentionner l'auteur, l'éditeur ou la réputation du livre
+
+La description DOIT :
+- Être rédigée comme si on présentait ce cours à un étudiant, indépendamment du livre
+- Refléter les compétences que l'étudiant va acquérir (angle pédagogique, pas éditorial)
+
+❌ "Ce livre reconnu comme référence mondiale explore l'architecture des processeurs modernes..."
+✅ "Comprendre comment un programme en C devient des instructions machine, comment la mémoire est organisée, et comment optimiser les performances au niveau système."
+
 ### 2. Titres de parties
 
 **Objectifs :**
@@ -84,6 +98,28 @@ Ce document explique comment traduire les titres de cours, parties et chapitres 
 - "Working with X" → "Travailler avec X" (pas "Travailler sur")
 - Utiliser l'article défini : "les données", "les API", "les performances"
 - API reste au singulier en français (une API, les API)
+
+### 4. Règle de concision (LIMITE ABSOLUE)
+
+Les titres verbeux sont le défaut le plus courant. Appliquer ces limites strictement.
+
+**Limites de longueur :**
+- Partie : ≤ 6 mots après "Partie N : "
+- Chapitre : ≤ 7 mots après "Chapitre N : "
+
+**Interdiction du "et" à double concept :**
+Dès qu'un titre contient "et" pour relier deux idées distinctes, c'est un signal d'alerte — couper le titre à l'idée principale ou scinder le chapitre.
+
+| ❌ Trop long / double concept | ✅ Concis et net |
+|-------------------------------|-----------------|
+| "Comprendre le rôle du data engineer et maîtriser le cycle de vie des données" | "Le cycle de vie du data engineer" |
+| "Concevoir et architecturer des systèmes de données" | "Concevoir des systèmes de données" |
+| "Transformer, servir et pérenniser les données" | "Transformer et servir les données" |
+| "Sécuriser les pipelines et anticiper l'avenir du data engineering" | "Sécuriser les pipelines de données" |
+| "Concevoir une architecture de données scalable et résiliente" | "Architecturer des systèmes scalables" |
+| "Choisir les technologies adaptées au cycle de vie des données" | "Choisir ses outils selon le cycle de vie" |
+
+**Règle du "et" acceptable :** Un seul "et" est toléré uniquement si les deux éléments forment une opération indissociable et courte (ex : "Lire et écrire des fichiers" — 5 mots, opération unique). Au-delà, supprimer le second élément.
 
 ## Termes techniques courants
 

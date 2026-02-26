@@ -1,246 +1,164 @@
 {
   "course": {
-    "title": "Code : le langage secret de l'informatique",
-    "slug": "code-langage-secret-informatique",
-    "description": "Explorez les fondements cachés de l'informatique, des codes et circuits électroniques aux processeurs et systèmes d'exploitation, à travers une approche progressive et accessible.",
-    "source_dir": "Code-language-caché-informatique"
+    "title": "Code : le langage caché de l'informatique",
+    "slug": "code-langage-cache-informatique",
+    "description": "Comprendre comment fonctionne un ordinateur — des codes secrets entre amis jusqu'au réseau mondial — en suivant le fil de l'électricité, de la logique et du binaire.",
+    "author": "Charles Petzold"
   },
   "parts": [
     {
       "order": 1,
-      "title": "Partie I : Communication et systèmes de codes",
+      "title": "Partie 1 : Encoder l'information",
       "chapters": [
         {
-          "chapter_num": 1,
-          "title": "Chapitre 1 : Premiers échanges",
-          "source_file": "ch01.xhtml",
           "order": 1,
-          "slug": "chapitre-1-premiers-echanges"
+          "title": "Chapitre 1 : Comment deux symboles encodent-ils tout ?",
+          "slug": "chapitre-1-comment-deux-symboles-encodent-ils-tout",
+          "source_files": ["ch01.xhtml", "ch02.xhtml", "ch03.xhtml"]
         },
         {
-          "chapter_num": 2,
-          "title": "Chapitre 2 : Codes et combinaisons",
-          "source_file": "ch02.xhtml",
           "order": 2,
-          "slug": "chapitre-2-codes-et-combinaisons"
+          "title": "Chapitre 2 : Comment l'électricité transmet-elle l'information ?",
+          "slug": "chapitre-2-comment-electricite-transmet-elle-information",
+          "source_files": ["ch04.xhtml", "ch05.xhtml"]
         },
         {
-          "chapter_num": 3,
-          "title": "Chapitre 3 : Le braille et les codes binaires",
-          "source_file": "ch03.xhtml",
           "order": 3,
-          "slug": "chapitre-3-le-braille-et-les-codes-binaires"
+          "title": "Chapitre 3 : Comment des interrupteurs font-ils de la logique ?",
+          "slug": "chapitre-3-comment-interrupteurs-font-ils-logique",
+          "source_files": ["ch06.xhtml", "ch07.xhtml"]
         },
         {
-          "chapter_num": 4,
-          "title": "Chapitre 4 : Anatomie d'une lampe de poche",
-          "source_file": "ch04.xhtml",
           "order": 4,
-          "slug": "chapitre-4-anatomie-dune-lampe-de-poche"
-        },
-        {
-          "chapter_num": 5,
-          "title": "Chapitre 5 : Communiquer à distance",
-          "source_file": "ch05.xhtml",
-          "order": 5,
-          "slug": "chapitre-5-communiquer-a-distance"
+          "title": "Chapitre 4 : Comment les relais construisent-ils des portes logiques ?",
+          "slug": "chapitre-4-comment-relais-construisent-ils-portes-logiques",
+          "source_files": ["ch08.xhtml"]
         }
       ]
     },
     {
       "order": 2,
-      "title": "Partie II : Circuits et logique booléenne",
+      "title": "Partie 2 : Représenter les données",
       "chapters": [
         {
-          "chapter_num": 6,
-          "title": "Chapitre 6 : La logique avec les interrupteurs",
-          "source_file": "ch06.xhtml",
+          "order": 5,
+          "title": "Chapitre 5 : Pourquoi différentes bases de numération existent-elles ?",
+          "slug": "chapitre-5-pourquoi-differentes-bases-numerotation",
+          "source_files": ["ch09.xhtml", "ch10.xhtml"]
+        },
+        {
           "order": 6,
-          "slug": "chapitre-6-la-logique-avec-les-interrupteurs"
+          "title": "Chapitre 6 : Comment bits et octets encodent-ils les données ?",
+          "slug": "chapitre-6-comment-bits-octets-encodent-donnees",
+          "source_files": ["ch11.xhtml", "ch12.xhtml"]
         },
         {
-          "chapter_num": 7,
-          "title": "Chapitre 7 : Télégraphes et relais",
-          "source_file": "ch07.xhtml",
           "order": 7,
-          "slug": "chapitre-7-telegraphes-et-relais"
-        },
-        {
-          "chapter_num": 8,
-          "title": "Chapitre 8 : Des relais aux portes logiques",
-          "source_file": "ch08.xhtml",
-          "order": 8,
-          "slug": "chapitre-8-des-relais-aux-portes-logiques"
+          "title": "Chapitre 7 : Comment encoder toutes les langues du monde ?",
+          "slug": "chapitre-7-comment-encoder-toutes-langues-monde",
+          "source_files": ["ch13.xhtml"]
         }
       ]
     },
     {
       "order": 3,
-      "title": "Partie III : Numération et représentation des données",
+      "title": "Partie 3 : Calculer et mémoriser",
       "chapters": [
         {
-          "chapter_num": 9,
-          "title": "Chapitre 9 : Nos dix chiffres",
-          "source_file": "ch09.xhtml",
+          "order": 8,
+          "title": "Chapitre 8 : Comment les circuits font-ils de l'arithmétique ?",
+          "slug": "chapitre-8-comment-circuits-font-arithmetique",
+          "source_files": ["ch14.xhtml", "ch16.xhtml"]
+        },
+        {
           "order": 9,
-          "slug": "chapitre-9-nos-dix-chiffres"
+          "title": "Chapitre 9 : Comment représenter les nombres réels en machine ?",
+          "slug": "chapitre-9-comment-representer-nombres-reels-machine",
+          "source_files": ["ch15.xhtml"]
         },
         {
-          "chapter_num": 10,
-          "title": "Chapitre 10 : Systèmes de numération alternatifs",
-          "source_file": "ch10.xhtml",
           "order": 10,
-          "slug": "chapitre-10-systemes-de-numeration-alternatifs"
+          "title": "Chapitre 10 : Comment un circuit mémorise-t-il un état ?",
+          "slug": "chapitre-10-comment-circuit-memorise-etat",
+          "source_files": ["ch17.xhtml"]
         },
         {
-          "chapter_num": 11,
-          "title": "Chapitre 11 : Le bit à bit",
-          "source_file": "ch11.xhtml",
           "order": 11,
-          "slug": "chapitre-11-le-bit-a-bit"
-        },
-        {
-          "chapter_num": 12,
-          "title": "Chapitre 12 : Octets et hexadécimal",
-          "source_file": "ch12.xhtml",
-          "order": 12,
-          "slug": "chapitre-12-octets-et-hexadecimal"
-        },
-        {
-          "chapter_num": 13,
-          "title": "Chapitre 13 : De l'ASCII à l'Unicode",
-          "source_file": "ch13.xhtml",
-          "order": 13,
-          "slug": "chapitre-13-de-lascii-a-lunicode"
+          "title": "Chapitre 11 : Comment synchroniser un ordinateur ?",
+          "slug": "chapitre-11-comment-synchroniser-ordinateur",
+          "source_files": ["ch18.xhtml"]
         }
       ]
     },
     {
       "order": 4,
-      "title": "Partie IV : Arithmétique binaire",
+      "title": "Partie 4 : Construire un processeur",
       "chapters": [
         {
-          "chapter_num": 14,
-          "title": "Chapitre 14 : Additionner avec des portes logiques",
-          "source_file": "ch14.xhtml",
+          "order": 12,
+          "title": "Chapitre 12 : Comment organiser une mémoire adressable ?",
+          "slug": "chapitre-12-comment-organiser-memoire-adressable",
+          "source_files": ["ch19.xhtml"]
+        },
+        {
+          "order": 13,
+          "title": "Chapitre 13 : Comment automatiser le calcul avec une ALU ?",
+          "slug": "chapitre-13-comment-automatiser-calcul-alu",
+          "source_files": ["ch20.xhtml", "ch21.xhtml"]
+        },
+        {
           "order": 14,
-          "slug": "chapitre-14-additionner-avec-des-portes-logiques"
+          "title": "Chapitre 14 : Comment les registres structurent-ils le CPU ?",
+          "slug": "chapitre-14-comment-registres-structurent-cpu",
+          "source_files": ["ch22.xhtml"]
         },
         {
-          "chapter_num": 15,
-          "title": "Chapitre 15 : Arithmétique en pratique",
-          "source_file": "ch15.xhtml",
           "order": 15,
-          "slug": "chapitre-15-arithmetique-en-pratique"
+          "title": "Chapitre 15 : Comment le CPU pilote-t-il ses propres opérations ?",
+          "slug": "chapitre-15-comment-cpu-pilote-ses-operations",
+          "source_files": ["ch23.xhtml"]
         },
         {
-          "chapter_num": 16,
-          "title": "Chapitre 16 : La soustraction en binaire",
-          "source_file": "ch16.xhtml",
           "order": 16,
-          "slug": "chapitre-16-la-soustraction-en-binaire"
-        },
-        {
-          "chapter_num": 17,
-          "title": "Chapitre 17 : Rétroaction et bascules",
-          "source_file": "ch17.xhtml",
-          "order": 17,
-          "slug": "chapitre-17-retroaction-et-bascules"
+          "title": "Chapitre 16 : Comment programmer un CPU en assembleur ?",
+          "slug": "chapitre-16-comment-programmer-cpu-assembleur",
+          "source_files": ["ch24.xhtml"]
         }
       ]
     },
     {
       "order": 5,
-      "title": "Partie V : Architecture des processeurs",
+      "title": "Partie 5 : Du matériel au logiciel",
       "chapters": [
         {
-          "chapter_num": 18,
-          "title": "Chapitre 18 : Construisons une horloge !",
-          "source_file": "ch18.xhtml",
+          "order": 17,
+          "title": "Chapitre 17 : Comment le CPU communique-t-il avec les périphériques ?",
+          "slug": "chapitre-17-comment-cpu-communique-peripheriques",
+          "source_files": ["ch25.xhtml"]
+        },
+        {
           "order": 18,
-          "slug": "chapitre-18-construisons-une-horloge"
+          "title": "Chapitre 18 : Comment le système d'exploitation gère-t-il tout ?",
+          "slug": "chapitre-18-comment-systeme-exploitation-gere-tout",
+          "source_files": ["ch26.xhtml"]
         },
         {
-          "chapter_num": 19,
-          "title": "Chapitre 19 : Les mécanismes de la mémoire",
-          "source_file": "ch19.xhtml",
           "order": 19,
-          "slug": "chapitre-19-les-mecanismes-de-la-memoire"
+          "title": "Chapitre 19 : Comment le code source devient-il des instructions ?",
+          "slug": "chapitre-19-comment-code-source-devient-instructions",
+          "source_files": ["ch27.xhtml"]
         },
         {
-          "chapter_num": 20,
-          "title": "Chapitre 20 : Automatiser les calculs",
-          "source_file": "ch20.xhtml",
           "order": 20,
-          "slug": "chapitre-20-automatiser-les-calculs"
-        },
-        {
-          "chapter_num": 21,
-          "title": "Chapitre 21 : L'unité arithmétique et logique",
-          "source_file": "ch21.xhtml",
-          "order": 21,
-          "slug": "chapitre-21-lunite-arithmetique-et-logique"
-        },
-        {
-          "chapter_num": 22,
-          "title": "Chapitre 22 : Registres et bus de données",
-          "source_file": "ch22.xhtml",
-          "order": 22,
-          "slug": "chapitre-22-registres-et-bus-de-donnees"
-        },
-        {
-          "chapter_num": 23,
-          "title": "Chapitre 23 : Signaux de contrôle du processeur",
-          "source_file": "ch23.xhtml",
-          "order": 23,
-          "slug": "chapitre-23-signaux-de-controle-du-processeur"
-        },
-        {
-          "chapter_num": 24,
-          "title": "Chapitre 24 : Boucles, sauts et appels de fonctions",
-          "source_file": "ch24.xhtml",
-          "order": 24,
-          "slug": "chapitre-24-boucles-sauts-et-appels-de-fonctions"
-        }
-      ]
-    },
-    {
-      "order": 6,
-      "title": "Partie VI : Systèmes et programmation",
-      "chapters": [
-        {
-          "chapter_num": 25,
-          "title": "Chapitre 25 : Les périphériques",
-          "source_file": "ch25.xhtml",
-          "order": 25,
-          "slug": "chapitre-25-les-peripheriques"
-        },
-        {
-          "chapter_num": 26,
-          "title": "Chapitre 26 : Le système d'exploitation",
-          "source_file": "ch26.xhtml",
-          "order": 26,
-          "slug": "chapitre-26-le-systeme-dexploitation"
-        },
-        {
-          "chapter_num": 27,
-          "title": "Chapitre 27 : Programmer un ordinateur",
-          "source_file": "ch27.xhtml",
-          "order": 27,
-          "slug": "chapitre-27-programmer-un-ordinateur"
-        },
-        {
-          "chapter_num": 28,
-          "title": "Chapitre 28 : Le cerveau mondial",
-          "source_file": "ch28.xhtml",
-          "order": 28,
-          "slug": "chapitre-28-le-cerveau-mondial"
+          "title": "Chapitre 20 : Comment les ordinateurs forment-ils un réseau mondial ?",
+          "slug": "chapitre-20-comment-ordinateurs-forment-reseau-mondial",
+          "source_files": ["ch28.xhtml"]
         }
       ]
     }
   ],
   "summary": {
-    "parts": 6,
-    "chapters": 28
+    "parts": 5,
+    "chapters": 20
   }
 }

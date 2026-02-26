@@ -92,6 +92,38 @@ def get_chapters(course_slug: str) -> list[dict]:
         return []
 
 
+def load_source_map(course_slug: str) -> Optional[tuple[dict, Path]]:
+    """Find source-map.json for this course. Returns (source_map, book_dir) or None."""
+    for book_dir in BOOKS_DIR.iterdir():
+        if not book_dir.is_dir():
+            continue
+        source_map_path = book_dir / "source-map.json"
+        if source_map_path.exists():
+            try:
+                data = json.loads(source_map_path.read_text())
+                if data.get("course_slug") == course_slug:
+                    return data, book_dir
+            except Exception:
+                pass
+    return None
+
+
+def find_chapter_file_by_name(filename: str, book_dir: Path) -> Optional[Path]:
+    """Find a specific XHTML file by name within a known book directory."""
+    search_dirs = [
+        book_dir / "OEBPS",
+        book_dir / "OEBPS" / "OEBPS",
+        book_dir,
+    ]
+    for search_dir in search_dirs:
+        if not search_dir.exists():
+            continue
+        candidate = search_dir / filename
+        if candidate.exists():
+            return candidate
+    return None
+
+
 def find_chapter_file(course_title: str, chapter_num: int, course_slug: str = None) -> Optional[Path]:
     """Find the XHTML file for a specific chapter."""
     # First: scan all book directories for one with a matching course-plan.json slug
@@ -194,10 +226,12 @@ def find_chapter_images(course_title: str, chapter_num: int, course_slug: str = 
     return images
 
 
-def extract_content(xhtml_path: Path) -> dict:
-    """Extract structured content from XHTML file."""
-    with open(xhtml_path, 'r', encoding='utf-8') as f:
-        content = f.read()
+def extract_content(xhtml_paths: list[Path]) -> dict:
+    """Extract structured content from one or more XHTML files."""
+    content = ""
+    for path in xhtml_paths:
+        with open(path, 'r', encoding='utf-8') as f:
+            content += f.read() + "\n"
 
     # For normalized EPUBs, the file may contain multiple concatenated XML documents
     # Parse each document and extract all content
@@ -526,22 +560,42 @@ def main():
     chapter_slug = target_chapter['slug']
     chapter_id = target_chapter['id']
 
-    # Find XHTML file
-    print(f"\n📄 Finding chapter file...")
-    xhtml_path = find_chapter_file(course_title, chapter_num, course_slug)
-    if not xhtml_path:
-        sys.exit(1)
+    # Find XHTML source files via source-map (preferred) or chapter number (fallback)
+    print(f"\n📄 Finding chapter source files...")
+    xhtml_paths = []
 
-    print(f"   ✅ Found: {xhtml_path}")
+    result = load_source_map(course_slug)
+    if result and chapter_slug in result[0].get("chapters", {}):
+        source_map, book_dir = result
+        source_filenames = source_map["chapters"][chapter_slug]["source_files"]
+        print(f"   📌 Source map found: {len(source_filenames)} file(s)")
+        for filename in source_filenames:
+            path = find_chapter_file_by_name(filename, book_dir)
+            if path:
+                xhtml_paths.append(path)
+                print(f"   ✅ {filename} → {path}")
+            else:
+                print(f"   ⚠️  File not found: {filename}")
+        if not xhtml_paths:
+            print("❌ None of the source files could be located")
+            sys.exit(1)
+    else:
+        # Fallback: use chapter number (legacy behavior for courses without source-map)
+        print(f"   ℹ️  No source map — falling back to ch{chapter_num:02d}.xhtml")
+        xhtml_path = find_chapter_file(course_title, chapter_num, course_slug)
+        if not xhtml_path:
+            sys.exit(1)
+        xhtml_paths = [xhtml_path]
+        print(f"   ✅ Found: {xhtml_path}")
 
-    # Find images
+    # Find images (based on first/primary chapter number)
     print(f"\n🖼️  Finding associated images...")
     image_paths = find_chapter_images(course_title, chapter_num, course_slug)
     print(f"   ✅ Found {len(image_paths)} images")
 
-    # Extract content
-    print(f"\n📖 Extracting content from XHTML...")
-    content = extract_content(xhtml_path)
+    # Extract content from all source files
+    print(f"\n📖 Extracting content from {len(xhtml_paths)} XHTML file(s)...")
+    content = extract_content(xhtml_paths)
     print(f"   ✅ Extracted: {content['word_count']:,} words, {len(content['sections'])} sections")
 
     # Skip image upload - we'll create diagrams instead
