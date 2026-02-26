@@ -7,3 +7,5 @@ sqlalchemy>=2.0
 python-multipart>=0.0.9
 requests
 psycopg2-binary>=2.9
+python-jose[cryptography]>=3.3
+bcrypt>=4.0

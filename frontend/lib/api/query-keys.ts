@@ -14,4 +14,12 @@ export const queryKeys = {
     detail: (courseSlug: string, chapterSlug: string) => [...queryKeys.chapters.details(), courseSlug, chapterSlug] as const,
     exercises: (chapterId: number) => ['chapters', chapterId, 'exercises'] as const,
   },
+  progress: {
+    chapter: (chapterId: number) => ['progress', 'chapter', chapterId] as const,
+    course: (courseSlug: string) => ['progress', 'course', courseSlug] as const,
+  },
+  reviewSheets: {
+    byPart: (partId: number) => ['review-sheets', 'part', partId] as const,
+    byCourse: (courseSlug: string) => ['review-sheets', 'course', courseSlug] as const,
+  },
 } as const;

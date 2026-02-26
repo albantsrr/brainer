@@ -24,6 +24,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/auth/register": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Register
+         * @description Create a new user account.
+         */
+        post: operations["register_api_auth_register_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Login
+         * @description Authenticate and return a JWT access token.
+         */
+        post: operations["login_api_auth_login_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Me
+         * @description Return the currently authenticated user.
+         */
+        get: operations["me_api_auth_me_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/courses": {
         parameters: {
             query?: never;
@@ -204,7 +264,7 @@ export interface components {
         /** ChapterCreate */
         ChapterCreate: {
             /** Part Id */
-            part_id: number;
+            part_id?: number | null;
             /** Order */
             order: number;
             /** Title */
@@ -230,7 +290,7 @@ export interface components {
             /** Slug */
             slug: string;
             /** Part Id */
-            part_id: number;
+            part_id: number | null;
         };
         /** ChapterResponse */
         ChapterResponse: {
@@ -239,7 +299,7 @@ export interface components {
             /** Course Id */
             course_id: number;
             /** Part Id */
-            part_id: number;
+            part_id: number | null;
             /** Order */
             order: number;
             /** Title */
@@ -453,6 +513,16 @@ export interface components {
             /** Description */
             description?: string | null;
         };
+        /** Token */
+        Token: {
+            /** Access Token */
+            access_token: string;
+            /**
+             * Token Type
+             * @default bearer
+             */
+            token_type: string;
+        };
         /** TrueFalseContent */
         TrueFalseContent: {
             /** Statement */
@@ -461,6 +531,31 @@ export interface components {
             answer: boolean;
             /** Explanation */
             explanation: string;
+        };
+        /** UserCreate */
+        UserCreate: {
+            /** Email */
+            email: string;
+            /** Username */
+            username: string;
+            /** Password */
+            password: string;
+        };
+        /** UserResponse */
+        UserResponse: {
+            /** Id */
+            id: number;
+            /** Email */
+            email: string;
+            /** Username */
+            username: string;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
         };
         /** ValidationError */
         ValidationError: {
@@ -500,6 +595,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    register_api_auth_register_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    login_api_auth_login_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UserCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Token"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    me_api_auth_me_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UserResponse"];
                 };
             };
         };

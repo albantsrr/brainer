@@ -77,11 +77,11 @@ export function ChapterNav({ courseSlug, parts, chapters }: ChapterNavProps) {
           >
             <AccordionTrigger className="hover:no-underline py-6">
               <div className="flex items-center gap-3 text-left">
-                <Badge variant="outline" className="font-semibold">
+                <Badge variant="outline" className="font-semibold shrink-0">
                   Partie {part.order}
                 </Badge>
-                <span className="font-semibold text-lg">{part.title}</span>
-                <Badge variant="secondary" className="ml-auto mr-4 text-xs">
+                <span className="font-semibold text-lg flex-1 min-w-0">{part.title}</span>
+                <Badge variant="secondary" className="ml-auto mr-4 text-xs shrink-0">
                   {chapters.length} chapitre{chapters.length > 1 ? 's' : ''}
                 </Badge>
               </div>

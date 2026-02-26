@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,33 +10,54 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import type { Exercise, MultipleChoiceContent, TrueFalseContent, CodeContent } from '@/lib/types';
+import type { Exercise, ExerciseSubmissionResponse, MultipleChoiceContent, TrueFalseContent, CodeContent } from '@/lib/types';
+import { apiClient } from '@/lib/api/client';
+import { queryKeys } from '@/lib/api/query-keys';
 
 interface AllExercisesViewProps {
   exercises: Exercise[];
+  chapterId: number;
+  courseSlug: string;
+  initialSubmissions?: Record<number, ExerciseSubmissionResponse>;
   className?: string;
 }
 
-export function AllExercisesView({ exercises, className }: AllExercisesViewProps) {
-  const [answers, setAnswers] = useState<Record<number, any>>({});
-  const [submitted, setSubmitted] = useState(false);
+export function AllExercisesView({ exercises, chapterId, courseSlug, initialSubmissions, className }: AllExercisesViewProps) {
+  const queryClient = useQueryClient();
+  const [answers, setAnswers] = useState<Record<number, any>>(
+    () => Object.fromEntries(
+      Object.entries(initialSubmissions ?? {}).map(([id, sub]) => [parseInt(id), sub.answer])
+    )
+  );
+  const [submitted, setSubmitted] = useState(
+    exercises.length > 0 && exercises.every(ex => (initialSubmissions ?? {})[ex.id] !== undefined)
+  );
 
   const handleAnswerChange = (exerciseId: number, answer: any) => {
     setAnswers(prev => ({ ...prev, [exerciseId]: answer }));
   };
 
-  const handleSubmit = () => {
-    // Check if all exercises have answers
+  const handleSubmit = async () => {
     const allAnswered = exercises.every(ex => {
       const answer = answers[ex.id];
       return answer !== null && answer !== undefined;
     });
 
-    if (allAnswered) {
-      setSubmitted(true);
-      // Scroll to top to see results
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    if (!allAnswered) return;
+
+    setSubmitted(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Persist submissions fire-and-forget
+    await Promise.allSettled(
+      exercises.map(ex =>
+        apiClient
+          .post(`/api/chapters/${chapterId}/exercises/${ex.id}/submit`, { answer: answers[ex.id] })
+          .catch(() => {})
+      )
+    );
+    queryClient.invalidateQueries({ queryKey: queryKeys.progress.chapter(chapterId) });
+    queryClient.invalidateQueries({ queryKey: queryKeys.progress.course(courseSlug) });
   };
 
   const handleReset = () => {
@@ -80,14 +102,12 @@ export function AllExercisesView({ exercises, className }: AllExercisesViewProps
       {/* Success message after submission */}
       {submitted && (
         <Alert className="mb-6" variant="default">
-          <div className="flex items-start gap-3">
-            <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5 text-green-600" />
-            <div className="flex-1">
-              <p className="font-semibold">Exercices soumis avec succès !</p>
-              <AlertDescription>
-                Consultez les corrections ci-dessous pour chaque exercice.
-              </AlertDescription>
-            </div>
+          <CheckCircle2 className="h-5 w-5 text-green-600" />
+          <div>
+            <p className="font-semibold">Exercices soumis avec succès !</p>
+            <AlertDescription>
+              Consultez les corrections ci-dessous pour chaque exercice.
+            </AlertDescription>
           </div>
         </Alert>
       )}
@@ -234,9 +254,12 @@ function MultipleChoiceExerciseContent({
           const showIncorrect = submitted && isSelected && !option.is_correct;
 
           return (
-            <div
+            <Label
               key={idx}
+              htmlFor={`ex-${content.question.substring(0,10)}-option-${idx}`}
               className={`flex items-start space-x-3 rounded-lg border p-4 transition-colors ${
+                submitted ? '' : 'cursor-pointer'
+              } ${
                 showCorrect
                   ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
                   : showIncorrect
@@ -247,21 +270,16 @@ function MultipleChoiceExerciseContent({
               }`}
             >
               <RadioGroupItem value={idx.toString()} id={`ex-${content.question.substring(0,10)}-option-${idx}`} className="mt-0.5" />
-              <Label
-                htmlFor={`ex-${content.question.substring(0,10)}-option-${idx}`}
-                className="flex-1 cursor-pointer font-normal leading-relaxed"
-              >
-                {option.text}
-              </Label>
+              <span className="flex-1 font-normal leading-relaxed">{option.text}</span>
               {showCorrect && <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />}
               {showIncorrect && <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />}
-            </div>
+            </Label>
           );
         })}
       </RadioGroup>
 
       {submitted && (
-        <Alert variant={isCorrect ? 'default' : 'destructive'} className="mt-6">
+        <Alert variant={isCorrect ? 'default' : 'destructive'} className="mt-6 !flex !flex-col">
           <div className="flex items-start gap-3">
             {isCorrect ? (
               <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />
@@ -352,7 +370,7 @@ function TrueFalseExerciseContent({
       )}
 
       {submitted && (
-        <Alert variant={isCorrect ? 'default' : 'destructive'}>
+        <Alert variant={isCorrect ? 'default' : 'destructive'} className="!flex !flex-col">
           <div className="flex items-start gap-3">
             {isCorrect ? (
               <CheckCircle2 className="h-5 w-5 shrink-0 mt-0.5" />

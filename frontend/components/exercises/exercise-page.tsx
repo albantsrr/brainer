@@ -8,20 +8,26 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import type { Exercise, MultipleChoiceContent, TrueFalseContent, CodeContent } from '@/lib/types';
+import type { Exercise, ExerciseSubmissionResponse, MultipleChoiceContent, TrueFalseContent, CodeContent } from '@/lib/types';
+import { useSubmitExerciseAnswer } from '@/lib/api/queries/progress';
 
 interface ExercisePageProps {
   exercise: Exercise;
+  chapterId: number;
+  courseSlug: string;
+  initialSubmission?: ExerciseSubmissionResponse | null;
   className?: string;
 }
 
-export function ExercisePage({ exercise, className }: ExercisePageProps) {
-  const [submitted, setSubmitted] = useState(false);
-  const [answer, setAnswer] = useState<any>(null);
+export function ExercisePage({ exercise, chapterId, courseSlug, initialSubmission, className }: ExercisePageProps) {
+  const [submitted, setSubmitted] = useState(!!initialSubmission);
+  const [answer, setAnswer] = useState<any>(initialSubmission?.answer ?? null);
+  const submitMutation = useSubmitExerciseAnswer(chapterId, exercise.id, courseSlug);
 
   const handleSubmit = () => {
     if (answer !== null && answer !== undefined) {
       setSubmitted(true);
+      submitMutation.mutate({ answer });
     }
   };
 
@@ -144,9 +150,12 @@ function MultipleChoiceExerciseContent({
           const showIncorrect = submitted && isSelected && !option.is_correct;
 
           return (
-            <div
+            <Label
               key={idx}
+              htmlFor={`option-${idx}`}
               className={`flex items-start space-x-3 rounded-lg border p-4 transition-colors ${
+                submitted ? '' : 'cursor-pointer'
+              } ${
                 showCorrect
                   ? 'border-green-500 bg-green-50 dark:bg-green-950/20'
                   : showIncorrect
@@ -157,15 +166,10 @@ function MultipleChoiceExerciseContent({
               }`}
             >
               <RadioGroupItem value={idx.toString()} id={`option-${idx}`} className="mt-0.5" />
-              <Label
-                htmlFor={`option-${idx}`}
-                className="flex-1 cursor-pointer font-normal leading-relaxed"
-              >
-                <span className="block">{option.text}</span>
-              </Label>
+              <span className="flex-1 font-normal leading-relaxed">{option.text}</span>
               {showCorrect && <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />}
               {showIncorrect && <XCircle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />}
-            </div>
+            </Label>
           );
         })}
       </RadioGroup>

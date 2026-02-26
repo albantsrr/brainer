@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useCourse, useCourseParts, useCourseChapters } from '@/lib/api/queries/courses';
 import { useChapter } from '@/lib/api/queries/chapters';
 import { useChapterExercises } from '@/lib/api/queries/exercises';
+import { useChapterProgress } from '@/lib/api/queries/progress';
+import { useAuth } from '@/lib/auth/auth-context';
 import { ChapterSidebar } from '@/components/chapters/chapter-sidebar';
 import { CourseBreadcrumb } from '@/components/chapters/course-breadcrumb';
 import { ExercisePage as ExercisePageComponent } from '@/components/exercises/exercise-page';
@@ -21,11 +23,14 @@ export default function ExercisePage({
   const { slug, chapterSlug, exerciseId } = use(params);
   const exerciseIdNum = parseInt(exerciseId);
 
+  const { token } = useAuth();
+
   const { data: course, isLoading: courseLoading } = useCourse(slug);
   const { data: parts, isLoading: partsLoading } = useCourseParts(slug);
   const { data: allChapters, isLoading: chaptersLoading } = useCourseChapters(slug);
   const { data: chapter, isLoading: chapterLoading } = useChapter(slug, chapterSlug);
   const { data: exercises, isLoading: exercisesLoading } = useChapterExercises(chapter?.id || 0);
+  const { data: chapterProgress } = useChapterProgress(token && chapter?.id ? chapter.id : undefined);
 
   const isLoading = courseLoading || partsLoading || chaptersLoading || chapterLoading || exercisesLoading;
 
@@ -104,7 +109,12 @@ export default function ExercisePage({
           </Link>
 
           {/* Exercise */}
-          <ExercisePageComponent exercise={currentExercise} />
+          <ExercisePageComponent
+            exercise={currentExercise}
+            chapterId={chapter.id}
+            courseSlug={slug}
+            initialSubmission={chapterProgress?.submissions.find(s => s.exercise_id === exerciseIdNum) ?? null}
+          />
 
           {/* Navigation between exercises */}
           <div className="mt-12 pt-8 border-t flex justify-between items-center">

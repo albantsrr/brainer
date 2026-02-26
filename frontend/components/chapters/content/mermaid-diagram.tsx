@@ -46,7 +46,9 @@ export function MermaidDiagram({ chart, className }: MermaidDiagramProps) {
     const renderDiagram = async () => {
       try {
         const id = `mermaid-${Math.random().toString(36).substring(2, 9)}`;
-        const { svg } = await mermaid.render(id, chart);
+        // Replace literal \n escape sequences with actual newlines
+        const processedChart = chart.replace(/\\n/g, '\n');
+        const { svg } = await mermaid.render(id, processedChart);
         setSvg(svg);
         setError('');
       } catch (err) {

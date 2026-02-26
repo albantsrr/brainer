@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from ..dependencies import get_db
-from ..models import Course, Part
+from ..dependencies import get_current_user, get_db
+from ..models import Course, Part, User
 from ..schemas import (
     CourseCreate,
     CourseResponse,
@@ -45,7 +45,7 @@ def list_courses(db: Session = Depends(get_db)):
 
 
 @router.post("/courses", response_model=CourseResponse, status_code=status.HTTP_201_CREATED)
-def create_course(course_in: CourseCreate, db: Session = Depends(get_db)):
+def create_course(course_in: CourseCreate, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = Course(**course_in.model_dump())
     db.add(course)
     db.commit()
@@ -59,7 +59,7 @@ def get_course(slug: str, db: Session = Depends(get_db)):
 
 
 @router.put("/courses/{slug}", response_model=CourseResponse)
-def update_course(slug: str, course_in: CourseUpdate, db: Session = Depends(get_db)):
+def update_course(slug: str, course_in: CourseUpdate, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     for key, value in course_in.model_dump(exclude_unset=True).items():
         setattr(course, key, value)
@@ -69,7 +69,7 @@ def update_course(slug: str, course_in: CourseUpdate, db: Session = Depends(get_
 
 
 @router.delete("/courses/{slug}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_course(slug: str, db: Session = Depends(get_db)):
+def delete_course(slug: str, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     db.delete(course)
     db.commit()
@@ -87,7 +87,7 @@ def list_parts(slug: str, db: Session = Depends(get_db)):
 
 
 @router.post("/courses/{slug}/parts", response_model=PartResponse, status_code=status.HTTP_201_CREATED)
-def create_part(slug: str, part_in: PartCreate, db: Session = Depends(get_db)):
+def create_part(slug: str, part_in: PartCreate, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     part = Part(course_id=course.id, **part_in.model_dump())
     db.add(part)
@@ -103,7 +103,7 @@ def get_part(slug: str, part_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/courses/{slug}/parts/{part_id}", response_model=PartResponse)
-def update_part(slug: str, part_id: int, part_in: PartUpdate, db: Session = Depends(get_db)):
+def update_part(slug: str, part_id: int, part_in: PartUpdate, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     part = _get_part(db, course.id, part_id)
     for key, value in part_in.model_dump(exclude_unset=True).items():
@@ -114,7 +114,7 @@ def update_part(slug: str, part_id: int, part_in: PartUpdate, db: Session = Depe
 
 
 @router.delete("/courses/{slug}/parts/{part_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_part(slug: str, part_id: int, db: Session = Depends(get_db)):
+def delete_part(slug: str, part_id: int, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     part = _get_part(db, course.id, part_id)
     db.delete(part)

@@ -5,27 +5,23 @@ Create pedagogical chapter content from EPUB XHTML files.
 This script:
 1. Finds the chapter XHTML file and associated images
 2. Extracts and parses the content
-3. Uploads images to the API
-4. Outputs extracted content for Claude to transform
-5. Updates the chapter in the database
+3. Outputs extracted content for Claude to transform
+4. Updates the chapter in the database
 
 Usage:
-    python create_chapter.py <course-slug> <chapter-number> [level]
+    python create_chapter.py <course-slug> <chapter-number>
 
 Parameters:
     <course-slug>: Course identifier (e.g., fundamentals-of-data-engineering)
     <chapter-number>: Chapter number to process (e.g., 1, 5)
-    [level]: Optional difficulty level - beginner, intermediate (default), or advanced
 
 Examples:
     python create_chapter.py fundamentals-of-data-engineering 1
-    python create_chapter.py fundamentals-of-data-engineering 5 beginner
-    python create_chapter.py computer-systems-a-programmers-perspective 3 advanced
+    python create_chapter.py computer-systems-a-programmers-perspective 3
 """
 
 import json
 import os
-import re
 import sys
 from pathlib import Path
 from typing import Optional
@@ -44,6 +40,7 @@ except ImportError:
 
 # Configuration
 API_URL = os.getenv("API_URL", "http://localhost:8000")
+BRAINER_TOKEN = os.getenv("BRAINER_TOKEN", "")
 # Script is in .claude/skills/create-chapters/scripts/create_chapter.py
 # Need to go up 5 levels to reach project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent  # Up to /home/teissier/brainer
@@ -51,10 +48,17 @@ BOOKS_DIR = PROJECT_ROOT / "books"
 TEMP_DIR = PROJECT_ROOT / "temp"
 
 
+def _auth_headers() -> dict:
+    if BRAINER_TOKEN:
+        return {"Authorization": f"Bearer {BRAINER_TOKEN}"}
+    print("⚠️  BRAINER_TOKEN not set — write requests will fail (401). Get a token via POST /api/auth/login")
+    return {}
+
+
 def check_backend():
     """Verify backend is accessible."""
     try:
-        response = requests.get(f"{API_URL}/api/courses", timeout=2)
+        requests.get(f"{API_URL}/api/courses", timeout=2)
         return True
     except requests.exceptions.RequestException as e:
         print(f"\n❌ Backend not accessible at {API_URL}")
@@ -90,21 +94,45 @@ def get_chapters(course_slug: str) -> list[dict]:
 
 def find_chapter_file(course_title: str, chapter_num: int, course_slug: str = None) -> Optional[Path]:
     """Find the XHTML file for a specific chapter."""
-    # Try multiple directory patterns
-    search_dirs = [
-        BOOKS_DIR / course_title / "OEBPS",                    # Standard structure (with title)
-        BOOKS_DIR / course_title,                              # Root of course directory (with title)
-        BOOKS_DIR / f"{course_title}-normalized" / "OEBPS",   # Normalized structure (with title)
-        BOOKS_DIR / f"{course_title}-normalized",             # Root of normalized directory (with title)
-    ]
+    # First: scan all book directories for one with a matching course-plan.json slug
+    search_dirs = []
+    if course_slug and BOOKS_DIR.exists():
+        for book_dir in BOOKS_DIR.iterdir():
+            if not book_dir.is_dir():
+                continue
+            plan_path = book_dir / "course-plan.json"
+            if plan_path.exists():
+                try:
+                    import json as _json
+                    with open(plan_path) as f:
+                        plan = _json.load(f)
+                    if plan.get("course", {}).get("slug") == course_slug:
+                        # Add all possible sub-paths including double-nested OEBPS
+                        search_dirs.extend([
+                            book_dir / "OEBPS",
+                            book_dir / "OEBPS" / "OEBPS",
+                            book_dir,
+                        ])
+                except Exception:
+                    pass
+
+    # Fallback: try title and slug based patterns
+    search_dirs.extend([
+        BOOKS_DIR / course_title / "OEBPS",
+        BOOKS_DIR / course_title / "OEBPS" / "OEBPS",
+        BOOKS_DIR / course_title,
+        BOOKS_DIR / f"{course_title}-normalized" / "OEBPS",
+        BOOKS_DIR / f"{course_title}-normalized",
+    ])
 
     # Also try with slug if provided
     if course_slug:
         search_dirs.extend([
-            BOOKS_DIR / course_slug / "OEBPS",                    # Standard structure (with slug)
-            BOOKS_DIR / course_slug,                              # Root of course directory (with slug)
-            BOOKS_DIR / f"{course_slug}-normalized" / "OEBPS",   # Normalized structure (with slug)
-            BOOKS_DIR / f"{course_slug}-normalized",             # Root of normalized directory (with slug)
+            BOOKS_DIR / course_slug / "OEBPS",
+            BOOKS_DIR / course_slug / "OEBPS" / "OEBPS",
+            BOOKS_DIR / course_slug,
+            BOOKS_DIR / f"{course_slug}-normalized" / "OEBPS",
+            BOOKS_DIR / f"{course_slug}-normalized",
         ])
 
     for book_dir in search_dirs:
@@ -300,7 +328,7 @@ def upload_image(image_path: Path) -> Optional[str]:
     try:
         with open(image_path, 'rb') as f:
             files = {'file': (image_path.name, f, 'image/png')}
-            response = requests.post(f"{API_URL}/api/images/upload", files=files)
+            response = requests.post(f"{API_URL}/api/images/upload", files=files, headers=_auth_headers())
 
         if response.status_code == 200:
             data = response.json()
@@ -329,9 +357,8 @@ def upload_images(image_paths: list[Path]) -> dict[str, str]:
     return url_map
 
 
-def save_extracted_content(course_slug: str, chapter_num: int, content: dict, image_map: dict, level: str = 'intermediate'):
+def save_extracted_content(course_slug: str, chapter_num: int, content: dict, image_map: dict):
     """Save extracted content to a JSON file for Claude to process."""
-    # Ensure temp directory exists
     TEMP_DIR.mkdir(exist_ok=True)
 
     output_file = TEMP_DIR / f"chapter_{course_slug}_ch{chapter_num:02d}_extracted.json"
@@ -341,17 +368,17 @@ def save_extracted_content(course_slug: str, chapter_num: int, content: dict, im
         'chapter_number': chapter_num,
         'content': content,
         'image_map': image_map,
-        'level': level,
         'instructions': {
-            'task': f'Transform this chapter content into concise, pedagogical course material in French (level: {level})',
+            'task': 'Transform this chapter content into concise, pedagogical course material in French',
             'mandatory_structure': [
+                '0. Introduction — 2-3 paragraphs, no <h2>, narrative tone',
                 '1. <h2>Objectifs d\'apprentissage</h2> - 3-6 actionable objectives using action verbs',
                 '2. <h2>Pourquoi c\'est important</h2> - Concrete impact (performance, security, etc.)',
-                '3. Content sections - Each main section MUST contain:',
-                '   - <h3>Concept fondamental</h3> - Core concept',
-                '   - <h3>Mécanisme interne</h3> - Technical mechanism',
-                '   - <h3>Exemple pratique</h3> - Concrete example (MANDATORY)',
-                '   - <h3>Erreurs fréquentes</h3> - Common mistakes (if relevant)',
+                '3. Content sections — each <h2> MUST contain:',
+                '   - <h3>Concept fondamental</h3>',
+                '   - <h3>Mécanisme interne</h3>',
+                '   - <h3>Exemple pratique</h3> (MANDATORY)',
+                '   - <h3>Erreurs fréquentes</h3> (if relevant)',
                 '4. <h2>Synthèse</h2> - Structured summary with key points'
             ],
             'critical_constraints': [
@@ -359,49 +386,25 @@ def save_extracted_content(course_slug: str, chapter_num: int, content: dict, im
                 '✅ NEVER remove essential technical content',
                 '✅ Simplify language WITHOUT making content incorrect/incomplete',
                 '✅ Reduce length to 40-60% of original',
-                '✅ Remove redundancies, digressions, tangential anecdotes',
-                '✅ Keep all structuring concepts, key examples, definitions'
+                '✅ Remove redundancies, digressions, tangential anecdotes'
             ],
-            'level_adaptation': {
-                'beginner': 'Simplified vocabulary, analogies, very concrete examples, gradual progression',
-                'intermediate': 'Balance theory/practice, technical terms with definitions, focus on patterns',
-                'advanced': 'Implementation details, performance analysis, edge cases, architectural implications'
-            },
             'html_guidelines': [
-                'Use semantic HTML5 tags only (h2, h3, p, ul, ol, pre, code, blockquote, figure)',
+                'Use semantic HTML5 tags only (h2, h3, p, ul, ol, pre, code, blockquote)',
                 'NO inline styles, NO presentational tags, NO CSS classes',
-                'CRITICAL: ALWAYS use <ul> and <ol> for lists - NEVER convert lists to paragraphs',
-                'List styling (bullets/dashes) is handled by CSS - keep semantic HTML structure',
-                'DO NOT use external images - create diagrams directly using Mermaid syntax',
-                'DIAGRAMS: Use Mermaid.js for all technical diagrams:',
-                '  • Syntax: <pre><code class="language-mermaid">DIAGRAM_CODE</code></pre>',
-                '  • Flowcharts: graph TD/LR for processes, architectures, data flows',
-                '  • Sequence diagrams: sequenceDiagram for interactions, protocols',
-                '  • Class diagrams: classDiagram for object relationships',
-                '  • State diagrams: stateDiagram-v2 for state machines',
-                '  • ER diagrams: erDiagram for database schemas',
-                '  • Other types: pie, gantt, gitGraph, mindmap as needed',
-                'MERMAID NAMING CONVENTIONS (MANDATORY):',
-                '  • Language: 100% French (no Franglais mixing)',
-                '  • Nodes (boxes): Use common nouns (e.g., "Serveur", "Client", "Base de données")',
-                '  • Labels (arrows): Use action nouns (e.g., "Requête", "Réponse", "Traitement") - NOT conjugated verbs',
-                '  • NO verbs: ❌ "Envoie", "Reçoit" → ✅ "Envoi", "Réception"',
-                '  • Technical names in English are OK: PostgreSQL, FastAPI, HTTP, JSON',
-                '  • Example: Client[Client HTTP] -->|Requête| API[Backend FastAPI]',
-                'Each diagram should be clear, focused, and directly relevant to the concept',
-                'Code: Complete, executable examples with comments',
-                'IMPORTANT: Images from the original EPUB are NOT available - replace them with Mermaid diagrams'
+                'ALWAYS use <ul> and <ol> for lists — NEVER convert to paragraphs',
+                'Mermaid diagrams: <pre><code class="language-mermaid">DIAGRAM_CODE</code></pre>',
+                '  • 100% French in nodes/labels, max 6-8 nodes, prefer graph TD over graph LR',
+                '  • Nodes: common nouns ("Serveur", "Client") — Labels: action nouns ("Requête", "Réponse")',
+                '  • Technical names OK in English: PostgreSQL, FastAPI, HTTP, JSON',
+                'Target 2-4 diagrams per chapter — only when they add clarity beyond text',
+                'Code: complete, executable examples with comments',
+                'NO external images — create Mermaid diagrams instead'
             ],
             'language_rules': [
-                'FRENCH for running text, TECHNICAL TERMS in English with explanation',
-                '✅ Keep technical terms in English: buffer, thread, cache, parser, stack, heap, etc.',
-                '✅ MANDATORY: Explain technical terms in French at first mention',
+                'French for running text, technical terms in English with explanation at first mention',
                 '  • Format: Un <strong>buffer</strong> (tampon mémoire temporaire) stocke...',
-                '✅ Use French for verbs and common words: analyser (not "parser"), données (not "data")',
-                '❌ NO Franglais: Do not mix French and English in running text',
-                '❌ NO English verbs: "On va analyser" not "On va parser"',
-                '❌ NO English common words: "les données" not "la data", "fichier" not "file"',
-                'Proper nouns OK without translation: Python, PostgreSQL, Docker, HTTP, JSON'
+                'NO Franglais: analyser (not "parser"), données (not "data"), fichier (not "file")',
+                'Proper nouns without translation: Python, PostgreSQL, Docker, HTTP, JSON'
             ],
             'output_format': 'Return complete HTML content as a string following the mandatory structure'
         }
@@ -412,11 +415,9 @@ def save_extracted_content(course_slug: str, chapter_num: int, content: dict, im
 
     print(f"\n📝 Extracted content saved to: {output_file}")
     print(f"   Title: {content['title']}")
-    print(f"   Level: {level}")
     print(f"   Word count: {content['word_count']:,}")
     print(f"   Sections: {len(content['sections'])}")
     print(f"   Images referenced: {len(content['images'])}")
-    print(f"   Images uploaded: {len(image_map)}")
 
     return output_file
 
@@ -427,7 +428,8 @@ def update_chapter(course_slug: str, chapter_slug: str, html_content: str) -> bo
 
     response = requests.put(
         f"{API_URL}/api/courses/{course_slug}/chapters/{chapter_slug}",
-        json=payload
+        json=payload,
+        headers=_auth_headers(),
     )
 
     if response.status_code == 200:
@@ -437,11 +439,27 @@ def update_chapter(course_slug: str, chapter_slug: str, html_content: str) -> bo
         return False
 
 
+def update_chapter_synopsis(course_slug: str, chapter_slug: str, synopsis: str) -> bool:
+    """Update chapter synopsis via API."""
+    response = requests.put(
+        f"{API_URL}/api/courses/{course_slug}/chapters/{chapter_slug}",
+        json={'synopsis': synopsis},
+        headers=_auth_headers(),
+    )
+
+    if response.status_code == 200:
+        return True
+    else:
+        print(f"❌ Failed to update synopsis: {response.status_code} - {response.text}")
+        return False
+
+
 def create_exercise(chapter_id: int, exercise_data: dict) -> bool:
     """Create an exercise via API."""
     response = requests.post(
         f"{API_URL}/api/chapters/{chapter_id}/exercises",
-        json=exercise_data
+        json=exercise_data,
+        headers=_auth_headers(),
     )
 
     if response.status_code == 201:
@@ -458,15 +476,13 @@ def main():
 
     # Parse arguments
     if len(sys.argv) < 3:
-        print("\nUsage: python create_chapter.py <course-slug> <chapter-number> [level]")
+        print("\nUsage: python create_chapter.py <course-slug> <chapter-number>")
         print("\nParameters:")
         print("  <course-slug>: Course identifier (e.g., fundamentals-of-data-engineering)")
         print("  <chapter-number>: Chapter number to process (e.g., 1, 5)")
-        print("  [level]: Optional difficulty level - beginner, intermediate (default), or advanced")
         print("\nExamples:")
         print("  python create_chapter.py fundamentals-of-data-engineering 1")
-        print("  python create_chapter.py fundamentals-of-data-engineering 5 beginner")
-        print("  python create_chapter.py computer-systems-a-programmers-perspective 3 advanced")
+        print("  python create_chapter.py computer-systems-a-programmers-perspective 3")
         sys.exit(1)
 
     course_slug = sys.argv[1]
@@ -476,16 +492,6 @@ def main():
     except ValueError:
         print(f"❌ Chapter number must be an integer, got: {sys.argv[2]}")
         sys.exit(1)
-
-    # Parse optional level parameter
-    level = 'intermediate'  # default
-    if len(sys.argv) >= 4:
-        level = sys.argv[3].lower()
-        valid_levels = ['beginner', 'intermediate', 'advanced']
-        if level not in valid_levels:
-            print(f"❌ Invalid level: {sys.argv[3]}")
-            print(f"   Valid levels: {', '.join(valid_levels)}")
-            sys.exit(1)
 
     # Check backend
     if not check_backend():
@@ -543,7 +549,7 @@ def main():
     image_map = {}  # Empty map - no images uploaded
 
     # Save extracted content for Claude to process
-    output_file = save_extracted_content(course_slug, chapter_num, content, image_map, level)
+    output_file = save_extracted_content(course_slug, chapter_num, content, image_map)
 
     # Summary
     print("\n" + "=" * 70)

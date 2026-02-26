@@ -28,10 +28,18 @@ except ImportError:
 
 # Configuration
 API_URL = os.getenv("API_URL", "http://localhost:8000")
+BRAINER_TOKEN = os.getenv("BRAINER_TOKEN", "")
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent.parent  # Go up to /home/teissier/brainer
 BOOKS_DIR = PROJECT_ROOT / "books"
 TEMP_DIR = PROJECT_ROOT / "temp"
 COURSE_PLAN_FR_FILE = TEMP_DIR / "course-plan-fr.json"
+
+
+def _auth_headers() -> dict:
+    if BRAINER_TOKEN:
+        return {"Authorization": f"Bearer {BRAINER_TOKEN}"}
+    print("⚠️  BRAINER_TOKEN not set — write requests will fail (401). Get a token via POST /api/auth/login")
+    return {}
 
 
 def clear_temp_dir():
@@ -92,7 +100,7 @@ def create_course(plan: dict) -> str:
     print(f"\n🎓 Creating course: {payload['title']}")
     print(f"   Slug: {payload['slug']}")
 
-    response = requests.post(f"{API_URL}/api/courses", json=payload)
+    response = requests.post(f"{API_URL}/api/courses", json=payload, headers=_auth_headers())
 
     if response.status_code == 201:
         print("   ✅ Course created")
@@ -120,7 +128,8 @@ def create_parts(course_slug: str, parts: list[dict]) -> dict[int, int]:
 
         response = requests.post(
             f"{API_URL}/api/courses/{course_slug}/parts",
-            json=payload
+            json=payload,
+            headers=_auth_headers(),
         )
 
         if response.status_code == 201:
@@ -153,7 +162,8 @@ def create_chapters(course_slug: str, parts: list[dict], part_ids: dict[int, int
 
             response = requests.post(
                 f"{API_URL}/api/courses/{course_slug}/chapters",
-                json=payload
+                json=payload,
+                headers=_auth_headers(),
             )
 
             if response.status_code == 201:

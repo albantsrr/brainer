@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from .database import Base, engine
-from .routers import chapters, courses, exercises, images
+from .routers import auth, chapters, courses, exercises, images, progress, review_sheets
 
 app = FastAPI(title="Brainer API", version="0.1.0")
 
@@ -33,7 +33,10 @@ _static_dir.mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory=_static_dir), name="static")
 
 # Routers
+app.include_router(auth.router, prefix="/api", tags=["auth"])
 app.include_router(courses.router, prefix="/api")
 app.include_router(chapters.router, prefix="/api")
 app.include_router(exercises.router, prefix="/api")
 app.include_router(images.router, prefix="/api")
+app.include_router(progress.router, prefix="/api")
+app.include_router(review_sheets.router, prefix="/api")

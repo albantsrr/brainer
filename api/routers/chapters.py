@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from ..dependencies import get_db
-from ..models import Chapter, Course
+from ..dependencies import get_current_user, get_db
+from ..models import Chapter, Course, User
 from ..schemas import (
     ChapterCreate,
     ChapterListItem,
@@ -59,7 +59,7 @@ def list_chapters(slug: str, db: Session = Depends(get_db)):
 
 
 @router.post("/courses/{slug}/chapters", response_model=ChapterResponse, status_code=status.HTTP_201_CREATED)
-def create_chapter(slug: str, chapter_in: ChapterCreate, db: Session = Depends(get_db)):
+def create_chapter(slug: str, chapter_in: ChapterCreate, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     chapter = Chapter(course_id=course.id, **chapter_in.model_dump())
     db.add(chapter)
@@ -75,7 +75,7 @@ def get_chapter(slug: str, chapter_slug: str, db: Session = Depends(get_db)):
 
 
 @router.put("/courses/{slug}/chapters/{chapter_slug}", response_model=ChapterResponse)
-def update_chapter(slug: str, chapter_slug: str, chapter_in: ChapterUpdate, db: Session = Depends(get_db)):
+def update_chapter(slug: str, chapter_slug: str, chapter_in: ChapterUpdate, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     chapter = _get_chapter_by_slug(db, course.id, chapter_slug)
     for key, value in chapter_in.model_dump(exclude_unset=True).items():
@@ -86,7 +86,7 @@ def update_chapter(slug: str, chapter_slug: str, chapter_in: ChapterUpdate, db: 
 
 
 @router.delete("/courses/{slug}/chapters/{chapter_slug}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_chapter(slug: str, chapter_slug: str, db: Session = Depends(get_db)):
+def delete_chapter(slug: str, chapter_slug: str, db: Session = Depends(get_db), _: User = Depends(get_current_user)):
     course = _get_course(db, slug)
     chapter = _get_chapter_by_slug(db, course.id, chapter_slug)
     db.delete(chapter)

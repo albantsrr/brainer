@@ -43,32 +43,39 @@ Load the `course-plan.json` file from the book directory:
 - Contains chapters with order, titles, slugs, and source files
 - No parsing needed - the file is already in the correct format
 
-### Step 3: Translate to French and Generate Description
+### Step 3: Adapt to French and Generate Description
 
-**⚠️ IMPORTANT: All titles must be translated to French and a course description must be generated.**
+**⚠️ IMPORTANT: All titles must be adapted to French AND paraphrased to avoid plagiarism. Slugs must be generated from the French titles.**
 
 1. Read the `course-plan.json` file from the book directory
-2. Translate ALL titles (course, parts, chapters) to French:
-   - **NOT literal translation** - use pedagogical, comprehensible French
+2. Adapt ALL titles (course, parts, chapters) to French — **paraphrase, don't copy**:
+   - **NOT a literal translation** — rephrase to express the same idea differently
+   - The goal is anti-plagiarism: the French title must not be a word-for-word translation of the original
    - Preserve technical terms when appropriate (e.g., "Data Engineering" → "Ingénierie des données")
-   - Make titles clear and educational (e.g., "Getting Started" → "Premiers pas")
+   - Reframe the angle when needed (e.g., "Storing Data at Scale" → "Systèmes de stockage pour le Big Data")
 3. **Generate a concise course description** (1-2 sentences):
    - Summarize what the course covers
    - Highlight key topics and technologies
    - Keep it clear and informative (NOT just author name)
    - Example: "Guide complet de Docker, des concepts de base aux fonctionnalités avancées : conteneurs, images, réseaux, volumes, Compose, Swarm et sécurité."
-4. Save the translated version as `temp/course-plan-fr.json`
-5. The script will use the French version for database import
+4. **Generate slugs from the French titles** (NOT from the original English slugs):
+   - Take the French title, lowercase it, replace spaces and special chars with hyphens, remove accents
+   - Example: "Ingénierie des données" → `ingenierie-des-donnees`
+   - Example: "Chapitre 1 : Premiers pas" → `chapitre-1-premiers-pas`
+   - Course slug: derived from the French course title
+   - Chapter slugs: derived from the French chapter title (include chapter number)
+5. Save the adapted version as `temp/course-plan-fr.json`
+6. The script will use the French version for database import
 
-**Translation Guidelines:**
-- Course title: Clear, professional French (e.g., "Fundamentals of Data Engineering" → "Principes fondamentaux de l'ingénierie des données")
+**Adaptation Guidelines:**
+- Course title: Clear, professional French paraphrase (e.g., "Fundamentals of Data Engineering" → "Maîtriser l'ingénierie des données")
 - Course description: Concise 1-2 sentence summary highlighting key topics (NOT author name)
-- Part titles: Natural French structure (e.g., "Part I: Introduction" → "Partie I : Introduction")
-- **Chapter titles: ALWAYS include "Chapter X:" prefix** (e.g., "Chapter 1: Getting Started" → "Chapitre 1 : Premiers pas")
-  - The `course-plan.json` file automatically includes "Chapter X:" prefix in all chapter titles
+- Part titles: Natural French structure, rephrased (e.g., "Part I: Introduction" → "Partie I : Les fondamentaux")
+- **Chapter titles: ALWAYS include "Chapitre X:" prefix** (e.g., "Chapter 1: Getting Started" → "Chapitre 1 : Prise en main")
   - Translate "Chapter" to "Chapitre" and add proper French spacing before the colon
-  - Keep titles educational and clear
+  - Paraphrase the chapter title — avoid literal translations
 - Keep technical keywords recognizable for search/SEO
+- **Slugs MUST be derived from the French titles** — never copy the English slug
 
 ### Step 4: Create Course in Database
 
@@ -115,6 +122,13 @@ Display a summary:
 
 - **Prerequisites:** Run `/reformat-epub` first to generate `course-plan.json` in the book directory
 - **Backend must be running** on `http://localhost:8000` (or configured API URL)
+- **`BRAINER_TOKEN` required:** Write endpoints are protected. Get a token first:
+  ```bash
+  curl -s -X POST http://localhost:8000/api/auth/login \
+    -H "Content-Type: application/json" \
+    -d '{"email":"you@example.com","password":"yourpassword"}' | python3 -c "import sys,json; print(json.load(sys.stdin)['access_token'])"
+  export BRAINER_TOKEN=<token>
+  ```
 - **All titles MUST be in French** - the skill translates and uses `temp/course-plan-fr.json`
 - **Temp directory is cleared** at the start of each import to ensure a clean state
 - The skill creates the **structure only** (course, parts, chapters with placeholder content)
@@ -142,14 +156,15 @@ This skill uses `.claude/skills/import-course/scripts/import_course.py` which:
 1. Clear `temp/` directory
 2. Find `books/deep-dive-docker/course-plan.json`
 3. Load course plan (English version)
-4. **Translate to French** → generate `temp/course-plan-fr.json` with:
-   - Course: "Docker en profondeur"
-   - Parts: "Partie I : Introduction à Docker", etc.
-   - Chapters: "Chapitre 1 : Les conteneurs - Vue d'ensemble", etc.
-5. Create course with slug `deep-dive-docker` (from course plan)
-6. Create parts (with French titles)
-7. Create chapters (with French titles)
-8. Report: "✅ Course imported successfully! View at http://localhost:3000/courses/deep-dive-docker"
+4. **Adapt to French (paraphrased)** → generate `temp/course-plan-fr.json` with:
+   - Course: "Maîtriser Docker" → slug: `maitriser-docker`
+   - Parts: "Partie I : Comprendre les conteneurs", etc. (rephrased, not literal)
+   - Chapters: "Chapitre 1 : Vue d'ensemble des conteneurs", etc. (paraphrased titles)
+   - All chapter slugs derived from French titles: `chapitre-1-vue-densemble-des-conteneurs`
+5. Create course with slug `maitriser-docker` (derived from French title)
+6. Create parts (with French paraphrased titles)
+7. Create chapters (with French paraphrased titles and French-derived slugs)
+8. Report: "✅ Course imported successfully! View at http://localhost:3000/courses/maitriser-docker"
 
 ## Resources
 

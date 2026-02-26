@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { ChapterListItem } from '@/lib/types';
@@ -24,34 +23,40 @@ export function ChapterNavigation({
   const nextChapter = currentIndex < sortedChapters.length - 1 ? sortedChapters[currentIndex + 1] : null;
 
   return (
-    <nav className={cn("flex items-center justify-between gap-4", className)}>
-      <div className="flex-1">
+    <nav className={cn("grid grid-cols-2 gap-4", className)}>
+      <div>
         {prevChapter ? (
-          <Button variant="outline" asChild className="w-full sm:w-auto">
-            <Link href={`/courses/${courseSlug}/chapters/${prevChapter.slug}`}>
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              <div className="flex flex-col items-start">
-                <span className="text-xs text-muted-foreground">Précédent</span>
-                <span className="line-clamp-1">{prevChapter.title}</span>
-              </div>
-            </Link>
-          </Button>
+          <Link
+            href={`/courses/${courseSlug}/chapters/${prevChapter.slug}`}
+            className="group flex flex-col gap-1.5 rounded-lg border-2 p-4 transition-all hover:border-primary/30 hover:bg-accent/50 h-full"
+          >
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <ChevronLeft className="h-3 w-3" />
+              Chapitre précédent
+            </span>
+            <span className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
+              {prevChapter.title}
+            </span>
+          </Link>
         ) : (
           <div />
         )}
       </div>
 
-      <div className="flex-1 flex justify-end">
+      <div>
         {nextChapter ? (
-          <Button asChild className="w-full sm:w-auto">
-            <Link href={`/courses/${courseSlug}/chapters/${nextChapter.slug}`}>
-              <div className="flex flex-col items-end">
-                <span className="text-xs opacity-90">Suivant</span>
-                <span className="line-clamp-1">{nextChapter.title}</span>
-              </div>
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
+          <Link
+            href={`/courses/${courseSlug}/chapters/${nextChapter.slug}`}
+            className="group flex flex-col gap-1.5 rounded-lg border-2 border-primary/20 bg-primary/5 p-4 text-right transition-all hover:border-primary/40 hover:bg-primary/10 h-full"
+          >
+            <span className="flex items-center justify-end gap-1 text-xs text-muted-foreground">
+              Chapitre suivant
+              <ChevronRight className="h-3 w-3" />
+            </span>
+            <span className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors">
+              {nextChapter.title}
+            </span>
+          </Link>
         ) : (
           <div />
         )}

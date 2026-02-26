@@ -1,10 +1,12 @@
 'use client';
 
-import { use } from 'react';
+import { use, useMemo } from 'react';
 import Link from 'next/link';
 import { useCourse, useCourseParts, useCourseChapters } from '@/lib/api/queries/courses';
 import { useChapter } from '@/lib/api/queries/chapters';
 import { useChapterExercises } from '@/lib/api/queries/exercises';
+import { useChapterProgress, useCourseProgress, useMarkChapterComplete } from '@/lib/api/queries/progress';
+import { useAuth } from '@/lib/auth/auth-context';
 import { ChapterSidebar } from '@/components/chapters/chapter-sidebar';
 import { ChapterContent } from '@/components/chapters/chapter-content';
 import { ChapterNavigation } from '@/components/chapters/chapter-navigation';
@@ -17,6 +19,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle2 } from 'lucide-react';
 
 export default function ChapterPage({
   params
@@ -25,11 +28,23 @@ export default function ChapterPage({
 }) {
   const { slug, chapterSlug } = use(params);
 
+  const { token } = useAuth();
+
   const { data: course, isLoading: courseLoading } = useCourse(slug);
   const { data: parts, isLoading: partsLoading } = useCourseParts(slug);
   const { data: allChapters, isLoading: chaptersLoading } = useCourseChapters(slug);
   const { data: chapter, isLoading: chapterLoading } = useChapter(slug, chapterSlug);
   const { data: exercises } = useChapterExercises(chapter?.id || 0);
+  const { data: chapterProgress } = useChapterProgress(token && chapter?.id ? chapter.id : undefined);
+  const { data: courseProgress } = useCourseProgress(token ? slug : undefined);
+  const markComplete = useMarkChapterComplete(chapter?.id ?? 0, slug);
+
+  const completedChapterIds = useMemo(
+    () => new Set(courseProgress?.completed_chapter_ids ?? []),
+    [courseProgress]
+  );
+
+  const currentPartId = chapter?.part_id ?? null;
 
   const isLoading = courseLoading || partsLoading || chaptersLoading || chapterLoading;
 
@@ -68,6 +83,7 @@ export default function ChapterPage({
         parts={parts}
         chapters={allChapters}
         currentChapterSlug={chapterSlug}
+        completedChapterIds={completedChapterIds}
       />
 
       {/* Main content */}
@@ -85,8 +101,9 @@ export default function ChapterPage({
 
               {/* Progress */}
               <CourseProgress
-                currentChapterOrder={chapter.order}
+                completedChapters={courseProgress?.completed_chapters ?? 0}
                 totalChapters={allChapters.length}
+                completionPercentage={courseProgress?.completion_percentage}
                 className="mb-8"
               />
 
@@ -104,6 +121,29 @@ export default function ChapterPage({
 
               {/* Chapter content */}
               <ChapterContent content={chapter.content} />
+
+              {/* Mark as complete button */}
+              {token && (
+                <div className="mt-10 flex items-center gap-3">
+                  <Button
+                    variant={chapterProgress?.is_completed ? 'secondary' : 'default'}
+                    onClick={() =>
+                      markComplete.mutate({ is_completed: !chapterProgress?.is_completed })
+                    }
+                    disabled={markComplete.isPending}
+                  >
+                    {chapterProgress?.is_completed
+                      ? 'Marquer comme non terminé'
+                      : 'Marquer comme terminé'}
+                  </Button>
+                  {chapterProgress?.is_completed && (
+                    <span className="text-sm text-muted-foreground flex items-center gap-1.5">
+                      <CheckCircle2 className="h-4 w-4 text-green-600" />
+                      Chapitre complété
+                    </span>
+                  )}
+                </div>
+              )}
 
               {/* Exercises Section */}
               {exercises && exercises.length > 0 && (

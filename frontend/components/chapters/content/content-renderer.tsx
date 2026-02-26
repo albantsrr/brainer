@@ -4,6 +4,7 @@ import { Heading } from './heading';
 import { List, ListItem } from './list';
 import { Blockquote } from './blockquote';
 import { CodeBlock, InlineCode } from './code-block';
+import { SyntaxCodeBlock } from './syntax-code-block';
 import { Figure, FigureImage, FigureCaption } from './figure';
 import { MermaidDiagram } from './mermaid-diagram';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './table';
@@ -56,15 +57,15 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
 
       // Code blocks
       if (name === 'pre') {
-        // Check if it's a Mermaid diagram
         const codeChild = children?.find(
           (child) => child instanceof Element && child.name === 'code'
         ) as Element | undefined;
 
         if (codeChild) {
-          const className = codeChild.attribs?.class || '';
-          if (className.includes('language-mermaid') || className.includes('mermaid')) {
-            // Extract mermaid code from text nodes
+          const codeClass = codeChild.attribs?.class || '';
+
+          // Mermaid diagram
+          if (codeClass.includes('language-mermaid') || codeClass.includes('mermaid')) {
             const mermaidCode = codeChild.children
               ?.filter((child) => child instanceof Text)
               .map((child) => (child as Text).data)
@@ -74,18 +75,32 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
               return <MermaidDiagram chart={mermaidCode.trim()} />;
             }
           }
+
+          // Check if it's inside a figure (ASCII/Unicode diagram)
+          const parent = domNode.parent;
+          if (parent && parent instanceof Element && parent.name === 'figure') {
+            return (
+              <pre className="my-0 overflow-x-auto text-sm font-mono whitespace-pre">
+                {domToReact(children as DOMNode[], options)}
+              </pre>
+            );
+          }
+
+          // Extract raw text and language for syntax highlighting
+          const rawCode = codeChild.children
+            ?.filter((child) => child instanceof Text)
+            .map((child) => (child as Text).data)
+            .join('') || '';
+
+          const langMatch = codeClass.match(/language-(\w+)/);
+          const language = langMatch?.[1] || 'text';
+
+          if (rawCode.trim()) {
+            return <SyntaxCodeBlock code={rawCode} language={language} />;
+          }
         }
 
-        // Check if it's inside a figure (diagram)
-        const parent = domNode.parent;
-        if (parent && parent instanceof Element && parent.name === 'figure') {
-          // Diagram in a figure - preserve alignment for ASCII/Unicode diagrams
-          return (
-            <pre className="my-0 overflow-x-auto text-sm font-mono whitespace-pre">
-              {domToReact(children as DOMNode[], options)}
-            </pre>
-          );
-        }
+        // Fallback for pre without code child
         return <CodeBlock>{domToReact(children as DOMNode[], options)}</CodeBlock>;
       }
 
