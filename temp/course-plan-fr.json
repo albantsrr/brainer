@@ -1,87 +1,111 @@
 {
   "course": {
-    "title": "Les Algorithmes Illustrés",
-    "slug": "les-algorithmes-illustres",
-    "description": "Comprendre les algorithmes fondamentaux — de la recherche dichotomique aux graphes, en passant par le tri et la programmation dynamique — à travers des illustrations visuelles et des exemples concrets accessibles à tous.",
+    "title": "La statistique nue : raisonner avec les données",
+    "slug": "la-statistique-nue-raisonner-avec-les-donnees",
+    "description": "Comprendre comment les statistiques transforment des données brutes en connaissances — de la description de phénomènes jusqu'à l'évaluation de causalités, sans jamais avoir peur des chiffres.",
     "difficulty": "debutant",
-    "author": "Aditya Y. Bhargava"
+    "author": "Charles Wheelan"
   },
   "parts": [
     {
       "order": 1,
-      "title": "Partie 1 : Mesurer l'efficacité des algorithmes",
+      "title": "Partie 1 : Décrire et comparer les données",
       "chapters": [
         {
           "order": 1,
-          "title": "Chapitre 1 : Comment mesurer la vitesse d'un algorithme ?",
-          "slug": "chapitre-1-mesurer-vitesse-algorithme",
-          "source_files": ["kindle_split_007.html"]
+          "title": "Chapitre 1 : Que peuvent vraiment faire les statistiques ?",
+          "slug": "chapitre-1-que-peuvent-vraiment-faire-les-statistiques",
+          "source_files": ["text/part0003.html", "text/part0004.html"]
         },
         {
           "order": 2,
-          "title": "Chapitre 2 : Comment la mémoire structure-t-elle les données ?",
-          "slug": "chapitre-2-memoire-structure-donnees",
-          "source_files": ["kindle_split_008.html", "kindle_split_009.html"]
+          "title": "Chapitre 2 : Comment mesurer ce qui est typique ?",
+          "slug": "chapitre-2-comment-mesurer-ce-qui-est-typique",
+          "source_files": ["text/part0005.html"]
+        },
+        {
+          "order": 3,
+          "title": "Chapitre 3 : Comment les statistiques descriptives peuvent-elles tromper ?",
+          "slug": "chapitre-3-comment-les-statistiques-descriptives-peuvent-elles-tromper",
+          "source_files": ["text/part0006.html"]
         }
       ]
     },
     {
       "order": 2,
-      "title": "Partie 2 : Trier et accéder aux données",
+      "title": "Partie 2 : Raisonner avec le hasard",
       "chapters": [
         {
-          "order": 3,
-          "title": "Chapitre 3 : Pourquoi diviser accélère-t-il le tri ?",
-          "slug": "chapitre-3-diviser-accelerer-tri",
-          "source_files": ["kindle_split_010.html"]
+          "order": 4,
+          "title": "Chapitre 4 : Que révèle vraiment la corrélation ?",
+          "slug": "chapitre-4-que-revele-vraiment-la-correlation",
+          "source_files": ["text/part0007.html"]
         },
         {
-          "order": 4,
-          "title": "Chapitre 4 : Comment les tables de hachage fonctionnent-elles ?",
-          "slug": "chapitre-4-tables-de-hachage",
-          "source_files": ["kindle_split_011.html"]
+          "order": 5,
+          "title": "Chapitre 5 : Comment calculer la probabilité d'un événement ?",
+          "slug": "chapitre-5-comment-calculer-la-probabilite-dun-evenement",
+          "source_files": ["text/part0008.html", "text/part0009.html"]
+        },
+        {
+          "order": 6,
+          "title": "Chapitre 6 : Pourquoi le risque trompe-t-il nos intuitions ?",
+          "slug": "chapitre-6-pourquoi-le-risque-trompe-t-il-nos-intuitions",
+          "source_files": ["text/part0010.html"]
         }
       ]
     },
     {
       "order": 3,
-      "title": "Partie 3 : Parcourir les graphes efficacement",
+      "title": "Partie 3 : Inférer à partir d'un échantillon",
       "chapters": [
         {
-          "order": 5,
-          "title": "Chapitre 5 : Pourquoi les graphes révèlent-ils les chemins optimaux ?",
-          "slug": "chapitre-5-graphes-chemins-optimaux",
-          "source_files": ["kindle_split_012.html", "kindle_split_013.html"]
+          "order": 7,
+          "title": "Chapitre 7 : Pourquoi la qualité des données est-elle cruciale ?",
+          "slug": "chapitre-7-pourquoi-la-qualite-des-donnees-est-elle-cruciale",
+          "source_files": ["text/part0011.html"]
+        },
+        {
+          "order": 8,
+          "title": "Chapitre 8 : À quoi sert le théorème central limite ?",
+          "slug": "chapitre-8-a-quoi-sert-le-theoreme-central-limite",
+          "source_files": ["text/part0012.html"]
+        },
+        {
+          "order": 9,
+          "title": "Chapitre 9 : Comment décider si un résultat est significatif ?",
+          "slug": "chapitre-9-comment-decider-si-un-resultat-est-significatif",
+          "source_files": ["text/part0013.html"]
+        },
+        {
+          "order": 10,
+          "title": "Chapitre 10 : Comment un sondage mesure-t-il une population ?",
+          "slug": "chapitre-10-comment-un-sondage-mesure-t-il-une-population",
+          "source_files": ["text/part0014.html"]
         }
       ]
     },
     {
       "order": 4,
-      "title": "Partie 4 : Résoudre des problèmes complexes",
+      "title": "Partie 4 : Modéliser et évaluer les relations",
       "chapters": [
         {
-          "order": 6,
-          "title": "Chapitre 6 : Quand une solution approchée est-elle meilleure ?",
-          "slug": "chapitre-6-solution-approchee-glouton",
-          "source_files": ["kindle_split_014.html"]
+          "order": 11,
+          "title": "Chapitre 11 : Comment la régression révèle-t-elle les relations ?",
+          "slug": "chapitre-11-comment-la-regression-revele-t-elle-les-relations",
+          "source_files": ["text/part0015.html", "text/part0016.html"]
         },
         {
-          "order": 7,
-          "title": "Chapitre 7 : Comment la programmation dynamique optimise-t-elle les choix ?",
-          "slug": "chapitre-7-programmation-dynamique",
-          "source_files": ["kindle_split_015.html"]
-        },
-        {
-          "order": 8,
-          "title": "Chapitre 8 : Quand les données permettent-elles de prédire ?",
-          "slug": "chapitre-8-donnees-prediction-knn",
-          "source_files": ["kindle_split_016.html", "kindle_split_017.html"]
+          "order": 12,
+          "title": "Chapitre 12 : Peut-on vraiment prouver qu'un programme fonctionne ?",
+          "slug": "chapitre-12-peut-on-vraiment-prouver-quun-programme-fonctionne",
+          "source_files": ["text/part0017.html", "text/part0018.html"]
         }
       ]
     }
   ],
   "summary": {
     "parts": 4,
-    "chapters": 8
+    "chapters": 12
   }
 }
