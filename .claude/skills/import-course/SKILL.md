@@ -147,7 +147,12 @@ Working from the pedagogical structure designed in Step 2.6 (NOT from the book s
    - Conceptual book: "Comprendre comment [phénomène central] fonctionne — de [concept de base] jusqu'à [concept avancé]."
    - Technical book: "Maîtriser [domaine technique] : [outil/concept A], [outil/concept B] et [outil/concept C] pour [objectif professionnel]."
 
-2. Generate the course slug from the French course title (kebab-case, no accents)
+2. Assess the course difficulty level (one of `debutant`, `intermediaire`, `avance`):
+   - **`debutant`** — No prerequisites required; introductory/survey book; accessible to complete beginners; examples are simple and self-contained
+   - **`intermediaire`** — Requires basic domain knowledge; practitioner-level book; some prior experience expected; covers real-world tools and patterns
+   - **`avance`** — Deep technical content; assumes significant prior knowledge; covers internals, theory, or complex systems; not suitable for beginners
+
+3. Generate the course slug from the French course title (kebab-case, no accents)
 
 3. Finalize part and chapter titles (already in French from Step 2.6):
    - **Chapter title format:** Keep `"Chapitre N : "` prefix for UI consistency, then the question/skill statement
@@ -165,6 +170,7 @@ Working from the pedagogical structure designed in Step 2.6 (NOT from the book s
     "title": "[Titre du cours en français]",
     "slug": "[titre-du-cours-en-kebab-case]",
     "description": "[1-2 phrases décrivant les compétences acquises, angle pédagogique]",
+    "difficulty": "debutant|intermediaire|avance",
     "author": "[Auteur]"
   },
   "parts": [
@@ -205,7 +211,8 @@ Make API calls to create the course structure:
    {
      "title": "Course title (in French)",
      "slug": "course-slug",
-     "description": "Brief 1-2 sentence course description (in French)"
+     "description": "Brief 1-2 sentence course description (in French)",
+     "difficulty": "debutant|intermediaire|avance"
    }
    ```
 

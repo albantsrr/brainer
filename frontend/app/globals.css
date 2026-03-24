@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "katex/dist/katex.min.css";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -175,6 +176,28 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+
+  /* Math fractions: <span class="frac"><sup>a</sup><sub>b</sub></span> */
+  .frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    font-size: 0.85em;
+    line-height: 1.1;
+    gap: 1px;
+  }
+  .frac > sup,
+  .frac > sub {
+    all: unset;
+    display: block;
+    text-align: center;
+    line-height: 1.2;
+    padding: 0 2px;
+  }
+  .frac > sup {
+    border-bottom: 1px solid currentColor;
   }
 }
 

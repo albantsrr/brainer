@@ -1,0 +1,257 @@
+<p>Chaque jour, nous raisonnons sur l'incertitude : "Il y a des risques de pluie", "Il est probable qu'il soit en retard", "Je pense que j'ai raté cet examen." Ces phrases traduisent une intuition sur ce qui pourrait arriver, mais l'intuition seule trahit souvent. Les statistiques existent précisément parce que notre cerveau est mal équipé pour gérer l'incertitude de façon rigoureuse.</p>
+
+<p>La théorie des probabilités est le langage mathématique qui permet de quantifier cette incertitude. Elle transforme un sentiment flou ("c'est probable") en un nombre précis ("la probabilité est de 0,73"), et plus important encore, elle fournit des règles pour combiner, mettre à jour et raisonner sur ces nombres sans se contredire.</p>
+
+<p>Ce chapitre pose les fondations de tout ce qui suivra : l'espace des possibles, la mesure de probabilité et ses propriétés, puis les notions d'indépendance et de probabilité conditionnelle, culminant avec le théorème de Bayes, outil central du raisonnement statistique.</p>
+
+<h2>Objectifs d'apprentissage</h2>
+
+<p>À la fin de ce chapitre, vous serez capable de :</p>
+<ul>
+  <li><strong>Définir</strong> un espace de probabilité et ses composants (espace échantillon, événements, mesure)</li>
+  <li><strong>Appliquer</strong> les trois axiomes de Kolmogorov pour dériver des propriétés de probabilité</li>
+  <li><strong>Calculer</strong> des probabilités sur des espaces finis uniformes à l'aide de l'analyse combinatoire</li>
+  <li><strong>Distinguer</strong> indépendance et disjonction, deux notions souvent confondues</li>
+  <li><strong>Calculer</strong> une probabilité conditionnelle et identifier la différence entre P(A|B) et P(B|A)</li>
+  <li><strong>Appliquer</strong> le théorème de Bayes pour mettre à jour une probabilité à la lumière d'une nouvelle information</li>
+</ul>
+
+<h2>Pourquoi c'est important</h2>
+
+<p>Comprendre la probabilité, c'est comprendre sur quoi repose toute statistique inférentielle. Sans ce socle, les concepts qui viennent, variables aléatoires, espérance, loi des grands nombres, tests d'hypothèses, flottent sans ancrage. On peut les mémoriser et les appliquer mécaniquement, mais on ne les comprend pas vraiment.</p>
+
+<p>Les conséquences pratiques d'un mauvais raisonnement probabiliste sont mesurables. Le "prosecutor's fallacy", confondre <span class="math-inline">P(\text{preuve} \mid \text{innocent})</span> avec <span class="math-inline">P(\text{innocent} \mid \text{preuve})</span>, a conduit à des erreurs judiciaires documentées. Les faux positifs médicaux déroutent les patients et les médecins qui ignorent comment la probabilité conditionnelle se comporte sur des maladies rares. Les modèles d'apprentissage automatique reposent sur Bayes pour classifier, filtrer, prédire.</p>
+
+<p>La bonne nouvelle : ces concepts sont plus simples qu'ils n'y paraissent. Trois axiomes suffisent à fonder l'ensemble de la théorie.</p>
+
+<h2>L'espace de probabilité : décrire le monde des possibles</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Avant d'assigner une probabilité à quoi que ce soit, il faut être précis sur <em>quoi</em> on parle. Qu'est-ce qui peut arriver ? La réponse à cette question s'appelle l'<strong>espace échantillon</strong>, noté Ω, c'est l'ensemble de tous les résultats possibles d'une expérience.</p>
+
+<p>Un <strong>événement</strong> est n'importe quel sous-ensemble de Ω. C'est ce à quoi on va assigner une probabilité. Sur ces événements, on dispose de trois opérations fondamentales :</p>
+<ul>
+  <li><strong>Complément</strong> A<sup>c</sup> : tout ce qui n'est pas dans A ("A ne se produit pas")</li>
+  <li><strong>Union</strong> A ∪ B : tout ce qui est dans A, dans B, ou dans les deux ("A ou B")</li>
+  <li><strong>Intersection</strong> A ∩ B : ce qui est à la fois dans A et dans B ("A et B")</li>
+</ul>
+
+<p>Deux événements sont <strong>disjoints</strong> (mutuellement exclusifs) quand <span class="math-inline">A \cap B = \emptyset</span>, ils ne peuvent pas se produire simultanément. Une <strong>partition</strong> de Ω est une famille d'événements disjoints dont l'union couvre exactement Ω.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Imaginez Ω comme un grand rectangle qui représente toutes les situations possibles. Chaque événement est une zone délimitée à l'intérieur.</p>
+<ul>
+  <li>Le complément A<sup>c</sup> est tout ce qui est en dehors de la zone A, parce qu'un résultat est soit dans A, soit en dehors.</li>
+  <li>L'union A ∪ B recouvre les deux zones, parce qu'il suffit d'appartenir à l'une pour être dans l'union.</li>
+  <li>L'intersection A ∩ B est le chevauchement des deux zones, parce qu'un résultat doit satisfaire les deux conditions simultanément.</li>
+</ul>
+<p>C'est pourquoi l'algèbre des événements obéit aux mêmes lois que l'algèbre des ensembles : les lois de De Morgan <span class="math-inline">(A \cup B)^c = A^c \cap B^c</span> découlent directement de cette géométrie.</p>
+
+<h3>Exemple pratique</h3>
+
+<p>On jette un dé à six faces. L'espace échantillon est Ω = {1, 2, 3, 4, 5, 6}. Définissons deux événements :</p>
+<pre><code>A = {2, 4, 6}   ← "le résultat est pair"
+B = {1, 2, 3}   ← "le résultat est inférieur ou égal à 3"
+
+A ∩ B = {2}     ← pair ET ≤ 3
+A ∪ B = {1, 2, 3, 4, 6}  ← pair OU ≤ 3
+A^c  = {1, 3, 5}  ← impair
+</code></pre>
+<p>En statistique, Ω peut être continu (ex. : la température mesurée ∈ ℝ) ou discret. Le choix de Ω est une décision de modélisation, on peut prendre Ω plus grand que nécessaire sans conséquences, mais jamais plus petit.</p>
+
+<h2>Les axiomes de Kolmogorov : fonder la mesure d'incertitude</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Une <strong>mesure de probabilité</strong> P est une fonction qui assigne un nombre réel à chaque événement. Mais toutes les fonctions ne sont pas des mesures de probabilité valides, il faut qu'elles respectent trois contraintes, appelées les <strong>axiomes de Kolmogorov</strong> :</p>
+
+<pre><code>Axiome 1 : P(A) ≥ 0                pour tout événement A
+Axiome 2 : P(Ω) = 1                la certitude totale vaut 1
+Axiome 3 : Si A₁, A₂, ... sont disjoints :
+           P(A₁ ∪ A₂ ∪ ...) = P(A₁) + P(A₂) + ...
+</code></pre>
+
+<p>Ces trois axiomes semblent modestes, mais ils engendrent l'ensemble de la théorie des probabilités.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Pourquoi seulement trois axiomes ? Parce qu'ils capturent exactement les propriétés d'une "proportion", et c'est précisément ce qu'est une probabilité dans l'interprétation fréquentiste.</p>
+<ol>
+  <li>Une proportion ne peut pas être négative, d'où l'Axiome 1.</li>
+  <li>La proportion de "quelque chose parmi tout" vaut 1, d'où l'Axiome 2.</li>
+  <li>Si deux catégories sont sans chevauchement, leurs proportions s'additionnent, d'où l'Axiome 3 (additivité pour les disjoints).</li>
+</ol>
+<p>C'est pourquoi des propriétés non évidentes en découlent directement : <span class="math-inline">P(\emptyset) = 0</span>, <span class="math-inline">P(A^c) = 1 - P(A)</span>, <span class="math-inline">0 \leq P(A) \leq 1</span>, et la formule d'inclusion-exclusion <span class="math-inline">P(A \cup B) = P(A) + P(B) - P(A \cap B)</span>.</p>
+
+<h3>Exemple pratique</h3>
+
+<p>Calculons <span class="math-inline">P(A \cup B)</span> pour le dé de l'exemple précédent, avec P uniforme (chaque face a probabilité <span class="math-inline">\frac{1}{6}</span>) :</p>
+<pre><code>P(A) = 3/6 = 1/2   ← trois faces paires sur six
+P(B) = 3/6 = 1/2   ← trois faces ≤ 3 sur six
+P(A ∩ B) = 1/6     ← seulement la face 2
+
+Formule d'inclusion-exclusion :
+P(A ∪ B) = P(A) + P(B) - P(A ∩ B)
+         = 1/2 + 1/2 - 1/6
+         = 5/6
+</code></pre>
+<p>Vérification : A ∪ B = {1, 2, 3, 4, 6} contient 5 éléments sur 6, cohérent avec <span class="math-inline">\frac{5}{6}</span>. C'est pourquoi soustraire P(A ∩ B) est indispensable : sans cela, on compterait la face 2 deux fois.</p>
+
+<h3>Espaces finis et dénombrement</h3>
+
+<p>Quand Ω est fini et que tous les résultats sont également probables, la probabilité d'un événement A est simplement sa proportion dans Ω :</p>
+<div class="math-block">P(A) = \frac{|A|}{|\Omega|}</div>
+<p>Calculer des probabilités revient alors à <em>compter</em>. Deux formules de dénombrement reviennent souvent : le nombre de façons d'ordonner n objets est n! = n × (n-1) × ... × 1, et le nombre de façons de choisir k objets parmi n (sans ordre) est :</p>
+<div class="math-block">\binom{n}{k} = \frac{n!}{k! \cdot (n-k)!}</div>
+<p>Par exemple, le nombre de comités de 3 personnes parmi 20 est <span class="math-inline">\binom{20}{3} = \frac{20!}{3! \cdot 17!} = 1140</span>.</p>
+
+<h2>Indépendance : quand deux événements n'ont rien à voir</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Deux événements A et B sont <strong>indépendants</strong> si savoir que l'un se produit ne change rien à la probabilité de l'autre. La définition formelle traduit exactement cette idée :</p>
+
+<div class="math-block">A \text{ et } B \text{ indépendants} \iff P(A \cap B) = P(A) \times P(B)</div>
+
+<p>L'indépendance peut être <em>supposée</em> (modèle : deux lancers d'une pièce sont indépendants par hypothèse) ou <em>dérivée</em> (on vérifie numériquement que la définition est satisfaite).</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>La définition par le produit vient de l'idée de proportion. Si B occupe 30 % de Ω, et si A n'est en aucune façon lié à B, alors A devrait occuper la même proportion de B que de Ω tout entier. Autrement dit :</p>
+<ol>
+  <li>P(A) mesure la proportion de Ω occupée par A.</li>
+  <li>Si l'occurrence de B ne "sélectionne" pas préférentiellement des éléments de A, alors dans la zone B, la proportion de A reste P(A).</li>
+  <li>La zone A ∩ B représente donc P(A) × P(B) de Ω, d'où la définition.</li>
+</ol>
+<p>L'indépendance n'est pas une propriété géométrique visible sur un diagramme : elle se vérifie uniquement par le calcul algébrique.</p>
+
+<h3>Exemple pratique</h3>
+
+<p>On lance un dé équilibré. Soit A = {2, 4, 6} (résultat pair) et B = {1, 2, 3, 4} (résultat ≤ 4).</p>
+<pre><code>P(A) = 3/6 = 1/2
+P(B) = 4/6 = 2/3
+P(A ∩ B) = P({2,4}) = 2/6 = 1/3
+
+P(A) × P(B) = 1/2 × 2/3 = 1/3  ✓ égal à P(A ∩ B)
+</code></pre>
+<p>A et B sont donc indépendants, non parce qu'on l'a supposé, mais parce que le calcul le confirme. Connaître le résultat est pair ne change pas la probabilité qu'il soit ≤ 4.</p>
+
+<h3>Erreurs fréquentes</h3>
+<ul>
+  <li><strong>Erreur :</strong> Confondre "disjoints" et "indépendants" → <strong>Solution :</strong> Des événements disjoints de probabilité non nulle sont <em>dépendants</em>, si A se produit, B ne peut pas se produire, donc <span class="math-inline">P(A \cap B) = 0 \neq P(A) \times P(B)</span></li>
+  <li><strong>Erreur :</strong> Croire que l'indépendance se voit sur un diagramme → <strong>Solution :</strong> L'indépendance ne se vérifie qu'algébriquement</li>
+</ul>
+
+<h2>Probabilité conditionnelle : raisonner avec une information partielle</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>La <strong>probabilité conditionnelle</strong> de A sachant B répond à la question : si je sais que B s'est produit, quelle est maintenant la probabilité de A ? Formellement, pour P(B) &gt; 0 :</p>
+
+<div class="math-block">P(A \mid B) = \frac{P(A \cap B)}{P(B)}</div>
+
+<p>Le conditionnement est un "zoom" : on restreint l'espace de référence à B, puis on mesure quelle proportion de ce nouvel espace appartient à A.</p>
+
+<h3>Mécanisme interne</h3>
+
+<p>Revenons à l'image du rectangle. B est une sous-zone. Conditionner sur B revient à effacer tout ce qui est en dehors de B et à renormaliser : B devient le nouveau Ω, et la proportion de A dans ce nouveau monde est <span class="math-inline">\frac{P(A \cap B)}{P(B)}</span>.</p>
+<ol>
+  <li>On restreint l'univers à B, parce qu'on sait que B s'est produit.</li>
+  <li>On mesure A dans ce nouvel univers, c'est la zone A ∩ B.</li>
+  <li>On renormalise par P(B) pour que la probabilité totale du nouvel univers reste 1.</li>
+</ol>
+<p>C'est pourquoi <span class="math-inline">P(\cdot \mid B)</span> satisfait elle aussi les trois axiomes de Kolmogorov, c'est une vraie mesure de probabilité sur Ω, avec B comme certitude.</p>
+
+<h3>Exemple pratique</h3>
+
+<p>Un test médical pour une maladie D donne les fréquences suivantes dans une population :</p>
+<pre><code>           Malade (D)   Sain (D^c)
+Test +       0,009        0,099
+Test -       0,001        0,891
+</code></pre>
+<p>Le test est positif 90 % du temps chez les malades :</p>
+<div class="math-block">P(+ \mid D) = \frac{0{,}009}{0{,}009 + 0{,}001} = 0{,}9</div>
+<p>Mais si je reçois un résultat positif, quelle est la probabilité que je sois malade ?</p>
+<pre><code>P(D | +) = P(+ ∩ D) / P(+)
+         = 0,009 / (0,009 + 0,099)
+         ≈ 0,083   soit environ 8 %
+</code></pre>
+<p>Résultat contre-intuitif : un test positif avec une maladie rare ne signifie pas qu'on est malade. La rareté de la maladie (probabilité a priori faible) domine le calcul. C'est pourquoi confondre <span class="math-inline">P(D \mid +)</span> et <span class="math-inline">P(+ \mid D)</span>, souvent appelé "prosecutor's fallacy", mène à des conclusions erronées.</p>
+
+<h2>Le théorème de Bayes : mettre à jour nos croyances</h2>
+
+<h3>Concept fondamental</h3>
+
+<p>Le théorème de Bayes est une conséquence directe de la définition de la probabilité conditionnelle. Il répond à la question suivante : si on observe un résultat B, comment mettre à jour la probabilité d'une hypothèse A ?</p>
+
+<p>Le point de départ est la <strong>loi des probabilités totales</strong> : si A<sub>1</sub>, ..., A<sub>k</sub> est une partition de Ω, alors :</p>
+
+<div class="math-block">P(B) = \sum_{i=1}^{k} P(B \mid A_i) \cdot P(A_i)</div>
+
+<p>Cette loi permet de calculer P(B) en décomposant selon les causes possibles. Bayes inverse ensuite la question :</p>
+
+<div class="math-block">P(A_i \mid B) = \frac{P(B \mid A_i) \cdot P(A_i)}{P(B)}</div>
+
+<h3>Mécanisme interne</h3>
+
+<p>On appelle P(A<sub>i</sub>) la probabilité <strong>a priori</strong> (avant d'observer B) et P(A<sub>i</sub>|B) la probabilité <strong>a posteriori</strong> (après l'observation). La formule fait trois choses :</p>
+<ol>
+  <li>Elle part de la croyance initiale P(A<sub>i</sub>), ce qu'on savait avant.</li>
+  <li>Elle la multiplie par P(B|A<sub>i</sub>), la vraisemblance : à quel point B est-il compatible avec A<sub>i</sub> ?</li>
+  <li>Elle normalise par P(B), pour que la somme des probabilités a posteriori reste 1.</li>
+</ol>
+<p>C'est pourquoi Bayes est le fondement du raisonnement bayésien : l'observation transforme une croyance initiale en une croyance mise à jour, de façon cohérente et quantifiée.</p>
+
+<h3>Exemple pratique</h3>
+
+<p>Un filtre anti-spam doit décider si un email contenant le mot "gratuit" est du spam. On dispose des probabilités suivantes :</p>
+<pre><code>Catégories et probabilités a priori :
+  P(spam)          = 0,7
+  P(peu urgent)    = 0,2
+  P(urgent)        = 0,1
+
+Probabilité du mot "gratuit" dans chaque catégorie :
+  P("gratuit" | spam)       = 0,9
+  P("gratuit" | peu urgent) = 0,01
+  P("gratuit" | urgent)     = 0,01
+</code></pre>
+<p>Calcul de la probabilité a posteriori que l'email est du spam sachant qu'il contient "gratuit" :</p>
+<pre><code>P("gratuit") = 0,9×0,7 + 0,01×0,2 + 0,01×0,1
+             = 0,63 + 0,002 + 0,001 = 0,633
+
+P(spam | "gratuit") = (0,9 × 0,7) / 0,633 ≈ 0,995
+</code></pre>
+<p>Avec 99,5 % de probabilité a posteriori, le filtre classe correctement cet email comme spam. La forte probabilité a priori du spam, combinée à la haute vraisemblance du mot "gratuit" dans ce contexte, domine le résultat.</p>
+
+<h3>Erreurs fréquentes</h3>
+<ul>
+  <li><strong>Erreur :</strong> Confondre P(A|B) et P(B|A), ces deux quantités sont fondamentalement différentes → <strong>Solution :</strong> Toujours identifier clairement quelle est l'hypothèse (à gauche du |) et quelle est l'observation (à droite)</li>
+  <li><strong>Erreur :</strong> Oublier la probabilité a priori dans l'application de Bayes → <strong>Solution :</strong> Une forte vraisemblance P(B|A) ne suffit pas, si P(A) est très faible, P(A|B) peut rester faible malgré tout</li>
+</ul>
+
+<h2>Avant la synthèse</h2>
+
+<p>Prenez 30 secondes pour répondre mentalement à ces questions, les réponses sont dans la synthèse ci-dessous :</p>
+<ul>
+  <li>Quels sont les trois axiomes de Kolmogorov, et quelle propriété fondamentale chacun traduit-il ?</li>
+  <li>Pourquoi des événements disjoints de probabilité non nulle ne peuvent-ils pas être indépendants ?</li>
+</ul>
+
+<h2>Synthèse</h2>
+
+<p>Ce chapitre a posé les fondations de la théorie des probabilités :</p>
+
+<ul>
+  <li><strong>Espace de probabilité</strong> : triplet (Ω, événements, P), où Ω liste les résultats possibles, les événements sont des sous-ensembles, P leur assigne un nombre</li>
+  <li><strong>Axiomes de Kolmogorov</strong> : non-négativité (<span class="math-inline">P(A) \geq 0</span>), normalisation (<span class="math-inline">P(\Omega) = 1</span>), additivité sur les disjoints, trois contraintes qui engendrent toutes les propriétés de P</li>
+  <li><strong>Distribution uniforme</strong> : quand tous les résultats sont équiprobables, <span class="math-inline">P(A) = \frac{|A|}{|\Omega|}</span>, les probabilités deviennent un problème de dénombrement</li>
+  <li><strong>Indépendance</strong> : <span class="math-inline">P(A \cap B) = P(A) \times P(B)</span>, à ne pas confondre avec la disjonction, qui implique au contraire la dépendance</li>
+  <li><strong>Probabilité conditionnelle</strong> : <span class="math-inline">P(A \mid B) = \frac{P(A \cap B)}{P(B)}</span>, un zoom sur B qui restreint et renormalise l'espace</li>
+  <li><strong>Théorème de Bayes</strong> : <span class="math-inline">P(A_i \mid B) = \frac{P(B \mid A_i) \cdot P(A_i)}{P(B)}</span>, met à jour une croyance a priori par une observation, en tenant compte de la vraisemblance et de la probabilité a priori</li>
+</ul>
+
+<p><strong>À retenir :</strong> Ces trois axiomes simples fondent l'ensemble du raisonnement probabiliste. La difficulté n'est pas dans les axiomes eux-mêmes, mais dans l'application correcte de la probabilité conditionnelle, en distinguant P(A|B) de P(B|A), erreur à l'origine de nombreux raisonnements fallacieux.</p>
+
+<p><strong>Prochaines étapes :</strong> Le chapitre suivant introduit la notion de variable aléatoire, un outil pour passer d'un espace échantillon abstrait à des valeurs numériques que l'on peut calculer et comparer.</p>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import type { Exercise, ExerciseSubmissionResponse, MultipleChoiceContent, TrueFalseContent, CodeContent } from '@/lib/types';
+import type { Exercise, ExerciseSubmissionResponse, MultipleChoiceContent, TrueFalseContent, CodeContent, CalculationContent } from '@/lib/types';
+import { CalculationExercise } from './calculation-exercise';
 import { apiClient } from '@/lib/api/client';
 import { queryKeys } from '@/lib/api/query-keys';
 
@@ -171,6 +172,8 @@ function ExerciseCard({
         return 'Vrai ou Faux';
       case 'code':
         return 'Exercice de code';
+      case 'calculation':
+        return 'Exercice de calcul';
       default:
         return type;
     }
@@ -214,6 +217,13 @@ function ExerciseCard({
             answer={answer}
             setAnswer={onAnswerChange}
             submitted={submitted}
+          />
+        )}
+
+        {exercise.type === 'calculation' && (
+          <CalculationExerciseContent
+            content={exercise.content as any}
+            onAnswerChange={onAnswerChange}
           />
         )}
       </CardContent>
@@ -386,6 +396,30 @@ function TrueFalseExerciseContent({
           </div>
         </Alert>
       )}
+    </div>
+  );
+}
+
+// Calculation Exercise Component
+function CalculationExerciseContent({
+  content,
+  onAnswerChange,
+}: {
+  content: CalculationContent;
+  onAnswerChange: (answer: any) => void;
+}) {
+  useEffect(() => {
+    onAnswerChange('viewed');
+  }, [onAnswerChange]);
+
+  return (
+    <div className="space-y-4">
+      <Alert>
+        <AlertDescription className="text-muted-foreground text-sm">
+          Exercice libre — étudiez l&apos;énoncé et découvrez la solution à votre rythme.
+        </AlertDescription>
+      </Alert>
+      <CalculationExercise content={content} />
     </div>
   );
 }

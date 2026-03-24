@@ -1,0 +1,308 @@
+{
+  "profession": "Data Scientist",
+  "slug": "data-scientist",
+  "generated_at": "2026-03-12",
+  "rationale": "A data scientist is hired to extract reliable knowledge from data — not just predictions, but trustworthy insights with quantified uncertainty and defensible causal claims. This path builds the three capabilities that distinguish a top-10% data scientist: statistical rigor (knowing when results are trustworthy), Bayesian fluency (quantifying uncertainty explicitly), and causal reasoning (distinguishing correlation from causation). These three compound across all domains and remain essential regardless of which tools, frameworks, or cloud platforms dominate.",
+  "shared_foundations_with": ["ml-engineer", "research-scientist"],
+  "considered_and_rejected": [
+    {
+      "name": "Deep Learning",
+      "rejected_because": "Critical for NLP/computer vision specialists but statisticians, A/B testing analysts, and causal inference practitioners operate at senior level without it.",
+      "filter_failed": "specialty_trap"
+    },
+    {
+      "name": "Time Series Analysis",
+      "rejected_because": "Essential in finance and operations but many senior data scientists in healthcare, consumer, and social science domains function without deep time series expertise.",
+      "filter_failed": "specialty_trap"
+    },
+    {
+      "name": "Data Engineering & Pipelines",
+      "rejected_because": "Owned by data engineers; a data scientist borrows basic pipeline literacy but primary responsibility belongs to an adjacent profession.",
+      "filter_failed": "specialty_trap"
+    },
+    {
+      "name": "Natural Language Processing",
+      "rejected_because": "A sub-specialty of ML — universally important within NLP teams but not required for senior data scientists outside text-heavy domains.",
+      "filter_failed": "specialty_trap"
+    },
+    {
+      "name": "Convex Optimization",
+      "rejected_because": "Foundational for ML researchers writing new algorithms but not a required competency for the practicing data scientist who applies existing methods.",
+      "filter_failed": "specialty_trap"
+    },
+    {
+      "name": "Information Theory",
+      "rejected_because": "Elegant and useful but primarily a research-scientist tool; practicing data scientists encounter it peripherally (entropy in trees, KL divergence) without needing mastery.",
+      "filter_failed": "specialty_trap"
+    },
+    {
+      "name": "Data Visualization & Storytelling",
+      "rejected_because": "Important craft skill but fails Filter 2 — deep mastery of chart design does not provide the competitive advantage of statistical or causal reasoning depth.",
+      "filter_failed": "leverage"
+    },
+    {
+      "name": "Software Engineering Practices",
+      "rejected_because": "Hygiene borrowed from software engineering — not owned by data scientists and not the source of DS competitive differentiation.",
+      "filter_failed": "specialty_trap"
+    },
+    {
+      "name": "Communication & Stakeholder Management",
+      "rejected_because": "Universally important but fails Filter 4 (no canonical technical book) and Filter 2 (does not produce hard-to-replicate technical depth).",
+      "filter_failed": "leverage"
+    }
+  ],
+  "tiers": [
+    {
+      "level": "beginner",
+      "label": "Fondations",
+      "goal": "Build correct mental models of data, probability, machine learning, and computation — enough to engage with tier 2 material without being blocked, and enough to read data science discussions without feeling lost.",
+      "entry_requirements": {
+        "assumed_knowledge": ["general literacy", "high-school arithmetic"],
+        "assumed_tools": [],
+        "note": "Designed for anyone — career-changers, non-STEM graduates, or curious beginners with no prior data or programming background. A motivated high-school student can start here."
+      },
+      "skills": [
+        {
+          "rank": 1,
+          "name": "Statistical Intuition",
+          "category": "foundation",
+          "description": "Understanding randomness, distributions, variability, and the logic of inference before any formal notation. The ability to reason correctly about what data can and cannot tell you, and why uncertainty must be quantified rather than suppressed.",
+          "why_fundamental": "Statistical thinking is the primary cognitive mode of the data scientist. Every modeling decision — sample size, metric choice, confidence intervals, significance testing — rests on this foundation. Without it, a practitioner can run models but cannot judge when results are trustworthy. All other skills on this path become dangerous without this one.",
+          "prerequisites": [],
+          "mastery_signals": [
+            "Can explain what a p-value measures and — crucially — what it does NOT measure, using only a coin-flip example accessible to a non-statistician",
+            "Can identify a Simpson's paradox in a news article and explain why the aggregate statistic is misleading without using any equations",
+            "Can describe the difference between a confidence interval and an uncertainty claim using plain language, and explain why 'the true value is in this interval with 95% probability' is wrong"
+          ],
+          "book": {
+            "title": "Naked Statistics: Stripping the Dread from the Data",
+            "authors": "Wheelan, Charles",
+            "year": 2013,
+            "why_this_book": "The most recommended accessible gateway to statistical thinking — no equations, real-world examples throughout, and it builds correct intuitions without the misleading simplifications that must be unlearned later. Wheelan covers distributions, regression, inference, and hypothesis testing for a general audience with precision and humor. No other introductory statistics book matches its combination of accuracy, accessibility, and breadth.",
+            "shared_with": []
+          }
+        },
+        {
+          "rank": 2,
+          "name": "Machine Learning Intuition",
+          "category": "foundation",
+          "description": "A conceptual map of what machine learning models do — how they learn from data, what the five major paradigms are (symbolic, connectionist, evolutionary, Bayesian, analogical), and what each class of model is best suited for. The vocabulary to follow technical ML discussions without yet doing the math.",
+          "why_fundamental": "Data scientists regularly choose modeling approaches, communicate about model behavior, and debug unexpected outputs. Without a conceptual map of the ML landscape, these decisions become cargo-cult choices. This foundation makes the applied work in tiers 2 and 3 meaningful rather than mechanical — the practitioner understands what family of assumptions underlies each tool they reach for.",
+          "prerequisites": [1],
+          "mastery_signals": [
+            "Can explain the bias-variance tradeoff using an analogy that involves no math and that a product manager would understand",
+            "Can describe what overfitting means, why it happens, and name two genuinely different approaches to prevent it",
+            "Can categorize five different ML algorithms (k-NN, decision tree, neural network, naive Bayes, SVM) into their paradigm families and explain what each assumes about the structure of data"
+          ],
+          "book": {
+            "title": "The Master Algorithm: How the Quest for the Ultimate Learning Machine Will Remake Our World",
+            "authors": "Domingos, Pedro",
+            "year": 2015,
+            "why_this_book": "The only popular-science book that accurately maps all five ML paradigms with correct intuitions and no equations. Unlike most ML popularizations, Domingos' intuitions are ones senior practitioners recognize as correct rather than oversimplified. It covers what ML fundamentally is — and what it cannot do — with the clarity of an ML researcher writing for a general audience.",
+            "shared_with": []
+          }
+        },
+        {
+          "rank": 3,
+          "name": "Computational Thinking",
+          "category": "foundation",
+          "description": "Understanding how computers process data algorithmically — big-O complexity, core data structures (arrays, hash tables, trees, graphs), and how algorithms make decisions. The ability to reason about why certain operations are fast or slow, and why that matters when working with data at any scale.",
+          "why_fundamental": "Data scientists implement models on finite machines with real complexity constraints. Understanding why k-NN search is O(n), why hash tables underpin feature stores, and why trees enable efficient splits makes model selection and debugging non-arbitrary. Without this foundation, practitioners treat computational constraints as mysterious limitations rather than predictable consequences of algorithmic structure.",
+          "prerequisites": [1],
+          "mastery_signals": [
+            "Can explain why an O(n²) pairwise distance computation becomes impractical at 10M rows and suggest an alternative data structure approach",
+            "Can describe how a hash table works internally and explain why dictionary lookups in Python are O(1) average case rather than O(log n)",
+            "Can trace through a binary search tree insertion and explain why decision tree depth is bounded logarithmically under balanced conditions"
+          ],
+          "book": {
+            "title": "Grokking Algorithms: An Illustrated Guide for Programmers and Other Curious People",
+            "authors": "Bhargava, Aditya Y.",
+            "year": 2016,
+            "why_this_book": "The most visually accessible and formally correct introduction to algorithm design available — hundreds of hand-drawn diagrams, no prerequisite notation, every concept illustrated with real examples. Uniquely suited for data scientists who need algorithmic intuition without pursuing computer science formally. Covers arrays, hash tables, trees, graphs, and dynamic programming at precisely the depth tier 1 requires.",
+            "shared_with": []
+          }
+        }
+      ]
+    },
+    {
+      "level": "intermediate",
+      "label": "Maîtrise",
+      "goal": "Work independently on real data science problems — fit and evaluate models with theoretical justification, reason probabilistically, and identify whether an analysis answers a causal or merely correlational question.",
+      "entry_requirements": {
+        "note": "Completion of the Fondations tier, or equivalent (1+ year in the field, STEM undergraduate degree, or comparable self-study). Some comfort with algebra and basic programming assumed."
+      },
+      "skills": [
+        {
+          "rank": 1,
+          "name": "Linear Algebra for Data Science",
+          "category": "foundation",
+          "description": "Vectors, matrices, matrix operations, eigenvalues/eigenvectors, and decompositions (SVD, PCA, QR) as the mathematical language of ML models. The ability to read and reason about the structure of any model that operates on numerical data.",
+          "why_fundamental": "Almost every ML model is a matrix operation. Linear regression is a projection; PCA is an eigendecomposition; neural networks are chains of matrix multiplications. Without this foundation, practitioners can use models but cannot modify, debug, or reason about failure modes from first principles. This is the mathematical substrate that makes the rest of tier 2 rigorous rather than mechanical.",
+          "prerequisites": [],
+          "mastery_signals": [
+            "Can derive the normal equations for linear regression from the projection interpretation and explain why (XᵀX)⁻¹Xᵀy minimizes the sum of squared residuals geometrically",
+            "Can describe what SVD decomposes a matrix into, what the singular values represent, and why PCA is a special case of SVD applied to a centered data matrix",
+            "Can explain the curse of dimensionality — specifically why Euclidean distance loses discriminative power as dimensionality grows — using both a geometric argument and a numerical example"
+          ],
+          "book": {
+            "title": "Introduction to Linear Algebra",
+            "authors": "Strang, Gilbert",
+            "year": 2016,
+            "why_this_book": "The most recommended applied linear algebra reference for practitioners — builds geometric intuition before formalism, covers all topics used in ML (projections, eigendecomposition, SVD, least squares), and pairs theory with computational examples. No other linear algebra textbook matches its balance of accessibility and depth for data science applications. The companion MIT OpenCourseWare lectures make it self-contained for independent study.",
+            "shared_with": ["ml-engineer"]
+          }
+        },
+        {
+          "rank": 2,
+          "name": "Applied Statistical Learning",
+          "category": "craft",
+          "description": "The applied practice of supervised and unsupervised machine learning: fitting models, evaluating generalization honestly, selecting and regularizing models, and understanding the statistical justification behind each method. Moving from 'running a model' to 'choosing, validating, and defending a modeling approach.'",
+          "why_fundamental": "This is the core applied skill of the data science practitioner — turning a problem and a dataset into a model, evaluating its performance without illusion, and understanding what the model has actually learned. Without this applied rigor, practitioners overfit, misuse accuracy metrics, and cannot explain why models succeed or fail in production. The theoretical grounding here is what makes this craft rather than guesswork.",
+          "prerequisites": [1],
+          "mastery_signals": [
+            "Can implement k-fold cross-validation from scratch (without sklearn) and explain why a naive single train/test split gives an optimistically biased estimate of generalization error",
+            "Can explain lasso vs. ridge regularization geometrically — why lasso produces sparse solutions and ridge does not — and state when each is preferred",
+            "Can compare a random forest and gradient boosted trees theoretically: what inductive bias each uses, when each tends to overfit, and what hyperparameters to tune first"
+          ],
+          "book": {
+            "title": "An Introduction to Statistical Learning: with Applications in R",
+            "authors": "James, Gareth; Witten, Daniela; Hastie, Trevor; Tibshirani, Robert",
+            "year": 2021,
+            "why_this_book": "The best applied bridge book in the field — rigorous without requiring graduate-level math, covers all core supervised and unsupervised methods with statistical justification, and includes R labs for hands-on practice. The 2021 edition adds neural networks, survival analysis, and multiple testing. Unlike Géron's Hands-On ML, ISLR explains the statistical rationale behind every method rather than just the API. The most widely recommended first ML textbook by practitioners worldwide.",
+            "shared_with": ["ml-engineer"]
+          }
+        },
+        {
+          "rank": 3,
+          "name": "Probabilistic & Bayesian Reasoning",
+          "category": "foundation",
+          "description": "The Bayesian framework for inference: priors, likelihoods, posteriors, Markov chain Monte Carlo, hierarchical models, and model comparison. The ability to express uncertainty explicitly in a model and reason formally about how beliefs update as data arrives.",
+          "why_fundamental": "Frequentist methods answer 'what does this data suggest at a fixed error rate?' Bayesian methods answer 'what should I believe, and with what certainty?' Senior data scientists need both. Bayesian reasoning is essential for sequential experiments, small-data settings, multilevel modeling, and any situation where domain knowledge should inform the analysis. It is also the foundation for probabilistic ML and the more rigorous BDA3 at tier 3.",
+          "prerequisites": [1, 2],
+          "mastery_signals": [
+            "Can compute the posterior for a Beta-Binomial model after 3 successes in 5 trials from a flat prior, and explain why the posterior mean is not the same as the MLE",
+            "Can describe what MCMC samples and explain — without the full Metropolis-Hastings derivation — why it converges to the posterior distribution",
+            "Can construct a simple hierarchical model (students nested in schools), implement it in Stan or brms, and explain what partial pooling means and why it outperforms either fully pooled or fully unpooled estimates"
+          ],
+          "book": {
+            "title": "Statistical Rethinking: A Bayesian Course with Examples in R and Stan",
+            "authors": "McElreath, Richard",
+            "year": 2020,
+            "why_this_book": "The best accessible entry to Bayesian statistics in practice — McElreath builds the full Bayesian workflow from first principles using a small probability language that forces clarity, then scales to hierarchical models and missing data. Vastly more readable than Gelman's BDA3 and more practically grounded than Jaynes. Used in Bayesian graduate courses worldwide as the approachable entry before the canonical reference. The companion R/Python code makes every concept executable from day one.",
+            "shared_with": []
+          }
+        },
+        {
+          "rank": 4,
+          "name": "Causal Inference",
+          "category": "design",
+          "description": "Identifying causal effects from observational and experimental data: the potential outcomes framework, directed acyclic graphs (DAGs), randomization inference, difference-in-differences, regression discontinuity, and instrumental variables at an applied level. The ability to recognize whether an association is causal and design analyses that credibly answer causal questions.",
+          "why_fundamental": "A large fraction of real data science work is implicitly causal — 'does this feature affect retention?', 'did this intervention reduce churn?'. Without causal reasoning, the data scientist produces correlational answers to causal questions, making recommendations that fail when policies change. This is the skill most practitioners skip because it requires thinking structurally about data-generating processes, not just fitting models.",
+          "prerequisites": [2],
+          "mastery_signals": [
+            "Can draw a DAG for a confounded observational study, identify all open backdoor paths using d-separation rules, and state which variables need to be conditioned on to identify the causal effect",
+            "Can explain the parallel trends assumption in difference-in-differences and give two plausible scenarios where it would fail in a realistic business setting",
+            "Can describe what an instrumental variable does conceptually, explain the exclusion restriction, and give a real-world example of a valid instrument"
+          ],
+          "book": {
+            "title": "The Effect: An Introduction to Research Design and Causality",
+            "authors": "Huntington-Klein, Nick",
+            "year": 2022,
+            "why_this_book": "The most accessible and current applied causal inference textbook — covers DAGs, potential outcomes, RCTs, matching, DiD, IV, and RDD in a unified framework with real datasets and R/Stata/Python code. Freely available online. Written for practitioners, not econometrics PhD students. The optimal bridge to Angrist & Pischke's Mostly Harmless Econometrics at tier 3 — it covers the same identification strategies but builds the intuition *The Effect* leaves to the reader to formalize.",
+            "shared_with": []
+          }
+        }
+      ]
+    },
+    {
+      "level": "advanced",
+      "label": "Excellence",
+      "goal": "Operate at senior practitioner level — read and evaluate ML research papers, build and validate complex probabilistic models, design experiments that produce trustworthy causal inference, and engage with edge cases that most practitioners handle by guesswork.",
+      "entry_requirements": {
+        "note": "Completion of the Maîtrise tier, or equivalent senior experience (3+ years of applied data science, comfort with calculus and probability theory, familiarity with at least one ML framework)."
+      },
+      "skills": [
+        {
+          "rank": 1,
+          "name": "Statistical Learning Theory",
+          "category": "foundation",
+          "description": "The mathematical theory underlying why ML models generalize: VC dimension, PAC learning, bias-variance decomposition at formal depth, regularization theory, ensemble methods derived from first principles, kernel methods, and the connections between boosting, SVMs, and regularized regression. The ability to read ML research papers from first principles and evaluate theoretical claims.",
+          "why_fundamental": "Senior data scientists who cannot engage with theory are permanently dependent on others to tell them what works and why. Statistical learning theory answers the fundamental questions: when can a model generalize from finite data? why does ensemble averaging reduce variance? what is the capacity of a model class? These answers are what separate practitioners who reason from practitioners who follow recipes. ESL is what the tier 2 ISLR was designed to complement, not replace.",
+          "prerequisites": [],
+          "mastery_signals": [
+            "Can state the bias-variance decomposition formally and derive it for squared-error loss; correctly identify which term regularization controls and why increasing model complexity always reduces one while typically increasing the other",
+            "Can explain VC dimension intuitively, state what it implies for sample complexity in PAC learning, and give examples of model classes with finite vs. infinite VC dimension",
+            "Can compare gradient boosting and random forests theoretically — demonstrate that boosting primarily reduces bias via additive stage-wise fitting and that bagging primarily reduces variance via averaging independent estimators"
+          ],
+          "book": {
+            "title": "The Elements of Statistical Learning: Data Mining, Inference, and Prediction",
+            "authors": "Hastie, Trevor; Tibshirani, Robert; Friedman, Jerome",
+            "year": 2009,
+            "why_this_book": "The canonical reference for statistical learning — cited in virtually every serious ML paper, covers every core method with full mathematical derivation, and provides the theoretical depth that ISLR intentionally omits. Free online. ESL is the book practitioners cite when they want to understand why something works, not just how to use it. Its relationship to ISLR is precisely the tier 2 → tier 3 progression: same terrain, deeper formalism.",
+            "shared_with": ["ml-engineer", "research-scientist"]
+          }
+        },
+        {
+          "rank": 2,
+          "name": "Bayesian Data Analysis (Advanced)",
+          "category": "foundation",
+          "description": "The full Bayesian workflow at canonical depth: posterior computation, MCMC convergence diagnostics, hierarchical and multilevel models, posterior predictive model checking, missing data via principled imputation, and decision-theoretic foundations. The ability to build, validate, and defend complex probabilistic models from scratch.",
+          "why_fundamental": "Real datasets have missing values, nested structures, measurement error, and small samples. The Bayesian framework handles all of these naturally. Senior data scientists who can build three-level hierarchical models, diagnose MCMC convergence formally, and perform principled model comparison have capabilities that most practitioners entirely lack. This is the skill most data scientists skip because the book is difficult and the prior (tier 2) requires genuine mastery.",
+          "prerequisites": [1],
+          "mastery_signals": [
+            "Can build a three-level hierarchical model (observations nested in individuals nested in groups), code it in Stan, and diagnose convergence using R-hat, effective sample size, and traceplots",
+            "Can implement a posterior predictive check for a custom likelihood, explain what it tests that WAIC and LOO-CV do not, and interpret a failure",
+            "Can compare three Bayesian model comparison approaches (LOO-CV, WAIC, Bayes factors) and explain the practical failure mode of each — including why Bayes factors are sensitive to prior specification while LOO-CV is not"
+          ],
+          "book": {
+            "title": "Bayesian Data Analysis",
+            "authors": "Gelman, Andrew; Carlin, John B.; Stern, Hal S.; Dunson, David B.; Vehtari, Aki; Rubin, Donald B.",
+            "year": 2013,
+            "why_this_book": "The canonical reference for Bayesian statistics — universally cited, covers the full mathematical theory alongside applied workflow, and is the book every serious statistician and data scientist must eventually engage with. Deeper than Statistical Rethinking by design: includes MCMC theory, importance sampling, variational inference, and advanced hierarchical modeling that Rethinking treats lightly. The senior practitioner's required reference for any serious probabilistic modeling work.",
+            "shared_with": ["research-scientist"]
+          }
+        },
+        {
+          "rank": 3,
+          "name": "Rigorous Causal Inference",
+          "category": "design",
+          "description": "The econometric toolkit for causal identification with observational data: the Rubin causal model at full formalism, local average treatment effects (LATE), two-stage least squares, regression discontinuity and kink designs, synthetic control, and the theory of natural experiments. The ability to evaluate the credibility of causal claims in research papers and business analyses.",
+          "why_fundamental": "Applied causal inference (tier 2) builds the right intuitions. Rigorous causal inference builds the formal tools for edge cases: heterogeneous treatment effects, partial compliance, weak instruments, and multiple testing in observational settings — situations where intuition misleads and formal methods are necessary. Senior data scientists evaluating vendor A/B tests, advising on study design, or publishing findings need this rigor to catch failures that applied intuition misses.",
+          "prerequisites": [1],
+          "mastery_signals": [
+            "Can derive the IV estimator as a ratio of reduced forms and prove that the Wald estimator equals the LATE under the monotonicity assumption, with a worked numerical example",
+            "Can describe the identifying assumptions for synthetic control, explain what placebo tests check, and identify two conditions under which the synthetic control estimate is likely to be biased",
+            "Can identify a regression discontinuity design opportunity from a real policy rule, state the identifying assumption in formal terms (local continuity of the conditional expectation), and describe its threats"
+          ],
+          "book": {
+            "title": "Mostly Harmless Econometrics: An Empiricist's Companion",
+            "authors": "Angrist, Joshua D.; Pischke, Jörn-Steffen",
+            "year": 2009,
+            "why_this_book": "The canonical reference for applied causal inference — bridges formal econometric theory with data science applications, covers all major identification strategies (IV, DiD, RDD, matching) with rigorous derivations and real empirical examples. Written to be accessible to practitioners without a full econometrics PhD sequence while preserving mathematical rigor. The most-cited reference in applied causal inference across economics, public health, and data science.",
+            "shared_with": []
+          }
+        },
+        {
+          "rank": 4,
+          "name": "Experimental Design",
+          "category": "design",
+          "description": "The theory and practice of designing experiments that produce valid causal inference: randomization inference, factorial and fractional factorial designs, sample size calculation under multiple testing, sequential testing, and the analysis of complex experimental designs. The ability to design and audit experiments — not just run them.",
+          "why_fundamental": "Senior data scientists are often the internal authority on whether an experiment was valid. Understanding blocking, randomization, power calculation, and early stopping separates practitioners who can run A/B tests from practitioners who can guarantee the results are trustworthy. Most practitioners run experiments without understanding the design principles that make them valid — this is the skill most data scientists skip because it requires engaging with statistical theory that is unfashionable outside academic statistics.",
+          "prerequisites": [1, 3],
+          "mastery_signals": [
+            "Can derive the power formula for a two-sample t-test and correctly explain what each of the four quantities (α, β, δ, σ) controls in practice when planning a product experiment",
+            "Can explain why naive sequential testing inflates the false positive rate and describe two principled alternatives (group sequential tests, always-valid p-values) that maintain Type I error control",
+            "Can design a 2³ factorial experiment, generate the alias structure for a half-fraction (2³⁻¹ design), and explain in plain terms what confounding means for the interpretation of results"
+          ],
+          "book": {
+            "title": "Design and Analysis of Experiments",
+            "authors": "Montgomery, Douglas C.",
+            "year": 2017,
+            "why_this_book": "The canonical reference for experimental design — covers factorial designs, response surface methods, blocking, split-plot designs, and sequential analysis with full statistical rigor. Used in statistics, engineering, and pharmaceutical research for 40+ years. The book most senior practitioners who need to defend the validity of complex experiments at scale (adaptive experiments, multi-armed bandits, sequential A/B tests) must have read. No other textbook covers this terrain with comparable depth and generality.",
+            "shared_with": []
+          }
+        }
+      ]
+    }
+  ]
+}

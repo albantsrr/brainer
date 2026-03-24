@@ -10,10 +10,12 @@ export type Chapter = components['schemas']['ChapterResponse'];
 export type ChapterListItem = components['schemas']['ChapterListItem'];
 export type ChapterUpdate = components['schemas']['ChapterUpdate'];
 export type Exercise = components['schemas']['ExerciseResponse'];
-export type ExerciseType = 'multiple_choice' | 'code' | 'true_false';
+export type ExerciseType = 'multiple_choice' | 'code' | 'true_false' | 'calculation';
+export type CourseDifficulty = 'debutant' | 'intermediaire' | 'avance';
 export type MultipleChoiceContent = components['schemas']['MultipleChoiceContent'];
 export type CodeContent = components['schemas']['CodeContent'];
 export type TrueFalseContent = components['schemas']['TrueFalseContent'];
+export type CalculationContent = components['schemas']['CalculationContent'];
 
 // Review sheet types (not yet in auto-generated API)
 export interface ReviewSheet {

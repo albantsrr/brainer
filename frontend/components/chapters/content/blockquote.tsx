@@ -10,8 +10,9 @@ export function Blockquote({ children, className }: BlockquoteProps) {
   return (
     <blockquote
       className={cn(
-        'my-6 border-l-4 border-primary pl-6 pr-4',
+        'my-6 border-l-4 border-primary pl-6 pr-4 py-4',
         'italic text-muted-foreground',
+        'bg-primary/5 rounded-r-lg',
         'space-y-2',
         className
       )}

@@ -249,6 +249,94 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/chapters/{chapter_id}/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Chapter Progress */
+        get: operations["get_chapter_progress_api_chapters__chapter_id__progress_get"];
+        /** Update Chapter Progress */
+        put: operations["update_chapter_progress_api_chapters__chapter_id__progress_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/chapters/{chapter_id}/exercises/{exercise_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Exercise Answer */
+        post: operations["submit_exercise_answer_api_chapters__chapter_id__exercises__exercise_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/courses/{course_slug}/progress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Course Progress */
+        get: operations["get_course_progress_api_courses__course_slug__progress_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/courses/{slug}/review-sheets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Review Sheets For Course */
+        get: operations["list_review_sheets_for_course_api_courses__slug__review_sheets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/parts/{part_id}/review-sheet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Review Sheet */
+        get: operations["get_review_sheet_api_parts__part_id__review_sheet_get"];
+        put?: never;
+        /** Upsert Review Sheet */
+        post: operations["upsert_review_sheet_api_parts__part_id__review_sheet_post"];
+        /** Delete Review Sheet */
+        delete: operations["delete_review_sheet_api_parts__part_id__review_sheet_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -260,6 +348,17 @@ export interface components {
              * Format: binary
              */
             file: string;
+        };
+        /** CalculationContent */
+        CalculationContent: {
+            /** Problem */
+            problem: string;
+            /** Steps */
+            steps: string[];
+            /** Solution */
+            solution: string;
+            /** Hints */
+            hints: string[];
         };
         /** ChapterCreate */
         ChapterCreate: {
@@ -273,8 +372,21 @@ export interface components {
             slug: string;
             /** Content */
             content?: string | null;
+            /** Synopsis */
+            synopsis?: string | null;
             /** Image */
             image?: string | null;
+        };
+        /** ChapterDetailProgressResponse */
+        ChapterDetailProgressResponse: {
+            /** Chapter Id */
+            chapter_id: number;
+            /** Is Completed */
+            is_completed: boolean;
+            /** Completed At */
+            completed_at: string | null;
+            /** Submissions */
+            submissions: components["schemas"]["ExerciseSubmissionResponse"][];
         };
         /**
          * ChapterListItem
@@ -291,6 +403,22 @@ export interface components {
             slug: string;
             /** Part Id */
             part_id: number | null;
+            /** Synopsis */
+            synopsis: string | null;
+        };
+        /** ChapterProgressResponse */
+        ChapterProgressResponse: {
+            /** Chapter Id */
+            chapter_id: number;
+            /** Is Completed */
+            is_completed: boolean;
+            /** Completed At */
+            completed_at: string | null;
+        };
+        /** ChapterProgressUpdate */
+        ChapterProgressUpdate: {
+            /** Is Completed */
+            is_completed: boolean;
         };
         /** ChapterResponse */
         ChapterResponse: {
@@ -308,6 +436,8 @@ export interface components {
             slug: string;
             /** Content */
             content: string | null;
+            /** Synopsis */
+            synopsis: string | null;
             /** Image */
             image: string | null;
             /**
@@ -333,6 +463,8 @@ export interface components {
             slug?: string | null;
             /** Content */
             content?: string | null;
+            /** Synopsis */
+            synopsis?: string | null;
             /** Image */
             image?: string | null;
         };
@@ -359,6 +491,31 @@ export interface components {
             description?: string | null;
             /** Image */
             image?: string | null;
+            difficulty?: components["schemas"]["CourseDifficulty"] | null;
+        };
+        /**
+         * CourseDifficulty
+         * @enum {string}
+         */
+        CourseDifficulty: "debutant" | "intermediaire" | "avance";
+        /** CourseProgressResponse */
+        CourseProgressResponse: {
+            /** Course Id */
+            course_id: number;
+            /** Total Chapters */
+            total_chapters: number;
+            /** Completed Chapters */
+            completed_chapters: number;
+            /** Completion Percentage */
+            completion_percentage: number;
+            /** Total Exercises */
+            total_exercises: number;
+            /** Answered Exercises */
+            answered_exercises: number;
+            /** Correct Exercises */
+            correct_exercises: number;
+            /** Completed Chapter Ids */
+            completed_chapter_ids: number[];
         };
         /** CourseResponse */
         CourseResponse: {
@@ -372,6 +529,7 @@ export interface components {
             description: string | null;
             /** Image */
             image: string | null;
+            difficulty: components["schemas"]["CourseDifficulty"] | null;
             /**
              * Created At
              * Format: date-time
@@ -393,6 +551,7 @@ export interface components {
             description?: string | null;
             /** Image */
             image?: string | null;
+            difficulty?: components["schemas"]["CourseDifficulty"] | null;
         };
         /** ExerciseCreate */
         ExerciseCreate: {
@@ -400,7 +559,7 @@ export interface components {
             title: string;
             type: components["schemas"]["ExerciseType"];
             /** Content */
-            content: components["schemas"]["MultipleChoiceContent"] | components["schemas"]["CodeContent"] | components["schemas"]["TrueFalseContent"];
+            content: components["schemas"]["MultipleChoiceContent"] | components["schemas"]["CodeContent"] | components["schemas"]["TrueFalseContent"] | components["schemas"]["CalculationContent"];
             /** Image */
             image?: string | null;
             /**
@@ -439,18 +598,39 @@ export interface components {
              */
             updated_at: string;
         };
+        /** ExerciseSubmissionCreate */
+        ExerciseSubmissionCreate: {
+            /** Answer */
+            answer: number | boolean | string;
+        };
+        /** ExerciseSubmissionResponse */
+        ExerciseSubmissionResponse: {
+            /** Exercise Id */
+            exercise_id: number;
+            /** Answer */
+            answer: {
+                [key: string]: unknown;
+            } | number | boolean | string;
+            /** Is Correct */
+            is_correct: boolean;
+            /**
+             * Submitted At
+             * Format: date-time
+             */
+            submitted_at: string;
+        };
         /**
          * ExerciseType
          * @enum {string}
          */
-        ExerciseType: "multiple_choice" | "code" | "true_false";
+        ExerciseType: "multiple_choice" | "code" | "true_false" | "calculation";
         /** ExerciseUpdate */
         ExerciseUpdate: {
             /** Title */
             title?: string | null;
             type?: components["schemas"]["ExerciseType"] | null;
             /** Content */
-            content?: components["schemas"]["MultipleChoiceContent"] | components["schemas"]["CodeContent"] | components["schemas"]["TrueFalseContent"] | null;
+            content?: components["schemas"]["MultipleChoiceContent"] | components["schemas"]["CodeContent"] | components["schemas"]["TrueFalseContent"] | components["schemas"]["CalculationContent"] | null;
             /** Image */
             image?: string | null;
             /** Auto Generated */
@@ -465,6 +645,13 @@ export interface components {
         ImageUploadResponse: {
             /** Url */
             url: string;
+        };
+        /** LoginCredentials */
+        LoginCredentials: {
+            /** Email */
+            email: string;
+            /** Password */
+            password: string;
         };
         /** MultipleChoiceContent */
         MultipleChoiceContent: {
@@ -512,6 +699,30 @@ export interface components {
             title?: string | null;
             /** Description */
             description?: string | null;
+        };
+        /** ReviewSheetCreate */
+        ReviewSheetCreate: {
+            /** Content */
+            content: string;
+        };
+        /** ReviewSheetResponse */
+        ReviewSheetResponse: {
+            /** Id */
+            id: number;
+            /** Part Id */
+            part_id: number;
+            /** Content */
+            content: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
         };
         /** Token */
         Token: {
@@ -641,7 +852,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["UserCreate"];
+                "application/json": components["schemas"]["LoginCredentials"];
             };
         };
         responses: {
@@ -1346,6 +1557,265 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["ImageUploadResponse"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_chapter_progress_api_chapters__chapter_id__progress_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                chapter_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChapterDetailProgressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_chapter_progress_api_chapters__chapter_id__progress_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                chapter_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ChapterProgressUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ChapterProgressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_exercise_answer_api_chapters__chapter_id__exercises__exercise_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                chapter_id: number;
+                exercise_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExerciseSubmissionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExerciseSubmissionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_course_progress_api_courses__course_slug__progress_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                course_slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CourseProgressResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_review_sheets_for_course_api_courses__slug__review_sheets_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewSheetResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_review_sheet_api_parts__part_id__review_sheet_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                part_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewSheetResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upsert_review_sheet_api_parts__part_id__review_sheet_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                part_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewSheetCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReviewSheetResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_review_sheet_api_parts__part_id__review_sheet_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                part_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -1,76 +1,82 @@
 ---
 name: create-exercise
-description: Create targeted exercises for chapters or course sections to test and reinforce learning. Generates multiple choice, true/false, or code exercises based on chapter content. Use when you want to add exercises to existing course material.
+description: Create targeted exercises for chapters or course sections to test and reinforce learning. Generates multiple choice, true/false, code, or calculation exercises based on chapter content and pedagogical domain. Use when you want to add exercises to existing course material.
 ---
 
 # Create Exercise
 
 ## Overview
 
-This skill creates pedagogical exercises for course chapters. It analyzes chapter content to generate targeted exercises that test understanding and reinforce key concepts. Exercises can be created individually or in batches, and are integrated directly into the course structure via the API.
+This skill creates pedagogical exercises for course chapters. It detects the pedagogical domain (informatique, maths, general) and generates domain-appropriate exercises that test understanding and reinforce key concepts.
 
-**Key difference from create-chapters:** The `create-chapters` skill transforms raw book content into pedagogical material and creates initial exercises. This skill is focused solely on creating additional exercises for existing content, allowing for iterative improvement and customization of the learning experience.
-
-## When to Use This Skill
-
-Invoke this skill when the user wants to:
-- Add new exercises to an existing chapter
-- Create exercises on specific topics or concepts from a chapter
-- Generate exercises for a particular part or section
-- Replace or improve existing exercises
-- Create exercises based on a specific difficulty level
-- Generate exercises of a specific type (e.g., only code exercises)
+**Exercise types available:**
+- `multiple_choice` — 4 options with explanation (all domains)
+- `true_false` — statement + boolean answer with explanation (all domains)
+- `code` — code to write with starter + solution + hints (informatique only)
+- `calculation` — math problem with step hints and HTML solution (maths only)
 
 ## Workflow
 
 ### Step 1: Identify Target Content
 
 **Required information:**
-- Course slug (e.g., `fundamentals-of-data-engineering`)
+- Course slug (e.g., `statistiques-theorie-methodes`)
 - Chapter slug or chapter ID
-- Optional: Specific section or topic to focus on
-- Optional: Exercise type preference (multiple_choice, true_false, code)
-- Optional: Difficulty level (easy, medium, hard)
-- Optional: Number of exercises to create (default: 2-4)
+- Optional: specific section or topic
+- Optional: exercise type preference
+- Optional: number of exercises to create (default: 2-4)
 
 **Actions:**
 1. Verify the course exists via `GET /api/courses/{slug}`
-2. Retrieve chapter info via `GET /api/courses/{slug}/chapters/{chapter_slug}`
-3. Fetch chapter content to analyze
-4. List existing exercises via `GET /api/chapters/{chapter_id}/exercises` to avoid duplication
+2. Retrieve chapter info via `GET /api/courses/{slug}/chapters` — response includes `id`, `slug`, `title`, and **`synopsis`** for each chapter
+3. List existing exercises via `GET /api/chapters/{chapter_id}/exercises` to avoid duplication
 
-### Step 2: Analyze Chapter Content
+### Step 1.5: Detect Pedagogical Domain
 
-**Read and analyze the chapter content:**
-- Parse HTML structure to identify main topics
-- Extract key concepts, definitions, and technical terms
-- Identify code examples and practical applications
-- Note any existing exercises to ensure new ones are complementary
-- Understand the chapter's learning objectives
+**Priority order:**
+1. Explicit mention in user prompt ("exercices de maths", "code Python", etc.)
+2. Course title keywords:
+   - **informatique** — "computer", "systems", "data engineering", "programming", "algorithms", "networks"
+   - **maths** — "statistiques", "mathématiques", "probabilités", "algèbre", "analyse", "calcul"
+   - **general** — anything else
+3. Ask the user if ambiguous
 
-**If targeting a specific section:**
-- Focus analysis on the relevant section only
-- Extract section-specific concepts and examples
-- Ensure exercises test understanding of that section
+**Once detected, load the corresponding domain reference:**
+- `references/domains/informatique.md` — CS: favour `code` + `multiple_choice`
+- `references/domains/maths.md` — maths: favour `calculation` + `multiple_choice`, NO `code`
+- `references/domains/general.md` — mix based on content
+
+### Step 2: Analyze the Chapter Synopsis
+
+**The `synopsis` field is the primary source for exercise generation.** It contains:
+- Key bullet points summarizing main ideas
+- A "Concepts importants" section with definitions
+- An "À retenir absolument" section
+
+**Use the synopsis to:**
+- Identify the 3-5 core concepts to test
+- Understand key definitions and their nuances
+- Extract common misconceptions (good for true/false)
+- Find "why" explanations (good for application-level MCQ)
+
+**Do NOT fetch the full chapter HTML content** — the synopsis is sufficient.
 
 ### Step 3: Determine Exercise Strategy
-
-**Based on content type and user preferences:**
 
 **For conceptual content:**
 - Multiple choice for definitions and comparisons
 - True/false for common misconceptions
 - Focus on understanding "why" not just "what"
 
-**For technical content:**
+**For technical/CS content:**
 - Code exercises for practical application
 - Multiple choice for tool selection and trade-offs
 - True/false for capability statements
 
-**For mixed content:**
-- Balance exercise types (mix of all three)
-- Progress from conceptual to practical
-- Ensure coverage of different aspects
+**For mathematical content:**
+- Calculation exercises for numerical application of theorems/formulas
+- Multiple choice with KaTeX formulas, plausible distractors (sign errors, theorem confusion)
+- True/false for properties and conditions
 
 **Difficulty considerations:**
 - **Easy:** Basic definitions, straightforward facts
@@ -79,13 +85,12 @@ Invoke this skill when the user wants to:
 
 ### Step 4: Generate Exercises
 
-**Create exercises following these guidelines:**
+**All text must be in French.**
+
+---
 
 #### Multiple Choice Exercise
 
-**API Endpoint:** `POST /api/chapters/{chapter_id}/exercises`
-
-**Format:**
 ```json
 {
   "order": 1,
@@ -94,12 +99,11 @@ Invoke this skill when the user wants to:
   "content": {
     "question": "Question claire et précise ?",
     "options": [
-      "Option A",
-      "Option B (correcte)",
-      "Option C",
-      "Option D"
+      {"text": "Option A", "is_correct": false},
+      {"text": "Option B (correcte)", "is_correct": true},
+      {"text": "Option C", "is_correct": false},
+      {"text": "Option D", "is_correct": false}
     ],
-    "correct_index": 1,
     "explanation": "Explication détaillée de pourquoi B est correct et pourquoi les autres options sont incorrectes."
   },
   "auto_generated": true
@@ -108,14 +112,14 @@ Invoke this skill when the user wants to:
 
 **Quality criteria:**
 - Question tests understanding, not memorization
-- 4 options with plausible distractors
-- Correct answer is clearly the best
+- 4 options with plausible distractors (not obviously wrong)
 - Explanation reinforces learning (2-4 sentences)
-- All text in French
+- For maths: formulas in `<span class="math-inline">LaTeX</span>` inside question/options/explanation
+
+---
 
 #### True/False Exercise
 
-**Format:**
 ```json
 {
   "order": 2,
@@ -123,7 +127,7 @@ Invoke this skill when the user wants to:
   "type": "true_false",
   "content": {
     "statement": "Affirmation claire et testable.",
-    "correct_answer": false,
+    "answer": false,
     "explanation": "Explication de pourquoi c'est vrai/faux avec contexte additionnel."
   },
   "auto_generated": true
@@ -134,11 +138,11 @@ Invoke this skill when the user wants to:
 - Statement is clearly true or false (not ambiguous)
 - Tests important concept or common misconception
 - Explanation provides educational value
-- Avoid absolute terms unless accurate
 
-#### Code Exercise
+---
 
-**Format:**
+#### Code Exercise (informatique uniquement)
+
 ```json
 {
   "order": 3,
@@ -147,8 +151,8 @@ Invoke this skill when the user wants to:
   "content": {
     "instructions": "Description claire de ce que l'apprenant doit accomplir.",
     "language": "python",
-    "starter_code": "# Point de départ avec structure\ndef function_name():\n    # TODO: Implémenter\n    pass",
-    "solution": "# Solution complète et correcte\ndef function_name():\n    # Implémentation avec commentaires\n    return result",
+    "starter_code": "# Point de départ\ndef function_name():\n    # TODO: Implémenter\n    pass",
+    "solution": "def function_name():\n    # Implémentation complète\n    return result",
     "hints": [
       "Indice 1 : Guide la réflexion",
       "Indice 2 : Plus direct",
@@ -160,207 +164,102 @@ Invoke this skill when the user wants to:
 ```
 
 **Quality criteria:**
-- Instructions are specific and clear
+- Instructions specific and clear
 - Starter code provides structure
-- Solution is complete and follows best practices
+- Solution complete and follows best practices
 - Hints are progressive (subtle → direct)
-- Code is realistic and practical
+- **DO NOT use for maths chapters** — use `calculation` instead
 
-### Step 5: Create Exercises via API
+---
 
-**For each generated exercise:**
+#### Calculation Exercise (maths uniquement)
 
-1. **Determine order:**
-   - Get existing exercises count
-   - Assign sequential order (existing_count + 1, existing_count + 2, etc.)
-
-2. **Create via API:** `POST /api/chapters/{chapter_id}/exercises`
-   - Set `auto_generated: true` to mark as AI-generated
-   - Include complete exercise content
-
-3. **Handle errors:**
-   - If order conflict, retry with updated order
-   - Validate JSON structure before sending
-   - Provide clear error messages
-
-### Step 6: Report Results
-
-**Display a summary:**
-- ✅ Exercices créés: {count}
-- 📝 Types: {breakdown by type}
-- 📊 Niveau: {difficulty if specified}
-- 🎯 Chapitre: {chapter_title}
-- 🔗 Voir les exercices: `http://localhost:3000/courses/{course_slug}/chapters/{chapter_slug}`
-
-**List each created exercise:**
-```
-1. [Type] Titre de l'exercice
-   - Question/Statement summary
-   - Difficulté: {if specified}
-```
-
-## Exercise Creation Strategies
-
-### Strategy 1: Comprehensive Coverage
-
-**When:** User wants complete exercise set for a chapter
-**Approach:**
-- Analyze entire chapter content
-- Identify 3-5 main topics
-- Create 1-2 exercises per topic
-- Mix exercise types (don't use only one type)
-- Progress from easy to hard
-
-### Strategy 2: Targeted Topic
-
-**When:** User wants exercises on a specific concept
-**Approach:**
-- Focus only on specified topic/section
-- Create 2-3 exercises on that topic
-- Use most appropriate exercise type for the content
-- Ensure exercises approach concept from different angles
-
-### Strategy 3: Type-Specific
-
-**When:** User wants only code exercises (or only MCQ, etc.)
-**Approach:**
-- Create multiple exercises of requested type
-- Vary difficulty and approach
-- Cover different aspects of the content
-- Ensure quality doesn't suffer from type constraint
-
-### Strategy 4: Difficulty-Specific
-
-**When:** User wants exercises at specific difficulty level
-**Approach:**
-- Focus on appropriate complexity
-- Easy: Basic facts and definitions
-- Medium: Application and comparison
-- Hard: Problem-solving and edge cases
-
-## Important Notes
-
-- **Backend must be running** on `http://localhost:8000` (or configured API URL)
-- **Chapter must exist** - Cannot create exercises for non-existent chapters
-- **Content analysis is key** - Read chapter content thoroughly before generating exercises
-- **Avoid duplication** - Check existing exercises to create complementary ones
-- **Quality over quantity** - Better to create 2 excellent exercises than 5 mediocre ones
-- **French content** - All exercises must be in French
-- **Technical accuracy** - Verify technical details are correct
-- **Mark as auto-generated** - Set `auto_generated: true` for tracking
-
-## Example Usage
-
-### Example 1: Add exercises to existing chapter
-
-**User request:**
-> "Ajoute 3 nouveaux exercices au chapitre 'Data Engineering Described' du cours Fundamentals of Data Engineering"
-
-**Skill actions:**
-1. ✅ Course found: `fundamentals-of-data-engineering`
-2. ✅ Chapter found: "Data Engineering Described" (slug: `data-engineering-described`)
-3. 📖 Analyzed chapter content: ~6,500 words, 3 main sections
-4. 📋 Existing exercises: 3 (will create exercises 4-6)
-5. ✍️  Generated 3 new exercises:
-   - Exercise 4: [Multiple Choice] "Évolution du Data Engineering"
-   - Exercise 5: [True/False] "Composants d'un Pipeline"
-   - Exercise 6: [Code] "Requête SQL de Filtrage"
-6. ✅ Created 3 exercises via API
-7. 🔗 View at: http://localhost:3000/courses/fundamentals-of-data-engineering/chapters/data-engineering-described
-
-### Example 2: Create code exercises only
-
-**User request:**
-> "Crée 2 exercices de code Python pour le chapitre 5, focus sur les data pipelines"
-
-**Skill actions:**
-1. ✅ Chapter 5 found: "Building Data Pipelines"
-2. 📖 Analyzed content: focus on pipeline concepts and implementation
-3. 📋 Existing exercises: 4
-4. ✍️  Generated 2 code exercises (Python):
-   - Exercise 5: "Créer un Pipeline ETL Simple"
-   - Exercise 6: "Gestion des Erreurs dans un Pipeline"
-5. ✅ Both exercises created with starter code, solutions, and hints
-6. 🔗 View at: http://localhost:3000/courses/fundamentals-of-data-engineering/chapters/building-data-pipelines
-
-### Example 3: Replace existing exercises
-
-**User request:**
-> "Les exercices du chapitre 2 sont trop faciles, crée 3 exercices de niveau intermédiaire"
-
-**Skill actions:**
-1. ✅ Chapter 2 found: "The Data Engineering Lifecycle"
-2. 📋 Listed 3 existing exercises (will replace by adjusting order)
-3. 📖 Analyzed content for medium-difficulty topics
-4. ✍️  Generated 3 medium-difficulty exercises:
-   - Mix of types: 2 MCQ, 1 Code
-   - Focus on application and comparison
-5. ⚠️  Note: Old exercises still exist (recommend deletion via API or frontend)
-6. ✅ Created 3 new exercises
-7. 🔗 View at: http://localhost:3000/courses/fundamentals-of-data-engineering/chapters/the-data-engineering-lifecycle
-
-## Resources
-
-### references/exercise_guidelines.md
-
-Complete guidelines for creating effective exercises:
-- Exercise type selection
-- Writing clear questions
-- Creating plausible distractors
-- Crafting helpful explanations
-- Code exercise best practices
-- Quality checklist
-
-### references/api_examples.md
-
-API request/response examples:
-- Creating each exercise type
-- Handling errors
-- Updating exercise order
-- Deleting exercises
-- Batch operations
-
-## API Reference
-
-### Get Chapter Exercises
-
-```bash
-GET /api/chapters/{chapter_id}/exercises
-```
-
-Returns list of all exercises for a chapter, ordered by `order` field.
-
-### Create Exercise
-
-```bash
-POST /api/chapters/{chapter_id}/exercises
-Content-Type: application/json
-
+```json
 {
-  "order": 1,
-  "title": "Exercise Title",
-  "type": "multiple_choice|true_false|code",
-  "content": { /* type-specific content */ },
+  "order": 4,
+  "title": "Titre court et descriptif",
+  "type": "calculation",
+  "content": {
+    "problem": "<p>HTML de l'énoncé avec formules <span class=\"math-inline\">LaTeX</span> et éventuellement <div class=\"math-block\">LaTeX</div>.</p>",
+    "steps": [
+      "Description étape 1 (en texte simple, sans HTML)",
+      "Description étape 2",
+      "Description étape 3"
+    ],
+    "solution": "<p>HTML de la solution complète, avec chaque calcul dans <span class=\"math-inline\">LaTeX</span> ou <div class=\"math-block\">LaTeX</div>. Interpréter le résultat en français.</p>",
+    "hints": [
+      "Indice 1 : orientez-vous vers la bonne formule",
+      "Indice 2 : plus précis",
+      "Indice 3 : presque la réponse"
+    ]
+  },
   "auto_generated": true
 }
 ```
 
-### Update Exercise
+**Quality criteria:**
+- Problem: HTML with KaTeX for all formulas — NEVER plain text `^` or `_`
+- Steps: plain text descriptions of each calculation step (shown as progressive hints if requested)
+- Solution: HTML with KaTeX, showing each step and interpreting the result
+- Hints: 3 progressive hints (vague → precise)
+- Numerical values should be concrete (e.g., n=10 data points, not abstract variables only)
+- Follow the pattern: concrete situation → identify what to calculate → step-by-step → interpret
+
+**KaTeX notation rules (in problem and solution HTML):**
+- Inline formula: `<span class="math-inline">\bar{x} = \frac{1}{n}\sum_{i=1}^n x_i</span>`
+- Block formula: `<div class="math-block">P(A \mid B) = \frac{P(A \cap B)}{P(B)}</div>`
+- Unicode in plain text: ≤ ≥ ≠ ≈ × ÷ ± √ ∞ ∑ ∏ ∈
+- NEVER use `^` for exponents or `_` for subscripts outside KaTeX
+
+---
+
+### Step 5: Create Exercises via API
 
 ```bash
-PUT /api/exercises/{exercise_id}
+POST /api/chapters/{chapter_id}/exercises
+Authorization: Bearer $BRAINER_TOKEN
 Content-Type: application/json
-
-{
-  "title": "Updated Title",
-  "content": { /* updated content */ }
-}
 ```
 
-### Delete Exercise
+Assign sequential order (existing_count + 1, +2, ...).
+
+### Step 6: Report Results
+
+```
+✅ Exercices créés : {count}
+📝 Types : {breakdown}
+🎯 Chapitre : {chapter_title}
+🔗 http://localhost:3000/courses/{course_slug}/chapters/{chapter_slug}
+```
+
+---
+
+## Important Notes
+
+- **Backend must be running** on `http://localhost:8000`
+- **Use synopsis, not full HTML** for content analysis
+- **Avoid duplication** — check existing exercises first
+- **Quality over quantity** — 2 excellent exercises beat 5 mediocre ones
+- **French content** — all text in French
+- **Mark as auto-generated** — `auto_generated: true`
+- **Domain rules are mandatory** — don't generate `code` for math, don't generate `calculation` for CS
+
+---
+
+## Domain Reference Files
+
+Loaded after domain detection:
+- `references/domains/informatique.md`
+- `references/domains/maths.md`
+- `references/domains/general.md`
+
+---
+
+## API Reference
 
 ```bash
-DELETE /api/exercises/{exercise_id}
+GET  /api/chapters/{chapter_id}/exercises        # list exercises
+POST /api/chapters/{chapter_id}/exercises        # create exercise
+PUT  /api/exercises/{exercise_id}                # update exercise
+DELETE /api/exercises/{exercise_id}              # delete exercise
 ```
-
-Returns 204 No Content on success.

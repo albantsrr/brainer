@@ -1,7 +1,14 @@
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
 import { BookOpen } from 'lucide-react';
-import type { Course } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import type { Course, CourseDifficulty } from '@/lib/types';
+
+const DIFFICULTY_CONFIG: Record<CourseDifficulty, { label: string; className: string }> = {
+  debutant:      { label: 'Débutant',      className: 'bg-green-500/15 text-green-700 border-green-500/30' },
+  intermediaire: { label: 'Intermédiaire', className: 'bg-yellow-500/15 text-yellow-700 border-yellow-500/30' },
+  avance:        { label: 'Avancé',        className: 'bg-red-500/15 text-red-700 border-red-500/30' },
+};
 
 interface CourseHeaderProps {
   course: Course;
@@ -39,9 +46,18 @@ export function CourseHeader({ course, stats }: CourseHeaderProps) {
 
           {/* Content Section */}
           <div className="order-1 flex flex-col justify-center lg:order-2">
-            <Badge variant="secondary" className="mb-4 w-fit font-medium">
-              Cours technique
-            </Badge>
+            {course.difficulty ? (
+              <Badge
+                variant="outline"
+                className={cn("mb-4 w-fit font-medium", DIFFICULTY_CONFIG[course.difficulty].className)}
+              >
+                {DIFFICULTY_CONFIG[course.difficulty].label}
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="mb-4 w-fit font-medium">
+                Cours technique
+              </Badge>
+            )}
             <h1 className="mb-4 text-4xl font-bold tracking-tight lg:text-5xl">
               {course.title}
             </h1>

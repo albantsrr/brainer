@@ -79,19 +79,25 @@ def detect_chapters(documents: list, toc_structure: list, book_metadata: dict) -
     """
     print(f"\n[chapter_detector] Analyzing {len(documents)} documents...")
 
+    # Strategy 0: Calibre PDF conversion — TOC is unusable, detect from visual structure
+    if book_metadata.get('is_calibre_pdf'):
+        print("[chapter_detector] Calibre PDF detected — using visual structure detection")
+        result = _detect_from_calibre_pdf(documents)
     # Strategy 1: TOC-based detection
-    if toc_structure:
+    elif toc_structure:
         print(f"[chapter_detector] Using TOC structure ({len(toc_structure)} items)")
         result = _detect_from_toc(documents, toc_structure)
+        # Merge section files (for EPUBs with split content across multiple files)
+        result = _merge_section_files(result, documents)
+        # Merge split files
+        result = _merge_split_files(result, documents)
     else:
         print("[chapter_detector] No TOC, using content-based detection")
         result = _detect_from_content(documents)
-
-    # Merge section files (for EPUBs with split content across multiple files)
-    result = _merge_section_files(result, documents)
-
-    # Merge split files
-    result = _merge_split_files(result, documents)
+        # Merge section files (for EPUBs with split content across multiple files)
+        result = _merge_section_files(result, documents)
+        # Merge split files
+        result = _merge_split_files(result, documents)
 
     # Filter front matter
     result = _filter_frontmatter(result)
@@ -539,6 +545,11 @@ def _filter_frontmatter(result: dict) -> dict:
     for chapter in result['chapters']:
         title_lower = chapter['title'].lower()
 
+        # Never filter explicitly numbered chapters (e.g. "Chapter 1: Introduction")
+        if re.match(r'^chapter\s+\d+:', title_lower):
+            filtered_chapters.append(chapter)
+            continue
+
         # Check if it's frontmatter
         is_frontmatter = any(keyword in title_lower for keyword in frontmatter_keywords)
 
@@ -592,3 +603,255 @@ def _generate_slugs(result: dict) -> dict:
             chapter['slug'] = truncated + '...'
 
     return result
+
+
+# =============================================================================
+# Calibre PDF Reflow detection
+# =============================================================================
+
+def _detect_from_calibre_pdf(documents: list) -> dict:
+    """
+    Detect chapters from a Calibre PDF Reflow-converted EPUB.
+
+    Calibre's PDF conversion produces HTML without semantic structure.
+    Chapter boundaries are detected from visual patterns across all files:
+    - Parts  : <h1> tags containing "Part I", "Part II", etc.
+    - Chapters: isolated integer paragraph + title paragraph(s)
+
+    Guards against false positives (inline math numbers):
+    - Sequential ordering: chapter_num must be > last detected chapter_num
+    - Title length limit: each title line must be <= 80 chars
+    - Title content check: no math symbols (=, !, -, formulas)
+    """
+    parts = []
+    current_part = None
+    current_chapter = None
+    current_content = []
+    last_chapter_num = 0  # Track for sequential ordering check
+
+    def save_current_chapter():
+        nonlocal current_chapter, current_content
+        if current_chapter is None:
+            return
+        current_chapter['content_html'] = '\n'.join(current_content)
+        if current_part is not None:
+            current_part['chapters'].append(current_chapter)
+        current_chapter = None
+        current_content = []
+
+    for doc in documents:
+        soup = BeautifulSoup(doc['content'], 'html.parser')
+        body = soup.find('body')
+        if not body:
+            continue
+
+        elements = [el for el in body.children if hasattr(el, 'name') and el.name]
+        i = 0
+        while i < len(elements):
+            el = elements[i]
+
+            # --- Part heading: <h1> with "Part I / Part II / ..." ---
+            if el.name == 'h1':
+                text = el.get_text(strip=True)
+                if re.match(r'^Part\s+([IVX]+|\d+)', text, re.IGNORECASE):
+                    save_current_chapter()
+                    if current_part and current_part.get('chapters'):
+                        parts.append(current_part)
+
+                    m = re.match(r'^Part\s+([IVX]+|\d+)[\s:\-]*(.*)', text, re.IGNORECASE)
+                    part_num_str = m.group(1) if m else str(len(parts) + 1)
+                    part_subtitle = m.group(2).strip() if m else ''
+
+                    # Look for subtitle in next non-empty paragraph(s) — may be multi-line
+                    # e.g. "Statistical Models and" + "Methods"
+                    if not part_subtitle:
+                        subtitle_parts = []
+                        for j in range(i + 1, min(i + 8, len(elements))):
+                            next_el = elements[j]
+                            next_text = next_el.get_text(strip=True)
+                            if not next_text:
+                                continue
+                            # Stop at noise lines or long content
+                            if 'This is page' in next_text or 'Printer: Opaque' in next_text:
+                                break
+                            if re.match(r'^\d+$', next_text):
+                                break
+                            if len(next_text) <= 60 and _looks_like_title(next_text):
+                                subtitle_parts.append(next_text)
+                            else:
+                                break
+                        part_subtitle = ' '.join(subtitle_parts)
+
+                    if re.match(r'^[IVX]+$', part_num_str.upper()):
+                        part_num = roman_to_int(part_num_str)
+                    else:
+                        part_num = int(part_num_str) if part_num_str.isdigit() else len(parts) + 1
+
+                    current_part = {
+                        'order': part_num,
+                        'title': part_subtitle or f"Part {part_num}",
+                        'chapters': []
+                    }
+                    i += 1
+                    continue
+
+            # --- Chapter start: isolated integer + title (may be multi-line) ---
+            if _is_calibre_chapter_number(el):
+                chapter_num = int(el.get_text(strip=True))
+
+                # Sequential check: must be strictly greater than last chapter
+                # (prevents inline math numbers from triggering false chapter breaks)
+                if chapter_num <= last_chapter_num:
+                    if current_chapter is not None:
+                        cleaned = _clean_calibre_element(el)
+                        if cleaned:
+                            current_content.append(str(cleaned))
+                    i += 1
+                    continue
+
+                # Look ahead for chapter title — may span multiple consecutive elements
+                # (e.g. "Models, Statistical Inference and" + "Learning")
+                # Each title part must be short and look like a title (not a formula)
+                title_parts = []
+                j = i + 1
+                # Skip initial empty elements
+                while j < len(elements) and not elements[j].get_text(strip=True):
+                    j += 1
+                # Collect consecutive title elements
+                while j < len(elements):
+                    candidate = elements[j]
+                    cand_text = candidate.get_text(strip=True)
+                    if not cand_text:
+                        j += 1
+                        continue
+                    if (_is_calibre_chapter_title(candidate)
+                            and len(cand_text) <= 80
+                            and _looks_like_title(cand_text)):
+                        title_parts.append(cand_text)
+                        j += 1
+                    else:
+                        break
+
+                if title_parts:
+                    save_current_chapter()
+                    last_chapter_num = chapter_num
+                    chapter_title = ' '.join(title_parts)
+
+                    if current_part is None:
+                        current_part = {'order': 1, 'title': 'General', 'chapters': []}
+
+                    current_chapter = {
+                        'declared_num': chapter_num,
+                        'title': f"Chapter {chapter_num}: {chapter_title}",
+                        'source_files': [doc['href']],
+                        'content_html': '',
+                        'part_order': current_part['order'],
+                        'toc_depth': 0,
+                    }
+                    # Skip past all consumed title elements
+                    i = j
+                    continue
+
+            # --- Regular content: add to current chapter ---
+            if current_chapter is not None:
+                cleaned = _clean_calibre_element(el)
+                if cleaned:
+                    current_content.append(str(cleaned))
+
+            i += 1
+
+    # Flush last chapter and part
+    save_current_chapter()
+    if current_part and current_part.get('chapters'):
+        parts.append(current_part)
+
+    chapters = [ch for part in parts for ch in part['chapters']]
+    print(f"[chapter_detector] Calibre PDF: {len(parts)} parts, {len(chapters)} chapters detected")
+    return {'parts': parts, 'chapters': chapters}
+
+
+def _looks_like_title(text: str) -> bool:
+    """
+    Return True if text looks like a chapter/part title (not a formula or content).
+
+    Rejects text with math symbols, formula patterns, or that starts with digits.
+    """
+    # Contains obvious mathematical/formula notation
+    if re.search(r'[=\+\*\\{}\[\]<>]', text):
+        return False
+    # Contains more than 2 parentheses (likely a formula)
+    if text.count('(') + text.count(')') > 2:
+        return False
+    # Ends with mathematical punctuation (! . in formula context)
+    if re.search(r'[!]\s*$', text):
+        return False
+    # Starts with a digit immediately followed by non-space (inline math ref)
+    if re.match(r'^\d+[a-zA-Z]', text):
+        return False
+    return True
+
+
+def _is_calibre_chapter_number(el) -> bool:
+    """True if element is an isolated integer (1-25) — Calibre chapter number marker.
+
+    Calibre PDF conversions use <span class="calibreN"> instead of <b>/<strong>,
+    so we accept any inline formatting (span, b, strong) or even plain text.
+    """
+    if not hasattr(el, 'name') or el.name not in ['p', 'div', 'h2', 'h3']:
+        return False
+    text = el.get_text(strip=True)
+    if not re.match(r'^\d{1,2}$', text):
+        return False
+    num = int(text)
+    if num < 1 or num > 25:
+        return False
+    # Accept bold tags OR spans (Calibre uses spans for all formatting)
+    return bool(el.find('b') or el.find('strong') or el.find('span'))
+
+
+def _is_calibre_chapter_title(el) -> bool:
+    """True if element looks like a Calibre chapter title (not a section number).
+
+    Calibre PDF conversions use <span class="calibreN"> instead of <b>/<strong>,
+    so we accept any inline formatting (span, b, strong).
+    """
+    if not hasattr(el, 'name') or el.name not in ['p', 'div']:
+        return False
+    text = el.get_text(strip=True)
+    if not text:
+        return False
+    # Reject section numbers like "1.1" or "1.1 Title"
+    if re.match(r'^\d+\.\d+', text):
+        return False
+    # Reject bare numbers
+    if re.match(r'^\d+$', text):
+        return False
+    # Accept bold tags OR spans (Calibre uses spans for all formatting)
+    return bool(el.find('b') or el.find('strong') or el.find('span'))
+
+
+def _clean_calibre_element(el) -> object:
+    """Return None if element is PDF noise (page number, copyright, empty)."""
+    text = el.get_text(strip=True)
+
+    # Empty paragraph
+    if not text:
+        return None
+
+    # Standalone page number
+    if re.match(r'^\d+$', text):
+        return None
+
+    # Repeated copyright / distribution notices
+    text_lower = text.lower()
+    noise_phrases = [
+        'free to view and download for personal use only',
+        'published by cambridge university press',
+        'not for re-distribution, re-sale',
+        '©by m. p. deisenroth',
+        'this material is published by',
+    ]
+    if any(phrase in text_lower for phrase in noise_phrases):
+        return None
+
+    return el

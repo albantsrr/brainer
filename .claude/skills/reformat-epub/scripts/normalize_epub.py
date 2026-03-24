@@ -5,7 +5,6 @@ Structure-Agnostic EPUB Normalization Pipeline
 Transforms any EPUB (packed or unpacked, well-formed or malformed) into a
 standardized structure with:
 - 1 normalized XHTML file per logical chapter (ch01.xhtml, ch02.xhtml, ...)
-- Deterministically renamed images (chapter-01-image-01.png, ...)
 - Generated course-plan.json compatible with import_course.py
 - Front matter filtered out
 
@@ -29,7 +28,6 @@ from pathlib import Path
 # Import pipeline stages (now in same directory)
 import epub_analyzer
 import semantic_chapter_detector
-import image_normalizer
 
 
 # Utility function for generating slugs
@@ -80,7 +78,6 @@ def normalize_epub(source_path: Path, output_dir: Path = None, dry_run: bool = F
     if book_meta['author']:
         print(f"  Author: {book_meta['author']}")
     print(f"  Documents: {len(documents)}")
-    print(f"  Images: {len(metadata['images'])}")
     print(f"  TOC structure: {'Available' if toc_structure else 'Not found'}")
 
     # -------------------------------------------------------------------------
@@ -120,30 +117,10 @@ def normalize_epub(source_path: Path, output_dir: Path = None, dry_run: bool = F
     print(f"\n  Output: {output_dir}")
 
     # -------------------------------------------------------------------------
-    # Stage 3: Normalize Images
-    # -------------------------------------------------------------------------
-    print(f"\n{'='*70}")
-    print("STAGE 3: Normalizing Images & Updating References")
-    print(f"{'='*70}")
-
-    if not dry_run:
-        try:
-            chapters = image_normalizer.normalize_images(
-                chapters,
-                source_path if source_path.is_dir() else source_path.parent,
-                oebps_dir
-            )
-        except Exception as e:
-            print(f"\n❌ ERROR in Stage 3: {e}")
-            raise
-    else:
-        print("[DRY RUN] Skipping image normalization")
-
-    # -------------------------------------------------------------------------
     # Generate Outputs
     # -------------------------------------------------------------------------
     print(f"\n{'='*70}")
-    print("STAGE 4: Generating Normalized Files")
+    print("STAGE 3: Generating Normalized Files")
     print(f"{'='*70}")
 
     if not dry_run:
@@ -154,7 +131,7 @@ def normalize_epub(source_path: Path, output_dir: Path = None, dry_run: bool = F
         _write_normalized_xhtml(chapters, oebps_dir)
 
         # Generate course-plan.json
-        course_plan = _generate_course_plan(book_meta, parts, chapters, oebps_dir)
+        course_plan = _generate_course_plan(book_meta, parts, chapters)
 
         # Write course-plan.json
         plan_path = output_dir / "course-plan.json"
@@ -165,7 +142,7 @@ def normalize_epub(source_path: Path, output_dir: Path = None, dry_run: bool = F
         print(f"\n✓ Generated course-plan.json: {plan_path}")
     else:
         print("[DRY RUN] Skipping file generation")
-        course_plan = _generate_course_plan(book_meta, parts, chapters, oebps_dir)
+        course_plan = _generate_course_plan(book_meta, parts, chapters)
 
     # -------------------------------------------------------------------------
     # Summary
@@ -222,7 +199,7 @@ def _wrap_xhtml(content: str, title: str) -> str:
 """
 
 
-def _generate_course_plan(book_meta: dict, parts: list, chapters: list, oebps_dir: Path) -> dict:
+def _generate_course_plan(book_meta: dict, parts: list, chapters: list) -> dict:
     """
     Generate course-plan.json in format compatible with import_course.py.
     """

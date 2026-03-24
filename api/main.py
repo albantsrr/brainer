@@ -3,6 +3,8 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
+from sqlalchemy.exc import OperationalError
 
 from .database import Base, engine
 from .routers import auth, chapters, courses, exercises, images, progress, review_sheets
@@ -25,6 +27,14 @@ app.add_middleware(
 
 # Tables (idempotent — no-op si déjà créées)
 Base.metadata.create_all(bind=engine)
+
+# Migration : ajout colonne difficulty sur les DB existantes (idempotent)
+with engine.connect() as conn:
+    try:
+        conn.execute(text("ALTER TABLE courses ADD COLUMN difficulty VARCHAR"))
+        conn.commit()
+    except OperationalError:
+        pass  # colonne déjà existante
 
 # Static files : images uploadées
 _static_dir = Path(__file__).parent / "static"

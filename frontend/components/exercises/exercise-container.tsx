@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { MultipleChoiceExercise } from './multiple-choice-exercise';
 import { TrueFalseExercise } from './true-false-exercise';
 import { CodeExercise } from './code-exercise';
+import { CalculationExercise } from './calculation-exercise';
 import type { Exercise } from '@/lib/types';
 
 interface ExerciseContainerProps {
@@ -18,6 +19,8 @@ export function ExerciseContainer({ exercise }: ExerciseContainerProps) {
         return <CodeExercise content={exercise.content as any} />;
       case 'true_false':
         return <TrueFalseExercise content={exercise.content as any} />;
+      case 'calculation':
+        return <CalculationExercise content={exercise.content as any} />;
       default:
         return <p>Type d&apos;exercice inconnu</p>;
     }

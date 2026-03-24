@@ -94,11 +94,14 @@ def create_course(plan: dict) -> str:
     payload = {
         "title": course_info["title"],
         "slug": course_info["slug"],
-        "description": course_info.get("description")
+        "description": course_info.get("description"),
+        "difficulty": course_info.get("difficulty")
     }
 
     print(f"\n🎓 Creating course: {payload['title']}")
     print(f"   Slug: {payload['slug']}")
+    if payload["difficulty"]:
+        print(f"   Difficulty: {payload['difficulty']}")
 
     response = requests.post(f"{API_URL}/api/courses", json=payload, headers=_auth_headers())
 

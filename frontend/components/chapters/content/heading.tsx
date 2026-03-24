@@ -23,9 +23,9 @@ export function Heading({ level, children, id, className }: HeadingProps) {
 
   const levelStyles = {
     1: 'text-3xl mb-6 mt-8',
-    2: 'text-2xl mb-4 mt-8 border-b border-border pb-2',
-    3: 'text-xl mb-3 mt-6',
-    4: 'text-lg mb-2 mt-4',
+    2: 'text-2xl mb-4 mt-8 border-l-[3px] border-primary pl-4 py-1',
+    3: 'text-xl mb-3 mt-6 border-l-[3px] border-accent/70 pl-3',
+    4: 'text-lg mb-2 mt-4 text-primary/80',
     5: 'text-base mb-2 mt-4',
     6: 'text-sm mb-2 mt-4 font-medium',
   };

@@ -8,7 +8,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { CheckCircle2, XCircle } from 'lucide-react';
-import type { Exercise, ExerciseSubmissionResponse, MultipleChoiceContent, TrueFalseContent, CodeContent } from '@/lib/types';
+import type { Exercise, ExerciseSubmissionResponse, MultipleChoiceContent, TrueFalseContent, CodeContent, CalculationContent } from '@/lib/types';
+import { CalculationExercise } from './calculation-exercise';
 import { useSubmitExerciseAnswer } from '@/lib/api/queries/progress';
 
 interface ExercisePageProps {
@@ -44,6 +45,8 @@ export function ExercisePage({ exercise, chapterId, courseSlug, initialSubmissio
         return 'Vrai ou Faux';
       case 'code':
         return 'Exercice de code';
+      case 'calculation':
+        return 'Exercice de calcul';
       default:
         return type;
     }
@@ -92,7 +95,11 @@ export function ExercisePage({ exercise, chapterId, courseSlug, initialSubmissio
             />
           )}
 
-          {!submitted ? (
+          {exercise.type === 'calculation' && (
+            <CalculationExercise content={exercise.content as any} />
+          )}
+
+          {exercise.type !== 'calculation' && (!submitted ? (
             <Button
               onClick={handleSubmit}
               disabled={answer === null || answer === undefined}
@@ -110,7 +117,7 @@ export function ExercisePage({ exercise, chapterId, courseSlug, initialSubmissio
             >
               Réessayer
             </Button>
-          )}
+          ))}
         </CardContent>
       </Card>
     </div>

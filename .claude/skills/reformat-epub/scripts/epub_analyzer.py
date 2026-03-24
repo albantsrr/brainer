@@ -59,15 +59,6 @@ def _load_packed_epub(epub_path: Path) -> dict:
             'spine_order': None  # Will be set from spine
         })
 
-    # Extract images
-    images = []
-    for item in book.get_items_of_type(ebooklib.ITEM_IMAGE):
-        images.append({
-            'id': item.get_id(),
-            'href': item.get_name(),
-            'mime_type': item.media_type
-        })
-
     # Set spine order
     spine = book.spine
     for idx, (item_id, linear) in enumerate(spine):
@@ -83,7 +74,6 @@ def _load_packed_epub(epub_path: Path) -> dict:
         'book_metadata': metadata,
         'documents': sorted([d for d in documents if d['spine_order'] is not None],
                           key=lambda x: x['spine_order']),
-        'images': images,
         'toc_structure': toc_structure
     }
 
@@ -97,10 +87,25 @@ def _load_unpacked_epub(epub_dir: Path) -> dict:
 
     if opf_path:
         print(f"[epub_analyzer] Found content.opf: {opf_path.relative_to(epub_dir)}")
-        return _load_from_opf(opf_path, epub_dir)
+        result = _load_from_opf(opf_path, epub_dir)
     else:
         print("[epub_analyzer] No content.opf found, using directory scan fallback")
-        return _load_from_directory_scan(epub_dir)
+        result = _load_from_directory_scan(epub_dir)
+
+    # Detect Calibre PDF Reflow conversion
+    if _is_calibre_pdf_epub(result['documents']):
+        print("[epub_analyzer] ⚠️  Detected Calibre PDF Reflow conversion — will use visual structure detection")
+        result['book_metadata']['is_calibre_pdf'] = True
+
+    return result
+
+
+def _is_calibre_pdf_epub(documents: list) -> bool:
+    """Detect if EPUB was converted from PDF by Calibre (PDF Reflow conversion)."""
+    for doc in documents[:5]:
+        if 'PDF Reflow conversion' in doc.get('content', ''):
+            return True
+    return False
 
 
 def _find_content_opf(epub_dir: Path) -> Optional[Path]:
@@ -165,16 +170,6 @@ def _load_from_opf(opf_path: Path, epub_dir: Path) -> dict:
                         'type': item['media_type']
                     })
 
-    # Extract images
-    images = []
-    for item in manifest.values():
-        if item['media_type'].startswith('image/'):
-            images.append({
-                'id': item['id'],
-                'href': item['href'],
-                'mime_type': item['media_type']
-            })
-
     # Parse navigation
     toc_structure, toc_title = _parse_navigation(opf_dir, epub_dir)
 
@@ -185,7 +180,6 @@ def _load_from_opf(opf_path: Path, epub_dir: Path) -> dict:
     return {
         'book_metadata': metadata,
         'documents': documents,
-        'images': images,
         'toc_structure': toc_structure
     }
 

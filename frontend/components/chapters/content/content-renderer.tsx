@@ -7,12 +7,27 @@ import { CodeBlock, InlineCode } from './code-block';
 import { SyntaxCodeBlock } from './syntax-code-block';
 import { Figure, FigureImage, FigureCaption } from './figure';
 import { MermaidDiagram } from './mermaid-diagram';
+import { MathFormula } from './math-formula';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './table';
+import { Illustration, IllustrationCaption } from './illustration';
 import { cn } from '@/lib/utils';
 
 interface ContentRendererProps {
   content: string;
   className?: string;
+}
+
+function extractKatexLatex(element: Element): string | null {
+  if (element.name === 'annotation' && element.attribs?.encoding === 'application/x-tex') {
+    return element.children?.filter((c) => c instanceof Text).map((c) => (c as Text).data).join('') || null;
+  }
+  for (const child of element.children || []) {
+    if (child instanceof Element) {
+      const result = extractKatexLatex(child);
+      if (result !== null) return result;
+    }
+  }
+  return null;
 }
 
 export function ContentRenderer({ content, className }: ContentRendererProps) {
@@ -48,6 +63,61 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
 
       if (name === 'li') {
         return <ListItem>{domToReact(children as DOMNode[], options)}</ListItem>;
+      }
+
+      // Math formulas (KaTeX)
+      // Pre-rendered KaTeX HTML (legacy format) — extract LaTeX from annotation and re-render
+      if (name === 'span' && attribs?.class?.trim() === 'katex') {
+        const isBlock = domNode.parent instanceof Element && domNode.parent.attribs?.class?.includes('katex-display');
+        const latex = extractKatexLatex(domNode);
+        if (latex) return <MathFormula latex={latex} block={isBlock} />;
+      }
+
+      if (name === 'span' && attribs?.class?.includes('math-inline')) {
+        const latex = children?.filter((c) => c instanceof Text).map((c) => (c as Text).data).join('') || '';
+        return <MathFormula latex={latex} block={false} />;
+      }
+
+      // SVG illustration wrapper
+      if (name === 'div' && attribs?.class?.includes('illustration')) {
+        return <Illustration>{domToReact(children as DOMNode[], options)}</Illustration>;
+      }
+
+      if (name === 'p' && attribs?.class?.includes('illustration-caption')) {
+        return <IllustrationCaption>{domToReact(children as DOMNode[], options)}</IllustrationCaption>;
+      }
+
+      if (name === 'div' && attribs?.class?.includes('math-block')) {
+        const latex = children?.filter((c) => c instanceof Text).map((c) => (c as Text).data).join('') || '';
+        return <MathFormula latex={latex} block={true} />;
+      }
+
+      // Aside blocks (micro-challenge, story)
+      if (name === 'aside') {
+        const asideClass = attribs?.class || '';
+
+        if (asideClass.includes('micro-challenge')) {
+          return (
+            <aside className="my-6 rounded-lg border-l-4 border-amber-500 bg-amber-50 dark:bg-amber-950/30 p-4">
+              {domToReact(children as DOMNode[], options)}
+            </aside>
+          );
+        }
+
+        if (asideClass.includes('story')) {
+          return (
+            <aside className="my-6 rounded-lg border-l-4 border-indigo-500 bg-indigo-50 dark:bg-indigo-950/30 p-4 italic">
+              {domToReact(children as DOMNode[], options)}
+            </aside>
+          );
+        }
+
+        // Generic aside fallback
+        return (
+          <aside className="my-6 rounded-lg border-l-4 border-muted-foreground/30 bg-muted/30 p-4">
+            {domToReact(children as DOMNode[], options)}
+          </aside>
+        );
       }
 
       // Blockquote
@@ -93,9 +163,19 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
             .join('') || '';
 
           const langMatch = codeClass.match(/language-(\w+)/);
-          const language = langMatch?.[1] || 'text';
+          const language = langMatch?.[1];
 
-          if (rawCode.trim()) {
+          // No language class = preformatted pedagogical content (tables, derivations, ASCII art)
+          // Render as plain pre block without code chrome (no header, no copy button)
+          if (!language && rawCode.trim()) {
+            return (
+              <pre className="my-4 p-4 rounded-lg bg-muted/50 overflow-x-auto text-sm font-mono whitespace-pre leading-relaxed">
+                {rawCode}
+              </pre>
+            );
+          }
+
+          if (language && rawCode.trim()) {
             return <SyntaxCodeBlock code={rawCode} language={language} />;
           }
         }
@@ -152,7 +232,7 @@ export function ContentRenderer({ content, className }: ContentRendererProps) {
       // Strong
       if (name === 'strong' || name === 'b') {
         return (
-          <strong className="font-semibold text-foreground">
+          <strong className="font-semibold text-foreground bg-accent/10 px-0.5 rounded-sm">
             {domToReact(children as DOMNode[], options)}
           </strong>
         );

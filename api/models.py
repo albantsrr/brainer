@@ -22,6 +22,13 @@ class ExerciseType(enum.Enum):
     multiple_choice = "multiple_choice"
     code = "code"
     true_false = "true_false"
+    calculation = "calculation"
+
+
+class CourseDifficulty(enum.Enum):
+    debutant = "debutant"
+    intermediaire = "intermediaire"
+    avance = "avance"
 
 
 class Course(Base):
@@ -32,6 +39,7 @@ class Course(Base):
     slug = Column(String, unique=True, nullable=False, index=True)
     description = Column(Text, nullable=True)
     image = Column(String, nullable=True)
+    difficulty = Column(Enum(CourseDifficulty, native_enum=False), nullable=True)
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 

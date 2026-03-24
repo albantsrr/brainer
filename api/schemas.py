@@ -3,7 +3,7 @@ from typing import Union
 
 from pydantic import BaseModel, ConfigDict
 
-from .models import ExerciseType
+from .models import CourseDifficulty, ExerciseType
 
 
 # ---------------------------------------------------------------------------
@@ -36,7 +36,14 @@ class TrueFalseContent(BaseModel):
     explanation: str
 
 
-ExerciseContentUnion = Union[MultipleChoiceContent, CodeContent, TrueFalseContent]
+class CalculationContent(BaseModel):
+    problem: str
+    steps: list[str]
+    solution: str
+    hints: list[str]
+
+
+ExerciseContentUnion = Union[MultipleChoiceContent, CodeContent, TrueFalseContent, CalculationContent]
 
 
 # ---------------------------------------------------------------------------
@@ -49,6 +56,7 @@ class CourseCreate(BaseModel):
     slug: str
     description: str | None = None
     image: str | None = None
+    difficulty: CourseDifficulty | None = None
 
 
 class CourseUpdate(BaseModel):
@@ -56,6 +64,7 @@ class CourseUpdate(BaseModel):
     slug: str | None = None
     description: str | None = None
     image: str | None = None
+    difficulty: CourseDifficulty | None = None
 
 
 class CourseResponse(BaseModel):
@@ -66,6 +75,7 @@ class CourseResponse(BaseModel):
     slug: str
     description: str | None
     image: str | None
+    difficulty: CourseDifficulty | None
     created_at: datetime
     updated_at: datetime
 

@@ -9,7 +9,13 @@ import { BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth/auth-context';
 import { useCourseProgress } from '@/lib/api/queries/progress';
-import type { Course } from '@/lib/types';
+import type { Course, CourseDifficulty } from '@/lib/types';
+
+const DIFFICULTY_CONFIG: Record<CourseDifficulty, { label: string; className: string }> = {
+  debutant:      { label: 'Débutant',      className: 'bg-green-500/15 text-green-700 border-green-500/30' },
+  intermediaire: { label: 'Intermédiaire', className: 'bg-yellow-500/15 text-yellow-700 border-yellow-500/30' },
+  avance:        { label: 'Avancé',        className: 'bg-red-500/15 text-red-700 border-red-500/30' },
+};
 
 interface CourseCardProps {
   course: Course;
@@ -74,6 +80,14 @@ export function CourseCard({ course, className, style }: CourseCardProps) {
                 'Cours'
               )}
             </Badge>
+            {course.difficulty && (
+              <Badge
+                variant="outline"
+                className={cn("text-xs font-medium", DIFFICULTY_CONFIG[course.difficulty].className)}
+              >
+                {DIFFICULTY_CONFIG[course.difficulty].label}
+              </Badge>
+            )}
           </div>
           <CardTitle className="line-clamp-2 text-lg leading-tight transition-colors group-hover:text-primary">
             {course.title}
