@@ -1,4 +1,4 @@
-# Stratégie : Formalisme
+    # Stratégie : Formalisme
 
 ## Quand utiliser
 

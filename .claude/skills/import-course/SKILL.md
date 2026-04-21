@@ -49,17 +49,19 @@ Before designing the pedagogical structure, understand what each book chapter ac
 
 **Actions:**
 1. Find the OEBPS directory for the book (check `books/{book-dir}/OEBPS/`, `books/{book-dir}/OEBPS/OEBPS/` — double-nesting exists for some books)
-2. For each chapter listed in `course-plan.json`, read the corresponding XHTML file
-3. Extract only: the `<h1>` title, all `<h2>` section headings, and word count (from file size or text length)
+2. For each source file listed in `course-plan.json`, read the corresponding XHTML file
+3. Extract: the `<h1>` title, all `<h2>` headings, all `<h3>` headings, and the **first sentence of each `<h2>` section** (to gauge conceptual density)
 4. Build an internal working table (not saved to disk):
 
 ```
-ch01.xhtml | [h1 title from file] | Sections: [h2 heading 1, h2 heading 2, ...] | ~N words
-ch02.xhtml | [h1 title from file] | Sections: [h2 heading 1, h2 heading 2, ...] | ~N words
+index_split_001.html | [h1] | h2: [Section 1.1 title] → h3s: [sub-concept A, sub-concept B] | intro: "[first sentence of h2]"
+index_split_002.html | [h1] | h2: [Section 1.2 title] → h3s: [sub-concept C] | intro: "[first sentence of h2]"
 ...
 ```
 
-Do **not** read full content — just headings. This gives sufficient signal for grouping decisions.
+Do **not** read full content — headings + first sentence per h2 are sufficient signal.
+
+**Note pour les EPUBs splittés :** Si les fichiers source sont nommés `index_split_NNN.html` (pattern Calibre), chaque fichier correspond à une section du livre (h2 dans le livre original). Utiliser les h3 et la première phrase de chaque h2 pour estimer combien de **concepts absorbables distincts** chaque fichier contient — c'est ce qui détermine le nombre de chapitres à créer, pas le nombre de fichiers.
 
 ### Step 2.6: Design Pedagogical Structure
 
@@ -67,26 +69,28 @@ Do **not** read full content — just headings. This gives sufficient signal for
 
 With the content scan from Step 2.5, design a **completely original** course structure. The book's structure is raw material for analysis, NOT a template to follow.
 
+**Test du lycéen — principe directeur :**
+Avant de finaliser la structure, se poser la question : *"Un lycéen motivé mais sans prérequis peut-il suivre ce cours depuis le chapitre 1, sans bloquer ?"* Si non — restructurer jusqu'à ce que la réponse soit oui. Ce test prime sur toute autre considération de structure.
+
 **Mandatory constraints:**
 
-1. **Part titles** — Express what the student can DO after the part (action verb + object):
-   - ✅ "Encoder l'information avec seulement deux états"
-   - ✅ "Construire des circuits qui calculent"
-   - ❌ "Communication et codes" (topic label, not a skill)
-   - ❌ "Partie I : Introduction" (meaningless)
+1. **Part titles** — Express what the student will master or understand after the part. Action verb preferred, but a specific nominal form is acceptable:
+   - ✅ "Encoder l'information avec seulement deux états" (verbe d'action)
+   - ✅ "Construire des circuits qui calculent" (verbe d'action)
+   - ✅ "La géométrie des transformations linéaires" (nominal, mais orienté et spécifique)
+   - ❌ "Communication et codes" (label thématique sans angle)
+   - ❌ "Partie I : Introduction" (vide de sens)
 
-2. **Chapter titles** — Never a bare topic label; choose the format based on the book's nature:
-
-   - **Questions** — adapté aux livres conceptuels/découverte où le contenu suscite une interrogation naturelle :
-     - ✅ "Comment deux symboles suffisent-ils à tout représenter ?"
-     - ✅ "Pourquoi un circuit électrique peut-il raisonner ?"
-   - **Affirmations de compétence** — adapté aux livres techniques/pratiques où l'étudiant acquiert un savoir-faire :
-     - ✅ "Construire un pipeline de données distribué"
-     - ✅ "Optimiser les requêtes SQL pour la production"
-   - **Règle de choix :** si le contenu du livre est principalement narratif/conceptuel → questions ; si le livre est principalement technique/opérationnel → affirmations de compétence. Ne pas forcer les questions sur du contenu technique, ni les affirmations sur du contenu découverte.
-   - ❌ "Le binaire" (label thématique sans verbe ni question)
-   - ❌ "Circuits et portes logiques" (liste de sujets)
-   - ❌ "Introduction" (vide de sens pédagogique)
+2. **Chapter titles** — Doit exprimer ce que l'étudiant va maîtriser ou comprendre. Le verbe d'action est la forme privilégiée. Une forme nominale orientée est acceptable si elle est spécifique et ne ressemble pas à un label de manuel :
+   - ✅ "Construire un pipeline de données distribué" (verbe d'action — forme idéale)
+   - ✅ "Résoudre des systèmes par élimination gaussienne" (verbe d'action)
+   - ✅ "Les valeurs propres comme clés d'une matrice" (nominal orienté — acceptable)
+   - ✅ "La géométrie derrière les transformations" (nominal avec angle — acceptable)
+   - ❌ "Comment deux symboles suffisent-ils ?" (forme question — interdite)
+   - ❌ "Le binaire" (label thématique pur — interdit)
+   - ❌ "Circuits et portes logiques" (liste de sujets — interdit)
+   - ❌ "La puissance des valeurs propres" (flou, marketing — interdit)
+   - ❌ "Introduction" (vide de sens pédagogique — interdit)
 
 3. **Concision rule (HARD LIMIT)** — Titles must be short and focused on a single idea:
    - Part title (after "Partie N : "): ≤ 6 words
@@ -99,33 +103,74 @@ With the content scan from Step 2.5, design a **completely original** course str
    - ✅ "Concevoir des systèmes de données" (4 mots)
    - ✅ "Transformer et servir les données" (acceptable si les deux verbes forment UNE seule opération indissociable)
 
-4. **Chapter count** — MUST differ from the book by at least 20%:
-   - 28 book chapters → target 14–20 course chapters
-   - 10 book chapters → target 6–12 course chapters
-   - This is a hard constraint — a 1:1 mapping is NEVER acceptable
+4. **Unité d'apprentissage — règle centrale :**
+   - Chaque chapitre = **un seul concept absorbable**, défini comme ce qu'un étudiant peut comprendre, visualiser et pratiquer en **20-30 minutes**
+   - Un "concept absorbable" ≠ une section de livre. Un h2 de livre couvre souvent 3-5 concepts absorbables distincts → autant de chapitres
+   - Si un chapitre demande au lecteur de construire deux modèles mentaux nouveaux en parallèle → le scinder
+   - En cas de doute entre garder ensemble ou scinder : **scinder par défaut** — un chapitre trop court ne coûte rien, un chapitre trop dense décourage
+   - Indicateur pratique : si le titre nécessite un "et" ou une virgule pour être complet → c'est deux chapitres
+   - Exemple pour Strang ch1.1 "Vectors and Linear Combinations" → 3 chapitres : (1) Représenter une grandeur comme vecteur, (2) Additionner et scaler des vecteurs, (3) Exprimer un vecteur comme combinaison linéaire
 
-4. **Merging rule** — Merge book chapters when:
-   - 2–4 short chapters (< 4,000 words each) share a single coherent skill the student must demonstrate
-   - They form a natural learning unit that would have one set of exercises
-   - Example: book ch01 (codes) + ch02 (combinations) + ch03 (binary) → course ch01 "Comment deux symboles suffisent-ils à tout représenter ?"
+5. **Chaîne de prérequis :**
+   - Le prérequis du chapitre N = uniquement ce qui a été couvert dans les chapitres 1 à N-1
+   - Si un chapitre suppose implicitement une notion pas encore introduite → la sortir dans un chapitre antérieur, ou l'introduire en début de chapitre avant d'en avoir besoin
 
-5. **Splitting rule** — Split one book chapter into two course chapters when:
-   - It covers two clearly distinct skills (> 8,000 words, two separable competencies)
-   - Example: a chapter on "memory AND I/O" → ch1 "Comment la mémoire stocke-t-elle l'état ?" + ch2 "Comment les périphériques communiquent-ils avec le processeur ?"
+6. **Merging rule** — Fusionner uniquement quand deux sections du livre sont **conceptuellement inséparables** : comprendre l'une sans l'autre est impossible :
+   - Ne jamais fusionner pour des raisons de longueur ou de thème partagé
+   - ✅ Fusion valide : "la définition d'un vecteur" + "la notation d'un vecteur" → un seul chapitre (inséparables)
+   - ❌ Fusion invalide : "les vecteurs" + "les matrices" → deux chapitres (deux modèles mentaux distincts)
+   - ❌ Fusion invalide : ch01 (codes) + ch02 (binary) + ch03 (combinations) → un seul chapitre (trois concepts distincts)
 
-6. **Thematic reorganization** — Parts can group topics from different book parts if the learning progression demands it:
+7. **Splitting rule** — Découper dès qu'un chapitre de livre couvre **deux angles d'apprentissage distincts**, indépendamment de la longueur :
+   - La règle des 8 000 mots est supprimée — la longueur n'est pas le critère
+   - ✅ Exemple : un chapitre sur "les graphes" couvrant BFS et DFS → deux chapitres ("Parcourir un graphe en largeur" + "Parcourir un graphe en profondeur")
+   - ✅ Exemple : un chapitre sur "memory AND I/O" → deux chapitres ("Localiser les données en mémoire" + "Connecter les périphériques au processeur")
+
+8. **Granularité pour les EPUBs splittés — unité = concept absorbable, pas fichier :**
+   - Un fichier = une section du livre (h2) → peut générer **1, 2 ou 3 chapitres** selon le nombre de concepts absorbables qu'il contient
+   - Utiliser les h3 et la première phrase de chaque h2 (scannés en Step 2.5) pour identifier les concepts absorbables
+   - Un fichier peut être **fusionné** avec un adjacent UNIQUEMENT si les deux traitent d'un concept strictement inséparable
+   - Justifier chaque fusion ou découpe — ne pas justifier les chapitres individuels
+   - ❌ Invalide : `index_split_001.html` + `index_split_002.html` → 1 chapitre (deux sections distinctes = deux concepts minimums)
+   - ✅ Valide découpe intra-fichier : `index_split_001.html` couvrant vecteurs + opérations + combinaisons linéaires → 3 chapitres
+   - ✅ Valide fusion : deux fichiers dont l'un définit un objet et l'autre uniquement sa notation → 1 chapitre (inséparables)
+
+   **Découpe intra-fichier → ajouter `scope_headings`** : quand un fichier source produit N > 1 chapitres pédagogiques, chaque chapitre doit préciser sa borne de début (et optionnellement de fin) via le champ `scope_headings` dans le JSON. Ce champ sera écrit dans le `source-map.json` et utilisé par `/generate-synopses` et `/create-chapters` pour extraire uniquement la portion pertinente du fichier.
+   ```
+   index_split_001.html contient : "Vectors and Linear Combinations" (h2) → "Dot Products" (h2)
+   → ch1 "Représenter une grandeur avec un vecteur"
+       source_files: ["index_split_001.html"]
+       scope_headings: { "start": "Vectors and Linear Combinations", "end": "Dot Products" }
+   → ch2 "Combiner des vecteurs linéairement"
+       source_files: ["index_split_001.html"]
+       scope_headings: { "start": "Dot Products" }   ← si dot products sert de borne
+   ```
+   - `start` : texte partiel du heading (h1-h4) qui ouvre la section (inclusif, insensible à la casse)
+   - `end` : texte partiel du heading suivant à exclure (optionnel — absent = jusqu'à fin de fichier)
+   - Si le fichier n'est pas découpé (1 seul chapitre par fichier) : ne pas ajouter `scope_headings`
+
+9. **Accessibilité des premiers chapitres :**
+   - Les 3 premiers chapitres du cours doivent partir de zéro : aucun jargon sans définition préalable
+   - Le chapitre 1 doit répondre à "de quoi parle ce domaine et pourquoi ça compte ?" avant toute technique
+   - Une analogie du quotidien est obligatoire pour chaque nouveau concept introduit dans ces premiers chapitres
+
+10. **Thematic reorganization** — Parts can group topics from different book parts if the learning progression demands it:
    - Example: book chapters on "circuits" (part 2) and "relay-based logic" (part 1) can be merged into one course part on "physical foundations of computation"
 
 **Output of Step 2.6 — Internal mapping table:**
 ```
 Course Part 1: "[Verbe d'action + domaine de compétence]"
-  Course Ch 1: "[Question ou affirmation de compétence]"
-    source_files: ["ch01.xhtml", "ch02.xhtml", "ch03.xhtml"]
-    Rationale: three short chapters forming one coherent learning unit — [shared concept]
+  Course Ch 1: "[Affirmation de compétence]"
+    source_files: ["ch01.xhtml"]
+    Rationale: standalone section — one distinct concept
 
-  Course Ch 2: "[Question ou affirmation de compétence]"
-    source_files: ["ch04.xhtml", "ch05.xhtml"]
-    Rationale: two chapters sharing the same competency — [shared concept]
+  Course Ch 2: "[Affirmation de compétence]"
+    source_files: ["ch02.xhtml"]
+    Rationale: standalone section — distinct concept from Ch 1
+
+  Course Ch 3: "[Affirmation de compétence]"
+    source_files: ["ch03.xhtml", "ch04.xhtml"]
+    Rationale: FUSION — ch03 defines the concept, ch04 is solely its notation — inseparable
 
 Course Part 2: "[Verbe d'action + domaine de compétence]"
   Course Ch 3: "[Question ou affirmation de compétence]"
@@ -137,32 +182,45 @@ Course Part 2: "[Verbe d'action + domaine de compétence]"
   ...
 ```
 
-### Step 3: Adapt to French and Generate Description
+### Step 3: Generate French Course Identity
 
 Working from the pedagogical structure designed in Step 2.6 (NOT from the book structure):
 
-1. Generate a concise course description (1–2 sentences):
+1. **Invent an original French course title** — do NOT translate the book title:
+   - The title must feel like a course name, not a book name
+   - It MUST NOT evoke the original book title (different framing, not a translation)
+   - Expresses what the student will master/accomplish — outcome-oriented
+   - Free format, catchy, no length constraint
+   - Useful structures: "Maîtriser X", "Comprendre X de l'intérieur", "De zéro à X", "X en pratique", "Concevoir des X robustes"
+   - Examples:
+     - "Fundamentals of Data Engineering" → ✅ "Maîtriser les données de bout en bout" (❌ "Principes fondamentaux de l'ingénierie des données")
+     - "Computer Systems: A Programmer's Perspective" → ✅ "Comprendre l'ordinateur de l'intérieur" (❌ "Systèmes informatiques : une approche pratique")
+     - "Docker Deep Dive" → ✅ "Déployer avec Docker, de zéro à la production" (❌ "Docker en profondeur")
+     - "Grokking Algorithms" → ✅ "Penser algorithmique : résoudre avec élégance" (❌ "Algorithmes illustrés")
+
+2. Generate a concise course description (1–2 sentences):
    - Summarize what the course covers from the student's perspective (skills acquired, not book blurb)
    - NOT just the author name
    - Conceptual book: "Comprendre comment [phénomène central] fonctionne — de [concept de base] jusqu'à [concept avancé]."
    - Technical book: "Maîtriser [domaine technique] : [outil/concept A], [outil/concept B] et [outil/concept C] pour [objectif professionnel]."
 
-2. Assess the course difficulty level (one of `debutant`, `intermediaire`, `avance`):
+3. Assess the course difficulty level (one of `debutant`, `intermediaire`, `avance`):
    - **`debutant`** — No prerequisites required; introductory/survey book; accessible to complete beginners; examples are simple and self-contained
    - **`intermediaire`** — Requires basic domain knowledge; practitioner-level book; some prior experience expected; covers real-world tools and patterns
    - **`avance`** — Deep technical content; assumes significant prior knowledge; covers internals, theory, or complex systems; not suitable for beginners
 
-3. Generate the course slug from the French course title (kebab-case, no accents)
+4. Generate the course slug from the invented French course title (kebab-case, no accents)
 
-3. Finalize part and chapter titles (already in French from Step 2.6):
-   - **Chapter title format:** Keep `"Chapitre N : "` prefix for UI consistency, then the question/skill statement
-   - Question example: `"Chapitre 1 : Comment deux symboles suffisent-ils à tout représenter ?"`
-   - Skill example: `"Chapitre 1 : Construire un pipeline de données robuste"`
+5. Finalize part and chapter titles (already in French from Step 2.6):
+   - **Chapter title format:** Keep `"Chapitre N : "` prefix for UI consistency, then the competency statement (never a question)
+   - ✅ `"Chapitre 1 : Construire un pipeline de données robuste"`
+   - ✅ `"Chapitre 1 : Encoder l'information avec seulement deux états"`
+   - ❌ `"Chapitre 1 : Comment deux symboles suffisent-ils à tout représenter ?"` (forme question interdite)
    - Generate slugs from the full French title: `chapitre-1-[mots-cles-du-titre]`
 
-4. Assign sequential `order` values (1-based) globally across all parts for chapters
+6. Assign sequential `order` values (1-based) globally across all parts for chapters
 
-5. Save as `temp/course-plan-fr.json` with the **new format** including `source_files` array:
+7. Save as `temp/course-plan-fr.json` with the **new format** including `source_files` array:
 
 ```json
 {
@@ -180,15 +238,25 @@ Working from the pedagogical structure designed in Step 2.6 (NOT from the book s
       "chapters": [
         {
           "order": 1,
-          "title": "Chapitre 1 : [Question ou affirmation de compétence]",
+          "title": "Chapitre 1 : [Affirmation de compétence — verbe d'action + objet]",
           "slug": "chapitre-1-[mots-cles-du-titre]",
           "source_files": ["ch01.xhtml", "ch02.xhtml", "ch03.xhtml"]
         },
         {
           "order": 2,
-          "title": "Chapitre 2 : [Question ou affirmation de compétence]",
+          "title": "Chapitre 2 : [Affirmation de compétence — verbe d'action + objet]",
           "slug": "chapitre-2-[mots-cles-du-titre]",
           "source_files": ["ch04.xhtml", "ch05.xhtml"]
+        },
+        {
+          "order": 3,
+          "title": "Chapitre 3 : [Découpe intra-fichier — même source que ch2]",
+          "slug": "chapitre-3-[mots-cles-du-titre]",
+          "source_files": ["ch04.xhtml"],
+          "scope_headings": {
+            "start": "Section Heading To Start At",
+            "end": "Next Section Heading (exclusive, optional)"
+          }
         }
       ]
     }
@@ -307,11 +375,11 @@ This skill uses `.claude/skills/import-course/scripts/import_course.py` which:
 2. Find `books/[book-dir]/course-plan.json`
 3. Load course plan (original book structure: N chapters in M parts)
 4. **Scan** h1/h2 headings of all N XHTML files
-5. **Assess book nature** — conceptual/narrative → questions ; technical/practical → skill statements
-6. **Design original structure** targeting 20–30% fewer or more chapters than the book:
-   - Part 1 "[Verbe d'action + domaine]" (K chapters merging related book chapters)
-   - Part 2 "[Verbe d'action + domaine]" (K chapters, potentially splitting one large chapter)
-   - etc.
+5. **Invent an original French course title** (no translation of book title — outcome-oriented)
+6. **Design original structure** driven by pedagogical logic:
+   - Part 1 "[Verbe d'action + domaine]" (1 fichier = 1 chapitre par défaut — fusionner seulement si conceptuellement inséparable, scinder si deux angles d'apprentissage distincts)
+   - Part 2 "[Verbe d'action + domaine]" (split large chapters covering distinct skills if needed)
+   - Chapter titles: always competency statements ("Construire X", "Analyser Y"), never questions
 7. Generate `temp/course-plan-fr.json` with `source_files` arrays
 8. Create course/parts/chapters in DB
 9. Write `books/[book-dir]/source-map.json`

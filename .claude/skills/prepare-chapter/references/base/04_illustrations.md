@@ -1,6 +1,6 @@
 # Illustrations SVG — Guide de création
 
-Les illustrations SVG complètent les diagrammes Mermaid pour les cas où la **visualisation d'un état de structure de données** est plus parlante que n'importe quel texte ou flowchart. Elles obéissent aux mêmes exigences de qualité que les diagrammes.
+Les illustrations SVG complètent les diagrammes Mermaid pour tout concept dont la **visualisation est plus claire que le texte seul**. Elles ne se limitent pas aux structures de données : repères géométriques, courbes, histogrammes, transformations, distributions, plans 2D/3D — tout ce qui gagne en clarté visuellement est candidat.
 
 ---
 
@@ -9,11 +9,13 @@ Les illustrations SVG complètent les diagrammes Mermaid pour les cas où la **v
 | Utilise Mermaid | Utilise SVG |
 |---|---|
 | Flux logique, pipeline, architecture | État d'un tableau, d'un arbre, d'une pile |
-| Séquence d'appels, état machine | Étape d'exécution d'un algorithme |
-| Relations entre composants | Comparaison "avant / après" |
-| Diagrammes de classes, ER | Hash table, liste chaînée, graphe avec valeurs |
+| Séquence d'appels, état machine | Concept géométrique ou spatial (vecteurs, repère, plan) |
+| Relations entre composants | Courbe, histogramme, distribution statistique |
+| Diagrammes de classes, ER | Transformation linéaire, projection, comparaison "avant/après" |
 
-**Règle simple :** si la visualisation montre *comment ça marche* → Mermaid. Si elle montre *à quoi ça ressemble à un instant T* → SVG.
+**Règle simple :** si la visualisation montre *comment ça marche* → Mermaid. Si elle montre *à quoi ça ressemble* ou *comment c'est disposé dans l'espace* → SVG.
+
+SVG ne se limite pas aux structures de données. Dès qu'un concept gagne en clarté grâce à une visualisation spatiale ou graphique, SVG est approprié. L'important est que l'illustration soit plus claire que le texte seul, pas qu'elle suive un template prédéfini.
 
 ---
 

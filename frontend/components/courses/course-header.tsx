@@ -1,13 +1,13 @@
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen } from 'lucide-react';
+import { BookOpen, FileText, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Course, CourseDifficulty } from '@/lib/types';
 
 const DIFFICULTY_CONFIG: Record<CourseDifficulty, { label: string; className: string }> = {
-  debutant:      { label: 'Débutant',      className: 'bg-green-500/15 text-green-700 border-green-500/30' },
-  intermediaire: { label: 'Intermédiaire', className: 'bg-yellow-500/15 text-yellow-700 border-yellow-500/30' },
-  avance:        { label: 'Avancé',        className: 'bg-red-500/15 text-red-700 border-red-500/30' },
+  debutant:      { label: 'Débutant',      className: 'bg-green-500/10 text-green-700 border-green-500/25 dark:text-green-400' },
+  intermediaire: { label: 'Intermédiaire', className: 'bg-amber-500/10 text-amber-700 border-amber-500/25 dark:text-amber-400' },
+  avance:        { label: 'Avancé',        className: 'bg-red-500/10 text-red-700 border-red-500/25 dark:text-red-400' },
 };
 
 interface CourseHeaderProps {
@@ -21,13 +21,65 @@ interface CourseHeaderProps {
 
 export function CourseHeader({ course, stats }: CourseHeaderProps) {
   return (
-    <div className="border-b bg-gradient-to-b from-muted/30 to-background">
-      <div className="container py-12">
-        <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
+    <div className="border-b">
+      <div className="container py-12 md:py-16">
+        <div className="grid gap-10 lg:grid-cols-[1fr_auto] lg:gap-16 items-start">
+          {/* Content Section */}
+          <div className="flex flex-col justify-center">
+            {/* Eyebrow */}
+            <div className="mb-5 flex items-center gap-3">
+              <div className="h-px w-6 bg-primary/60" />
+              {course.difficulty ? (
+                <Badge
+                  variant="outline"
+                  className={cn("text-[10px] font-semibold uppercase tracking-[0.15em] px-2.5 py-1 h-auto", DIFFICULTY_CONFIG[course.difficulty].className)}
+                >
+                  {DIFFICULTY_CONFIG[course.difficulty].label}
+                </Badge>
+              ) : (
+                <span className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">
+                  Cours technique
+                </span>
+              )}
+            </div>
+
+            <h1 className="font-serif mb-4 text-4xl font-bold tracking-tight lg:text-5xl xl:text-6xl leading-[1.08]">
+              {course.title}
+            </h1>
+
+            <p className="mb-8 text-lg leading-relaxed text-muted-foreground max-w-2xl">
+              {course.description || 'Aucune description disponible.'}
+            </p>
+
+            {/* Quick Stats — inline editorial row */}
+            {stats && (
+              <div className="flex items-center gap-6 text-sm">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <FileText className="h-4 w-4 text-primary/60" />
+                  <span><strong className="text-foreground font-semibold">{stats.chaptersCount}</strong> chapitres</span>
+                </div>
+                <div className="h-4 w-px bg-border" />
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Clock className="h-4 w-4 text-primary/60" />
+                  <span><strong className="text-foreground font-semibold">~{stats.estimatedHours}h</strong> de contenu</span>
+                </div>
+                {stats.partsCount > 0 && (
+                  <>
+                    <div className="h-4 w-px bg-border" />
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <BookOpen className="h-4 w-4 text-primary/60" />
+                      <span><strong className="text-foreground font-semibold">{stats.partsCount}</strong> parties</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+
           {/* Image Section */}
-          <div className="order-2 lg:order-1">
+          <div className="order-first lg:order-last">
             {course.image ? (
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl border-2 shadow-2xl shadow-primary/10">
+              <div className="relative w-full max-w-sm lg:w-72 xl:w-80 aspect-[3/4] overflow-hidden rounded-lg border shadow-xl shadow-foreground/5">
                 <Image
                   src={`${process.env.NEXT_PUBLIC_API_URL}${course.image}`}
                   alt={course.title}
@@ -38,54 +90,11 @@ export function CourseHeader({ course, stats }: CourseHeaderProps) {
                 />
               </div>
             ) : (
-              <div className="flex aspect-video w-full items-center justify-center rounded-xl border-2 bg-gradient-to-br from-primary/10 via-primary/5 to-background shadow-2xl shadow-primary/10">
-                <BookOpen className="h-24 w-24 text-primary/20" />
-              </div>
-            )}
-          </div>
-
-          {/* Content Section */}
-          <div className="order-1 flex flex-col justify-center lg:order-2">
-            {course.difficulty ? (
-              <Badge
-                variant="outline"
-                className={cn("mb-4 w-fit font-medium", DIFFICULTY_CONFIG[course.difficulty].className)}
-              >
-                {DIFFICULTY_CONFIG[course.difficulty].label}
-              </Badge>
-            ) : (
-              <Badge variant="secondary" className="mb-4 w-fit font-medium">
-                Cours technique
-              </Badge>
-            )}
-            <h1 className="mb-4 text-4xl font-bold tracking-tight lg:text-5xl">
-              {course.title}
-            </h1>
-            <p className="mb-6 text-lg leading-relaxed text-muted-foreground">
-              {course.description || 'Aucune description disponible.'}
-            </p>
-
-            {/* Quick Stats */}
-            {stats && (
-              <div className="flex flex-wrap gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
-                    <BookOpen className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">{stats.chaptersCount}</p>
-                    <p className="text-xs text-muted-foreground">Chapitres</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10">
-                    <span className="text-sm font-bold text-primary">⏱</span>
-                  </div>
-                  <div>
-                    <p className="font-semibold">~{stats.estimatedHours}h</p>
-                    <p className="text-xs text-muted-foreground">Durée estimée</p>
-                  </div>
-                </div>
+              <div className="relative w-full max-w-sm lg:w-72 xl:w-80 aspect-[3/4] overflow-hidden rounded-lg border bg-gradient-to-br from-muted/80 to-muted/40 flex items-center justify-center shadow-xl shadow-foreground/5">
+                <div className="absolute inset-0 opacity-[0.04]"
+                  style={{ backgroundImage: 'repeating-linear-gradient(0deg, currentColor, currentColor 1px, transparent 1px, transparent 24px), repeating-linear-gradient(90deg, currentColor, currentColor 1px, transparent 1px, transparent 24px)' }}
+                />
+                <BookOpen className="h-20 w-20 text-primary/15 relative z-10" />
               </div>
             )}
           </div>

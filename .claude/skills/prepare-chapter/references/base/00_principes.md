@@ -61,6 +61,22 @@ Protocoles de communication, capteurs, IoT, domotique, bases de données, systè
 
 **Exception** : ces domaines peuvent apparaître en *conclusion* d'un exemple, comme application concrète une fois le concept compris — jamais comme point de départ.
 
+### Test d'isomorphisme (pour les analogies d'introduction)
+
+Avant d'utiliser une analogie comme accroche d'introduction ou d'une section, poser cette question :
+
+**Peut-on remplacer chaque élément de l'analogie 1:1 par un élément du concept enseigné ?**
+
+→ Si oui : c'est une définition circulaire déguisée en analogie. **La supprimer.**
+
+| ❌ Analogie isomorphe | ✅ Point d'entrée valide |
+|---|---|
+| Vecteurs → carte + points cardinaux (est/nord = x/y, position = vecteur) | "Comment représenter d'un seul objet la direction ET l'intensité d'un son, d'une force, d'une couleur ?" |
+| Probabilités → billes dans des urnes (urne = espace, bille = événement) | "Combien de fois sur 100 un médicament fonctionne-t-il — et comment être sûr que ce 70% n'est pas dû au hasard ?" |
+| Graphes → réseau routier (ville = nœud, route = arête) | "Comment savoir si deux personnes sur un réseau social peuvent se contacter en moins de 6 intermédiaires ?" |
+
+Règle pratique : si l'analogie *est* le concept renommé, préférer une **question qui motive le concept** ou une **application inattendue** qui montre son utilité avant de le définir.
+
 ### Arc narratif minimal
 
 Un exemple court doit avoir trois temps :
@@ -140,9 +156,12 @@ Test avant chaque analogie :
 
 ### Structure
 - [ ] Introduction présente (2-3 paragraphes, ton narratif, sans `<h2>`)
+- [ ] Section "Mots-clés" présente si chapitre formel/mathématique (2-5 termes, définitions courtes)
 - [ ] Section "Objectifs d'apprentissage" avec 3-6 objectifs actionnables
 - [ ] Section "Pourquoi c'est important" avec impact concret
-- [ ] Chaque section `<h2>` contient : Concept + Mécanisme + Exemple
+- [ ] Chaque section `<h2>` a un type identifié (Processus / Définition / Distinction / Théorème / Outil) et suit le template correspondant (voir `01_structure.md`)
+- [ ] Chaque section a un `<h3>En pratique</h3>` ou `<h3>Le test décisif</h3>` (Distinction)
+- [ ] Les types sont variés dans le chapitre (pas tous identiques)
 - [ ] Section "Avant la synthèse" avec 2 questions de rappel actif
 - [ ] Section "Synthèse" avec résumé structuré
 

@@ -107,40 +107,65 @@ export default function ChapterPage({
                 className="mb-8"
               />
 
-              {/* Chapter title */}
-              <header className="mb-8">
-                <h1 className="text-3xl lg:text-4xl font-bold mb-2">
+              {/* Chapter title — editorial header */}
+              <header className="mb-10 relative pb-8 overflow-hidden">
+                {/* Ghost chapter number */}
+                <span
+                  aria-hidden="true"
+                  className="absolute top-0 right-0 font-serif font-bold leading-none select-none pointer-events-none text-foreground/[0.045]"
+                  style={{ fontSize: 'clamp(5rem, 10vw, 8rem)' }}
+                >
+                  {String(chapter.order).padStart(2, '0')}
+                </span>
+
+                <p className="text-[11px] font-bold tracking-[0.25em] uppercase mb-4 text-primary/65">
+                  Chapitre {chapter.order} sur {allChapters.length}
+                </p>
+
+                <h1 className="font-serif text-3xl lg:text-[2.6rem] font-normal leading-[1.2] text-foreground mb-7">
                   {chapter.title}
                 </h1>
-                {chapter.order && (
-                  <p className="text-sm text-muted-foreground">
-                    Chapitre {chapter.order} sur {allChapters.length}
-                  </p>
-                )}
+
+                <div className="flex items-center gap-1">
+                  <div className="h-[2px] w-10 rounded-full bg-primary" />
+                  <div className="h-[2px] w-3 rounded-full bg-accent" />
+                  <div className="h-px flex-1 bg-border ml-2" />
+                </div>
               </header>
 
               {/* Chapter content */}
               <ChapterContent content={chapter.content} />
 
-              {/* Mark as complete button */}
+              {/* Mark as complete */}
               {token && (
-                <div className="mt-10 flex items-center gap-3">
-                  <Button
-                    variant={chapterProgress?.is_completed ? 'secondary' : 'default'}
-                    onClick={() =>
-                      markComplete.mutate({ is_completed: !chapterProgress?.is_completed })
-                    }
-                    disabled={markComplete.isPending}
-                  >
-                    {chapterProgress?.is_completed
-                      ? 'Marquer comme non terminé'
-                      : 'Marquer comme terminé'}
-                  </Button>
-                  {chapterProgress?.is_completed && (
-                    <span className="text-sm text-muted-foreground flex items-center gap-1.5">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      Chapitre complété
-                    </span>
+                <div className="mt-14 flex flex-col items-center gap-4 py-8 border-t border-b border-border/50">
+                  {chapterProgress?.is_completed ? (
+                    <div className="flex flex-col items-center gap-3">
+                      <span className="flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-500">
+                        <CheckCircle2 className="h-5 w-5" />
+                        Chapitre complété
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => markComplete.mutate({ is_completed: false })}
+                        disabled={markComplete.isPending}
+                        className="text-muted-foreground hover:text-foreground text-xs"
+                      >
+                        Marquer comme non terminé
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm text-muted-foreground text-center">Vous avez terminé ce chapitre ?</p>
+                      <Button
+                        onClick={() => markComplete.mutate({ is_completed: true })}
+                        disabled={markComplete.isPending}
+                        className="px-8"
+                      >
+                        Marquer comme terminé
+                      </Button>
+                    </>
                   )}
                 </div>
               )}

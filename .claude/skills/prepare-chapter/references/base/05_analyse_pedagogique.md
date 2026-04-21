@@ -77,8 +77,11 @@ Lister les 2-4 erreurs de raisonnement les plus probables. Pour chaque piège :
 
 Lister les 3-6 sections principales (`<h2>`) avec pour chacune :
 - Titre provisoire
+- **Type de section** : Processus / Définition / Distinction / Théorème / Outil (voir `01_structure.md` pour les templates)
 - Ce que cette section apporte au fil rouge
 - Ce qu'elle suppose acquis des sections précédentes
+
+**Règle de variété :** vérifier que les types sont variés. Un chapitre avec toutes les sections en "Définition" est un signal d'alerte — certaines sections sont probablement mieux servies par un autre type.
 
 **Règle de dépendance :** Si le concept B utilise le concept A, A doit être présenté avant B. Pas de références en avant ("nous verrons plus tard que...").
 

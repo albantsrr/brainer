@@ -11,7 +11,6 @@ interface HeadingProps {
 export function Heading({ level, children, id, className }: HeadingProps) {
   const Tag = `h${level}` as const;
 
-  // Generate id from text content if not provided
   const headingId = id || (typeof children === 'string'
     ? children
         .toLowerCase()
@@ -19,15 +18,15 @@ export function Heading({ level, children, id, className }: HeadingProps) {
         .replace(/(^-|-$)/g, '')
     : undefined);
 
-  const baseStyles = 'font-semibold text-foreground scroll-mt-20';
+  const baseStyles = 'text-foreground scroll-mt-24 leading-snug';
 
   const levelStyles = {
-    1: 'text-3xl mb-6 mt-8',
-    2: 'text-2xl mb-4 mt-8 border-l-[3px] border-primary pl-4 py-1',
-    3: 'text-xl mb-3 mt-6 border-l-[3px] border-accent/70 pl-3',
-    4: 'text-lg mb-2 mt-4 text-primary/80',
-    5: 'text-base mb-2 mt-4',
-    6: 'text-sm mb-2 mt-4 font-medium',
+    1: 'text-3xl lg:text-[2.2rem] mb-6 mt-10 font-normal font-serif first:mt-0',
+    2: 'text-[1.45rem] mb-5 mt-12 font-serif font-normal border-l-[3px] border-primary pl-4 py-0.5 first:mt-0',
+    3: 'text-[1.1rem] mb-3 mt-8 font-semibold first:mt-0',
+    4: 'text-base mb-2 mt-6 font-semibold text-primary/85 first:mt-0',
+    5: 'text-sm mb-2 mt-4 font-semibold uppercase tracking-wider first:mt-0',
+    6: 'text-sm mb-2 mt-4 font-medium text-muted-foreground first:mt-0',
   };
 
   return (
@@ -36,7 +35,6 @@ export function Heading({ level, children, id, className }: HeadingProps) {
       className={cn(
         baseStyles,
         levelStyles[level],
-        'first:mt-0',
         className
       )}
     >

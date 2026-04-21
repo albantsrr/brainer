@@ -156,9 +156,10 @@ def write_source_map(plan_path: Path, plan: dict):
         for ch in part["chapters"]:
             source_files = ch.get("source_files", [])
             if source_files:
-                source_map["chapters"][ch["slug"]] = {
-                    "source_files": source_files
-                }
+                entry: dict = {"source_files": source_files}
+                if ch.get("scope_headings"):
+                    entry["scope_headings"] = ch["scope_headings"]
+                source_map["chapters"][ch["slug"]] = entry
 
     if not source_map["chapters"]:
         print("   ⚠️  No source_files found in course-plan-fr.json — skipping source-map")

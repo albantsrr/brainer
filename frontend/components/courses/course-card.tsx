@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { BookOpen, ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -12,9 +11,9 @@ import { useCourseProgress } from '@/lib/api/queries/progress';
 import type { Course, CourseDifficulty } from '@/lib/types';
 
 const DIFFICULTY_CONFIG: Record<CourseDifficulty, { label: string; className: string }> = {
-  debutant:      { label: 'Débutant',      className: 'bg-green-500/15 text-green-700 border-green-500/30' },
-  intermediaire: { label: 'Intermédiaire', className: 'bg-yellow-500/15 text-yellow-700 border-yellow-500/30' },
-  avance:        { label: 'Avancé',        className: 'bg-red-500/15 text-red-700 border-red-500/30' },
+  debutant:      { label: 'Débutant',      className: 'bg-green-500/10 text-green-700 border-green-500/25 dark:text-green-400' },
+  intermediaire: { label: 'Intermédiaire', className: 'bg-amber-500/10 text-amber-700 border-amber-500/25 dark:text-amber-400' },
+  avance:        { label: 'Avancé',        className: 'bg-red-500/10 text-red-700 border-red-500/25 dark:text-red-400' },
 };
 
 interface CourseCardProps {
@@ -32,99 +31,103 @@ export function CourseCard({ course, className, style }: CourseCardProps) {
   const isCompleted = completionPercentage === 100;
 
   return (
-    <Link href={`/courses/${course.slug}`} className="group">
-      <Card
+    <Link href={`/courses/${course.slug}`} className="group block">
+      <div
         className={cn(
-          "h-full overflow-hidden transition-all duration-300",
-          "hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1",
-          "border-2 hover:border-primary/20",
-          isCompleted && "border-green-500/30",
+          "h-full flex flex-col overflow-hidden rounded-xl border bg-card",
+          "transition-all duration-300",
+          "hover:shadow-lg hover:shadow-primary/6 hover:-translate-y-0.5",
+          "hover:border-primary/30",
+          isCompleted && "border-success/30",
           className
         )}
         style={style}
       >
+        {/* Top accent bar — primary color that deepens on hover */}
+        <div className={cn(
+          "h-0.5 transition-all duration-300",
+          isCompleted
+            ? "bg-success"
+            : "bg-gradient-to-r from-primary/30 to-accent/30 group-hover:from-primary group-hover:to-accent"
+        )} />
+
         {/* Image Section */}
         {course.image ? (
-          <div className="relative h-36 w-full overflow-hidden bg-muted">
+          <div className="relative h-44 overflow-hidden bg-muted">
             <Image
               src={`${process.env.NEXT_PUBLIC_API_URL}${course.image}`}
               alt={course.title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-105"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
               unoptimized
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="absolute inset-0 bg-gradient-to-t from-foreground/30 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
           </div>
         ) : (
-          <div className="flex h-36 items-center justify-center bg-gradient-to-br from-primary/10 via-primary/5 to-background">
-            <BookOpen className="h-12 w-12 text-primary/20" />
+          <div className="relative h-44 overflow-hidden bg-gradient-to-br from-muted to-muted/60 flex items-center justify-center">
+            {/* Subtle grid pattern */}
+            <div className="absolute inset-0 opacity-[0.04]"
+              style={{ backgroundImage: 'repeating-linear-gradient(0deg, currentColor, currentColor 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, currentColor, currentColor 1px, transparent 1px, transparent 20px)' }}
+            />
+            <BookOpen className="h-14 w-14 text-primary/20 relative z-10 transition-transform duration-300 group-hover:scale-110" />
           </div>
         )}
 
-        {/* Content Section */}
-        <CardHeader className="space-y-2 pb-3">
-          <div className="flex items-start justify-between gap-2">
-            <Badge
-              variant={isCompleted ? "default" : "secondary"}
-              className={cn(
-                "text-xs font-medium",
-                isCompleted && "bg-green-500/20 text-green-700 border-green-500/30"
-              )}
-            >
+        {/* Content */}
+        <div className="flex flex-col flex-1 p-5 gap-3">
+          {/* Meta row */}
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/60">
               {isCompleted ? (
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 text-success">
                   <CheckCircle2 className="h-3 w-3" />
                   Terminé
                 </span>
-              ) : (
-                'Cours'
-              )}
-            </Badge>
+              ) : 'Cours'}
+            </span>
             {course.difficulty && (
               <Badge
                 variant="outline"
-                className={cn("text-xs font-medium", DIFFICULTY_CONFIG[course.difficulty].className)}
+                className={cn("text-[10px] font-semibold px-2 py-0.5 h-auto", DIFFICULTY_CONFIG[course.difficulty].className)}
               >
                 {DIFFICULTY_CONFIG[course.difficulty].label}
               </Badge>
             )}
           </div>
-          <CardTitle className="line-clamp-2 text-lg leading-tight transition-colors group-hover:text-primary">
+
+          {/* Title in serif */}
+          <h3 className="font-serif text-xl font-semibold leading-snug text-foreground transition-colors duration-200 group-hover:text-primary line-clamp-2">
             {course.title}
-          </CardTitle>
-          <CardDescription className="line-clamp-2 text-sm leading-relaxed">
+          </h3>
+
+          {/* Description */}
+          <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2 flex-1">
             {course.description || 'Aucune description disponible.'}
-          </CardDescription>
-        </CardHeader>
+          </p>
 
-        {/* Footer Section */}
-        <CardContent className="pt-0 space-y-3">
-          {/* Progress bar — only for logged-in users who have started */}
-          {token && isStarted && (
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>Progression</span>
-                <span className="font-medium">{Math.round(completionPercentage)}%</span>
+          {/* Footer */}
+          <div className="pt-3 mt-auto border-t border-border/50 space-y-2.5">
+            {token && isStarted && (
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground/70">
+                  <span className="uppercase tracking-wide font-medium">Progression</span>
+                  <span className="font-semibold">{Math.round(completionPercentage)}%</span>
+                </div>
+                <Progress
+                  value={completionPercentage}
+                  className={cn("h-1", isCompleted && "[&>div]:bg-success")}
+                />
               </div>
-              <Progress
-                value={completionPercentage}
-                className={cn("h-1.5", isCompleted && "[&>div]:bg-green-500")}
-              />
+            )}
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-primary transition-colors group-hover:text-primary">
+                {isCompleted ? 'Revoir' : isStarted ? 'Continuer' : 'Commencer'}
+              </span>
+              <ArrowRight className="h-4 w-4 text-primary/50 transition-all duration-200 group-hover:text-primary group-hover:translate-x-1" />
             </div>
-          )}
-
-          <div className="flex items-center justify-between border-t pt-3">
-            <span className="text-xs font-medium text-muted-foreground">
-              {isCompleted
-                ? 'Revoir le cours'
-                : isStarted
-                ? 'Continuer le cours'
-                : 'Commencer le cours'}
-            </span>
-            <ArrowRight className="h-4 w-4 text-primary transition-transform group-hover:translate-x-1" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 }

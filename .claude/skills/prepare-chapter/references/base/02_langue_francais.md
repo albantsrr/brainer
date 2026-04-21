@@ -4,6 +4,14 @@
 
 ---
 
+> ## 🚨 AVANT DE SOUMETTRE LE CONTENU
+> Chercher `—` dans tout le HTML. Chaque occurrence = erreur bloquante.
+> - Dans `<h2>`/`<h3>` → remplacer par `:`
+> - Dans `<p>` → remplacer par `,`
+> Voir Step 4.5 dans SKILL.md.
+
+---
+
 ## ⛔ INTERDICTION ABSOLUE : Le Tiret Cadratin (—)
 
 **Cette règle s'applique PARTOUT : titres (`<h2>`, `<h3>`) ET texte courant (`<p>`).**
@@ -14,15 +22,15 @@ Le tiret cadratin **—** est interdit dans tout contenu généré. Zéro except
 
 ```html
 <!-- ❌ JAMAIS -->
-<h3>Mécanisme interne — les axiomes de Kolmogorov</h3>
+<h3>L'intuition — pourquoi trois axiomes suffisent</h3>
 <h2>Probabilités — définition et mesure</h2>
 
 <!-- ✅ TOUJOURS -->
-<h3>Mécanisme interne : les axiomes de Kolmogorov</h3>
+<h3>L'intuition : pourquoi trois axiomes suffisent</h3>
 <h2>Probabilités : définition et mesure</h2>
 
 <!-- ✅ OU reformuler sans séparateur -->
-<h3>Les axiomes de Kolmogorov</h3>
+<h3>Pourquoi trois axiomes suffisent</h3>
 ```
 
 ### Dans le texte courant — remplacer par des virgules

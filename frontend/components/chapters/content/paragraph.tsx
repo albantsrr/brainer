@@ -10,7 +10,7 @@ export function Paragraph({ children, className }: ParagraphProps) {
   return (
     <p
       className={cn(
-        'text-base leading-7 text-foreground/90 mb-4',
+        'text-[1rem] leading-[1.85] text-foreground/88 mb-5',
         'last:mb-0',
         className
       )}

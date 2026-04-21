@@ -1,17 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Lora, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/lib/auth/auth-context";
 import { Header } from "@/components/layout/header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const loraFont = Lora({
+  variable: "--font-lora",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jb-mono",
   subsets: ["latin"],
 });
 
@@ -28,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${loraFont.variable} ${dmSans.variable} ${jetbrainsMono.variable} antialiased`}
       >
         <QueryProvider>
           <AuthProvider>
